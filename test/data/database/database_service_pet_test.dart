@@ -1,0 +1,377 @@
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:petjournal/data/database/database_service.dart';
+import 'package:petjournal/constants/pet_sex.dart';
+import 'package:petjournal/constants/pet_status.dart';
+import 'package:test/test.dart';
+import 'package:matcher/matcher.dart' as match;
+
+void main() {
+  late DatabaseService database;
+
+  setUp(() async {
+    final inMemory = DatabaseConnection(NativeDatabase.memory());
+    database = DatabaseService(inMemory);
+    // Create a species type that will be used by all tests
+    await database
+        .into(database.speciesTypes)
+        .insert(SpeciesTypesCompanion.insert(name: 'Dog'));
+  });
+
+  tearDown(() => database.close());
+
+  group('Pet CRUD Operations', () {
+    test('create a new pet object', () async {
+      const testName = 'Rex';
+      const testBreed = 'German Shepherd';
+      const testColour = 'Black and Tan';
+      const testSex = PetSex.male;
+      const testAge = 3;
+      const testDiet = 'Test food';
+      const testNotes = 'Test notes';
+      const testHistory = 'Test history';
+      final testDob = DateTime(2020, 1, 1);
+      const dobEstimate = false;
+      const dobCalc = false;
+      const testIsNeutered = true;
+      final testNeuterDate = DateTime(2021, 1, 1);
+
+      final pet = await database.createPet(
+        testName,
+        1,
+        testBreed,
+        testColour,
+        testSex,
+        testAge,
+        testDob,
+        dobEstimate,
+        dobCalc,
+        testDiet,
+        testNotes,
+        testHistory,
+        testIsNeutered,
+        testNeuterDate,
+        PetStatus.active,
+      );
+
+      expect(pet, match.isNotNull);
+      expect(pet?.name, equals(testName));
+      expect(pet?.breed, equals(testBreed));
+      expect(pet?.colour, equals(testColour));
+      expect(pet?.sex, equals(testSex.dataValue));
+      expect(pet?.age, equals(testAge));
+      expect(pet?.dob, equals(testDob));
+      expect(pet?.dobEstimate, equals(dobEstimate));
+      expect(pet?.dobCalculated, equals(dobCalc));
+      expect(pet?.diet, equals(testDiet));
+      expect(pet?.notes, equals(testNotes));
+      expect(pet?.history, equals(testHistory));
+      expect(pet?.isNeutered, equals(testIsNeutered));
+      expect(pet?.neuterDate, equals(testNeuterDate));
+      expect(pet?.status, equals(PetStatus.active.dataValue));
+      expect(pet?.statusDate, match.isNotNull);
+    });
+
+    test('create pet with minimal required fields', () async {
+      final pet = await database.createPet(
+        'Rex',
+        1,
+        'Mixed',
+        'Brown',
+        PetSex.male,
+        null,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      expect(pet, match.isNotNull);
+      expect(pet?.name, equals('Rex'));
+      expect(pet?.breed, equals('Mixed'));
+      expect(pet?.colour, equals('Brown'));
+      expect(pet?.sex, equals(PetSex.male.dataValue));
+      expect(pet?.age, match.isNull);
+      expect(pet?.dob, match.isNull);
+      expect(pet?.dobEstimate, equals(false));
+      expect(pet?.dobCalculated, equals(false));
+      expect(pet?.diet, isEmpty);
+      expect(pet?.notes, isEmpty);
+      expect(pet?.history, isEmpty);
+      expect(pet?.isNeutered, equals(false));
+      expect(pet?.neuterDate, match.isNull);
+      expect(pet?.status, equals(PetStatus.active.dataValue));
+      expect(pet?.statusDate, match.isNotNull);
+    });
+
+    test('get pet by id returns correct pet', () async {
+      // First create a pet
+      final createdPet = await database.createPet(
+        'Luna',
+        1,
+        'Mixed',
+        'White',
+        PetSex.female,
+        2,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      expect(createdPet, match.isNotNull);
+      final petId = createdPet!.petId;
+
+      // Then retrieve it
+      final retrievedPet = await database.getPet(petId);
+
+      expect(retrievedPet, match.isNotNull);
+      expect(retrievedPet?.petId, equals(petId));
+      expect(retrievedPet?.name, equals('Luna'));
+      expect(retrievedPet?.breed, equals('Mixed'));
+    });
+
+    test('get non-existent pet returns null', () async {
+      final pet = await database.getPet(999);
+      expect(pet, match.isNull);
+    });
+
+    test('get all pets returns correct list', () async {
+      // Create multiple pets
+      await database.createPet(
+        'Luna',
+        1,
+        'Mixed',
+        'White',
+        PetSex.female,
+        2,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      await database.createPet(
+        'Max',
+        1,
+        'Mixed',
+        'Black',
+        PetSex.male,
+        3,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      // Get all pets and verify
+      final pets = await database.getAllPets().first;
+      expect(pets.length, equals(2));
+      expect(pets.map((p) => p.name).toList()..sort(), equals(['Luna', 'Max']));
+    });
+
+    test('update pet updates all fields correctly', () async {
+      // First create a pet
+      final pet = await database.createPet(
+        'Luna',
+        1,
+        'Mixed',
+        'White',
+        PetSex.female,
+        2,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      expect(pet, match.isNotNull);
+      final petId = pet!.petId;
+
+      final updateDate = DateTime.now();
+      final dob = DateTime(2020, 1, 1);
+      final neuterDate = DateTime(2021, 1, 1);
+
+      // Update the pet
+      final updatedCount = await database.updatePet(
+        petId,
+        'Luna Updated',
+        1,
+        'Poodle',
+        'Brown',
+        PetSex.female,
+        3,
+        dob,
+        true,
+        false,
+        'New Diet',
+        'New Notes',
+        'New History',
+        true,
+        neuterDate,
+        PetStatus.deceased,
+        updateDate,
+      );
+
+      expect(updatedCount, equals(1));
+
+      // Verify the update
+      final updatedPet = await database.getPet(petId);
+      expect(updatedPet?.name, equals('Luna Updated'));
+      expect(updatedPet?.breed, equals('Poodle'));
+      expect(updatedPet?.colour, equals('Brown'));
+      expect(updatedPet?.age, equals(3));
+      expect(updatedPet?.dob, equals(dob));
+      expect(updatedPet?.dobEstimate, equals(true));
+      expect(updatedPet?.dobCalculated, equals(false));
+      expect(updatedPet?.diet, equals('New Diet'));
+      expect(updatedPet?.notes, equals('New Notes'));
+      expect(updatedPet?.history, equals('New History'));
+      expect(updatedPet?.isNeutered, equals(true));
+      expect(updatedPet?.neuterDate, equals(neuterDate));
+      expect(updatedPet?.status, equals(PetStatus.deceased.dataValue));
+      expect(updatedPet?.statusDate, equals(updateDate));
+    });
+
+    test('update non-existent pet returns zero', () async {
+      final updateDate = DateTime.now();
+      final updateCount = await database.updatePet(
+        999,
+        'NonExistent',
+        1,
+        'Mixed',
+        'Brown',
+        PetSex.male,
+        null,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+        updateDate,
+      );
+
+      expect(updateCount, equals(0));
+    });
+
+    test('delete existing pet returns 1', () async {
+      // First create a pet
+      final pet = await database.createPet(
+        'ToDelete',
+        1,
+        'Mixed',
+        'White',
+        PetSex.female,
+        2,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      expect(pet, match.isNotNull);
+      final petId = pet!.petId;
+
+      // Delete the pet
+      final deleteCount = await database.deletePet(petId);
+      expect(deleteCount, equals(1));
+
+      // Verify the pet is deleted
+      final deletedPet = await database.getPet(petId);
+      expect(deletedPet, match.isNull);
+    });
+
+    test('delete non-existent pet returns 0', () async {
+      final deleteCount = await database.deletePet(999);
+      expect(deleteCount, equals(0));
+    });
+
+    test('watch pet emits updates', () async {
+      // Create a pet
+      final pet = await database.createPet(
+        'Luna',
+        1,
+        'Mixed',
+        'White',
+        PetSex.female,
+        2,
+        null,
+        null,
+        null,
+        '',
+        '',
+        '',
+        null,
+        null,
+        PetStatus.active,
+      );
+
+      expect(pet, match.isNotNull);
+      final petId = pet!.petId;
+
+      // Start watching the pet
+      final stream = database.watchPet(petId);
+
+      // Update the pet
+      final updateDate = DateTime.now();
+      await database.updatePet(
+        petId,
+        'Luna Updated',
+        1,
+        'Poodle',
+        'Brown',
+        PetSex.female,
+        3,
+        null,
+        null,
+        null,
+        'New Diet',
+        'New Notes',
+        'New History',
+        true,
+        null,
+        PetStatus.deceased,
+        updateDate,
+      );
+
+      // Verify the stream emits the updated pet
+      final updatedPet = await stream.first;
+      expect(updatedPet?.name, equals('Luna Updated'));
+      expect(updatedPet?.breed, equals('Poodle'));
+    });
+  });
+}

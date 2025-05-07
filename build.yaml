@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true
+
+        generate_for:
+          exclude:
+            # make sure drift_dev and riverpod_generator don't operate on the same file
+            # - "lib/api/**"
