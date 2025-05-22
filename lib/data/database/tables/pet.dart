@@ -13,7 +13,7 @@ class Pets extends Table {
       integer().references(
         SpeciesTypes,
         #speciesId,
-        onDelete: KeyAction.cascade,
+        onDelete: KeyAction.restrict,
       )();
   TextColumn get breed => text().withLength(max: 100)();
   TextColumn get colour => text().withLength(max: 100)();
@@ -21,16 +21,14 @@ class Pets extends Table {
       integer().withDefault(Constant(PetSex.unknown.dataValue))();
   IntColumn get age => integer().nullable()();
   DateTimeColumn get dob => dateTime().nullable()();
-  BoolColumn get dobEstimate =>
-      boolean().nullable().withDefault(const Constant(false))();
+  BoolColumn get dobEstimate => boolean().withDefault(const Constant(false))();
   BoolColumn get dobCalculated =>
-      boolean().nullable().withDefault(const Constant(false))();
+      boolean().withDefault(const Constant(false))();
   TextColumn get diet => text().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get history => text().nullable()();
 
-  BoolColumn get isNeutered =>
-      boolean().nullable().withDefault(const Constant(false))();
+  BoolColumn get isNeutered => boolean().withDefault(const Constant(false))();
   DateTimeColumn get neuterDate => dateTime().nullable()();
 
   IntColumn get status =>

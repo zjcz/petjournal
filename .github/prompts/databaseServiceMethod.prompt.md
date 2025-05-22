@@ -1,4 +1,8 @@
-## Adding CRUD methods to the database service
+---
+mode: "agent"
+tools: ["githubRepo", "codebase"]
+description: "Adding CRUD methods to the database service"
+---
 
 Write the CRUD methods to access the `[db object name]` table from #pet_weight.dart
 and ensure that the methods are well-documented and follow best practices for database access in Dart. The methods should include:

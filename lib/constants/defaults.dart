@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const int defaultSettingsId = 1;
+
 class AppDefaults {
   static const double padding = 16.0;
   static const double borderRadius = 8.0;

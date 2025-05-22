@@ -1,4 +1,8 @@
-## Generating Unit Tests for CRUD Operations
+---
+mode: "agent"
+tools: ["githubRepo", "codebase"]
+description: "Generating Unit Tests for CRUD Operations"
+---
 
 Write the unit tests for all the CRUD calls for the `[db object name]` database object in #database_service.dart . Follow the standard used in the #database_service_pet_test.dart unit test file
 and ensure that the tests are comprehensive and cover all possible scenarios. The tests should include:

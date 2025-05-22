@@ -302,7 +302,7 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES species_types (species_id) ON DELETE CASCADE',
+      'REFERENCES species_types (species_id) ON DELETE RESTRICT',
     ),
   );
   static const VerificationMeta _breedMeta = const VerificationMeta('breed');
@@ -360,7 +360,7 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
   late final GeneratedColumn<bool> dobEstimate = GeneratedColumn<bool>(
     'dob_estimate',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.bool,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
@@ -375,7 +375,7 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
   late final GeneratedColumn<bool> dobCalculated = GeneratedColumn<bool>(
     'dob_calculated',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.bool,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
@@ -419,7 +419,7 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
   late final GeneratedColumn<bool> isNeutered = GeneratedColumn<bool>(
     'is_neutered',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.bool,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
@@ -655,14 +655,16 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}dob'],
       ),
-      dobEstimate: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}dob_estimate'],
-      ),
-      dobCalculated: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}dob_calculated'],
-      ),
+      dobEstimate:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}dob_estimate'],
+          )!,
+      dobCalculated:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}dob_calculated'],
+          )!,
       diet: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}diet'],
@@ -675,10 +677,11 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.string,
         data['${effectivePrefix}history'],
       ),
-      isNeutered: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_neutered'],
-      ),
+      isNeutered:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}is_neutered'],
+          )!,
       neuterDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}neuter_date'],
@@ -711,12 +714,12 @@ class Pet extends DataClass implements Insertable<Pet> {
   final int sex;
   final int? age;
   final DateTime? dob;
-  final bool? dobEstimate;
-  final bool? dobCalculated;
+  final bool dobEstimate;
+  final bool dobCalculated;
   final String? diet;
   final String? notes;
   final String? history;
-  final bool? isNeutered;
+  final bool isNeutered;
   final DateTime? neuterDate;
   final int status;
   final DateTime statusDate;
@@ -729,12 +732,12 @@ class Pet extends DataClass implements Insertable<Pet> {
     required this.sex,
     this.age,
     this.dob,
-    this.dobEstimate,
-    this.dobCalculated,
+    required this.dobEstimate,
+    required this.dobCalculated,
     this.diet,
     this.notes,
     this.history,
-    this.isNeutered,
+    required this.isNeutered,
     this.neuterDate,
     required this.status,
     required this.statusDate,
@@ -754,12 +757,8 @@ class Pet extends DataClass implements Insertable<Pet> {
     if (!nullToAbsent || dob != null) {
       map['dob'] = Variable<DateTime>(dob);
     }
-    if (!nullToAbsent || dobEstimate != null) {
-      map['dob_estimate'] = Variable<bool>(dobEstimate);
-    }
-    if (!nullToAbsent || dobCalculated != null) {
-      map['dob_calculated'] = Variable<bool>(dobCalculated);
-    }
+    map['dob_estimate'] = Variable<bool>(dobEstimate);
+    map['dob_calculated'] = Variable<bool>(dobCalculated);
     if (!nullToAbsent || diet != null) {
       map['diet'] = Variable<String>(diet);
     }
@@ -769,9 +768,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     if (!nullToAbsent || history != null) {
       map['history'] = Variable<String>(history);
     }
-    if (!nullToAbsent || isNeutered != null) {
-      map['is_neutered'] = Variable<bool>(isNeutered);
-    }
+    map['is_neutered'] = Variable<bool>(isNeutered);
     if (!nullToAbsent || neuterDate != null) {
       map['neuter_date'] = Variable<DateTime>(neuterDate);
     }
@@ -790,14 +787,8 @@ class Pet extends DataClass implements Insertable<Pet> {
       sex: Value(sex),
       age: age == null && nullToAbsent ? const Value.absent() : Value(age),
       dob: dob == null && nullToAbsent ? const Value.absent() : Value(dob),
-      dobEstimate:
-          dobEstimate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(dobEstimate),
-      dobCalculated:
-          dobCalculated == null && nullToAbsent
-              ? const Value.absent()
-              : Value(dobCalculated),
+      dobEstimate: Value(dobEstimate),
+      dobCalculated: Value(dobCalculated),
       diet: diet == null && nullToAbsent ? const Value.absent() : Value(diet),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
@@ -805,10 +796,7 @@ class Pet extends DataClass implements Insertable<Pet> {
           history == null && nullToAbsent
               ? const Value.absent()
               : Value(history),
-      isNeutered:
-          isNeutered == null && nullToAbsent
-              ? const Value.absent()
-              : Value(isNeutered),
+      isNeutered: Value(isNeutered),
       neuterDate:
           neuterDate == null && nullToAbsent
               ? const Value.absent()
@@ -832,12 +820,12 @@ class Pet extends DataClass implements Insertable<Pet> {
       sex: serializer.fromJson<int>(json['sex']),
       age: serializer.fromJson<int?>(json['age']),
       dob: serializer.fromJson<DateTime?>(json['dob']),
-      dobEstimate: serializer.fromJson<bool?>(json['dobEstimate']),
-      dobCalculated: serializer.fromJson<bool?>(json['dobCalculated']),
+      dobEstimate: serializer.fromJson<bool>(json['dobEstimate']),
+      dobCalculated: serializer.fromJson<bool>(json['dobCalculated']),
       diet: serializer.fromJson<String?>(json['diet']),
       notes: serializer.fromJson<String?>(json['notes']),
       history: serializer.fromJson<String?>(json['history']),
-      isNeutered: serializer.fromJson<bool?>(json['isNeutered']),
+      isNeutered: serializer.fromJson<bool>(json['isNeutered']),
       neuterDate: serializer.fromJson<DateTime?>(json['neuterDate']),
       status: serializer.fromJson<int>(json['status']),
       statusDate: serializer.fromJson<DateTime>(json['statusDate']),
@@ -855,12 +843,12 @@ class Pet extends DataClass implements Insertable<Pet> {
       'sex': serializer.toJson<int>(sex),
       'age': serializer.toJson<int?>(age),
       'dob': serializer.toJson<DateTime?>(dob),
-      'dobEstimate': serializer.toJson<bool?>(dobEstimate),
-      'dobCalculated': serializer.toJson<bool?>(dobCalculated),
+      'dobEstimate': serializer.toJson<bool>(dobEstimate),
+      'dobCalculated': serializer.toJson<bool>(dobCalculated),
       'diet': serializer.toJson<String?>(diet),
       'notes': serializer.toJson<String?>(notes),
       'history': serializer.toJson<String?>(history),
-      'isNeutered': serializer.toJson<bool?>(isNeutered),
+      'isNeutered': serializer.toJson<bool>(isNeutered),
       'neuterDate': serializer.toJson<DateTime?>(neuterDate),
       'status': serializer.toJson<int>(status),
       'statusDate': serializer.toJson<DateTime>(statusDate),
@@ -876,12 +864,12 @@ class Pet extends DataClass implements Insertable<Pet> {
     int? sex,
     Value<int?> age = const Value.absent(),
     Value<DateTime?> dob = const Value.absent(),
-    Value<bool?> dobEstimate = const Value.absent(),
-    Value<bool?> dobCalculated = const Value.absent(),
+    bool? dobEstimate,
+    bool? dobCalculated,
     Value<String?> diet = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     Value<String?> history = const Value.absent(),
-    Value<bool?> isNeutered = const Value.absent(),
+    bool? isNeutered,
     Value<DateTime?> neuterDate = const Value.absent(),
     int? status,
     DateTime? statusDate,
@@ -894,13 +882,12 @@ class Pet extends DataClass implements Insertable<Pet> {
     sex: sex ?? this.sex,
     age: age.present ? age.value : this.age,
     dob: dob.present ? dob.value : this.dob,
-    dobEstimate: dobEstimate.present ? dobEstimate.value : this.dobEstimate,
-    dobCalculated:
-        dobCalculated.present ? dobCalculated.value : this.dobCalculated,
+    dobEstimate: dobEstimate ?? this.dobEstimate,
+    dobCalculated: dobCalculated ?? this.dobCalculated,
     diet: diet.present ? diet.value : this.diet,
     notes: notes.present ? notes.value : this.notes,
     history: history.present ? history.value : this.history,
-    isNeutered: isNeutered.present ? isNeutered.value : this.isNeutered,
+    isNeutered: isNeutered ?? this.isNeutered,
     neuterDate: neuterDate.present ? neuterDate.value : this.neuterDate,
     status: status ?? this.status,
     statusDate: statusDate ?? this.statusDate,
@@ -1010,12 +997,12 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<int> sex;
   final Value<int?> age;
   final Value<DateTime?> dob;
-  final Value<bool?> dobEstimate;
-  final Value<bool?> dobCalculated;
+  final Value<bool> dobEstimate;
+  final Value<bool> dobCalculated;
   final Value<String?> diet;
   final Value<String?> notes;
   final Value<String?> history;
-  final Value<bool?> isNeutered;
+  final Value<bool> isNeutered;
   final Value<DateTime?> neuterDate;
   final Value<int> status;
   final Value<DateTime> statusDate;
@@ -1109,12 +1096,12 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<int>? sex,
     Value<int?>? age,
     Value<DateTime?>? dob,
-    Value<bool?>? dobEstimate,
-    Value<bool?>? dobCalculated,
+    Value<bool>? dobEstimate,
+    Value<bool>? dobCalculated,
     Value<String?>? diet,
     Value<String?>? notes,
     Value<String?>? history,
-    Value<bool?>? isNeutered,
+    Value<bool>? isNeutered,
     Value<DateTime?>? neuterDate,
     Value<int>? status,
     Value<DateTime>? statusDate,
@@ -4042,6 +4029,480 @@ class PetJournalEntriesCompanion extends UpdateCompanion<PetJournalEntry> {
   }
 }
 
+class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _settingsIdMeta = const VerificationMeta(
+    'settingsId',
+  );
+  @override
+  late final GeneratedColumn<int> settingsId = GeneratedColumn<int>(
+    'settings_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _acceptedTermsAndConditionsMeta =
+      const VerificationMeta('acceptedTermsAndConditions');
+  @override
+  late final GeneratedColumn<bool> acceptedTermsAndConditions =
+      GeneratedColumn<bool>(
+        'accepted_terms_and_conditions',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("accepted_terms_and_conditions" IN (0, 1))',
+        ),
+        defaultValue: const Constant(false),
+      );
+  static const VerificationMeta _onBoardingCompleteMeta =
+      const VerificationMeta('onBoardingComplete');
+  @override
+  late final GeneratedColumn<bool> onBoardingComplete = GeneratedColumn<bool>(
+    'on_boarding_complete',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("on_boarding_complete" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _optIntoAnalyticsWarningMeta =
+      const VerificationMeta('optIntoAnalyticsWarning');
+  @override
+  late final GeneratedColumn<bool> optIntoAnalyticsWarning =
+      GeneratedColumn<bool>(
+        'opt_into_analytics_warning',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("opt_into_analytics_warning" IN (0, 1))',
+        ),
+        defaultValue: const Constant(false),
+      );
+  static const VerificationMeta _lastUsedVersionMeta = const VerificationMeta(
+    'lastUsedVersion',
+  );
+  @override
+  late final GeneratedColumn<String> lastUsedVersion = GeneratedColumn<String>(
+    'last_used_version',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 10),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _defaultWeightUnitMeta = const VerificationMeta(
+    'defaultWeightUnit',
+  );
+  @override
+  late final GeneratedColumn<int> defaultWeightUnit = GeneratedColumn<int>(
+    'default_weight_unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    settingsId,
+    acceptedTermsAndConditions,
+    onBoardingComplete,
+    optIntoAnalyticsWarning,
+    lastUsedVersion,
+    defaultWeightUnit,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Setting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('settings_id')) {
+      context.handle(
+        _settingsIdMeta,
+        settingsId.isAcceptableOrUnknown(data['settings_id']!, _settingsIdMeta),
+      );
+    }
+    if (data.containsKey('accepted_terms_and_conditions')) {
+      context.handle(
+        _acceptedTermsAndConditionsMeta,
+        acceptedTermsAndConditions.isAcceptableOrUnknown(
+          data['accepted_terms_and_conditions']!,
+          _acceptedTermsAndConditionsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('on_boarding_complete')) {
+      context.handle(
+        _onBoardingCompleteMeta,
+        onBoardingComplete.isAcceptableOrUnknown(
+          data['on_boarding_complete']!,
+          _onBoardingCompleteMeta,
+        ),
+      );
+    }
+    if (data.containsKey('opt_into_analytics_warning')) {
+      context.handle(
+        _optIntoAnalyticsWarningMeta,
+        optIntoAnalyticsWarning.isAcceptableOrUnknown(
+          data['opt_into_analytics_warning']!,
+          _optIntoAnalyticsWarningMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_used_version')) {
+      context.handle(
+        _lastUsedVersionMeta,
+        lastUsedVersion.isAcceptableOrUnknown(
+          data['last_used_version']!,
+          _lastUsedVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_weight_unit')) {
+      context.handle(
+        _defaultWeightUnitMeta,
+        defaultWeightUnit.isAcceptableOrUnknown(
+          data['default_weight_unit']!,
+          _defaultWeightUnitMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {settingsId};
+  @override
+  Setting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Setting(
+      settingsId:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}settings_id'],
+          )!,
+      acceptedTermsAndConditions:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}accepted_terms_and_conditions'],
+          )!,
+      onBoardingComplete:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}on_boarding_complete'],
+          )!,
+      optIntoAnalyticsWarning:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}opt_into_analytics_warning'],
+          )!,
+      lastUsedVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_used_version'],
+      ),
+      defaultWeightUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}default_weight_unit'],
+      ),
+    );
+  }
+
+  @override
+  $SettingsTable createAlias(String alias) {
+    return $SettingsTable(attachedDatabase, alias);
+  }
+}
+
+class Setting extends DataClass implements Insertable<Setting> {
+  final int settingsId;
+  final bool acceptedTermsAndConditions;
+  final bool onBoardingComplete;
+  final bool optIntoAnalyticsWarning;
+  final String? lastUsedVersion;
+  final int? defaultWeightUnit;
+  const Setting({
+    required this.settingsId,
+    required this.acceptedTermsAndConditions,
+    required this.onBoardingComplete,
+    required this.optIntoAnalyticsWarning,
+    this.lastUsedVersion,
+    this.defaultWeightUnit,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['settings_id'] = Variable<int>(settingsId);
+    map['accepted_terms_and_conditions'] = Variable<bool>(
+      acceptedTermsAndConditions,
+    );
+    map['on_boarding_complete'] = Variable<bool>(onBoardingComplete);
+    map['opt_into_analytics_warning'] = Variable<bool>(optIntoAnalyticsWarning);
+    if (!nullToAbsent || lastUsedVersion != null) {
+      map['last_used_version'] = Variable<String>(lastUsedVersion);
+    }
+    if (!nullToAbsent || defaultWeightUnit != null) {
+      map['default_weight_unit'] = Variable<int>(defaultWeightUnit);
+    }
+    return map;
+  }
+
+  SettingsCompanion toCompanion(bool nullToAbsent) {
+    return SettingsCompanion(
+      settingsId: Value(settingsId),
+      acceptedTermsAndConditions: Value(acceptedTermsAndConditions),
+      onBoardingComplete: Value(onBoardingComplete),
+      optIntoAnalyticsWarning: Value(optIntoAnalyticsWarning),
+      lastUsedVersion:
+          lastUsedVersion == null && nullToAbsent
+              ? const Value.absent()
+              : Value(lastUsedVersion),
+      defaultWeightUnit:
+          defaultWeightUnit == null && nullToAbsent
+              ? const Value.absent()
+              : Value(defaultWeightUnit),
+    );
+  }
+
+  factory Setting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Setting(
+      settingsId: serializer.fromJson<int>(json['settingsId']),
+      acceptedTermsAndConditions: serializer.fromJson<bool>(
+        json['acceptedTermsAndConditions'],
+      ),
+      onBoardingComplete: serializer.fromJson<bool>(json['onBoardingComplete']),
+      optIntoAnalyticsWarning: serializer.fromJson<bool>(
+        json['optIntoAnalyticsWarning'],
+      ),
+      lastUsedVersion: serializer.fromJson<String?>(json['lastUsedVersion']),
+      defaultWeightUnit: serializer.fromJson<int?>(json['defaultWeightUnit']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'settingsId': serializer.toJson<int>(settingsId),
+      'acceptedTermsAndConditions': serializer.toJson<bool>(
+        acceptedTermsAndConditions,
+      ),
+      'onBoardingComplete': serializer.toJson<bool>(onBoardingComplete),
+      'optIntoAnalyticsWarning': serializer.toJson<bool>(
+        optIntoAnalyticsWarning,
+      ),
+      'lastUsedVersion': serializer.toJson<String?>(lastUsedVersion),
+      'defaultWeightUnit': serializer.toJson<int?>(defaultWeightUnit),
+    };
+  }
+
+  Setting copyWith({
+    int? settingsId,
+    bool? acceptedTermsAndConditions,
+    bool? onBoardingComplete,
+    bool? optIntoAnalyticsWarning,
+    Value<String?> lastUsedVersion = const Value.absent(),
+    Value<int?> defaultWeightUnit = const Value.absent(),
+  }) => Setting(
+    settingsId: settingsId ?? this.settingsId,
+    acceptedTermsAndConditions:
+        acceptedTermsAndConditions ?? this.acceptedTermsAndConditions,
+    onBoardingComplete: onBoardingComplete ?? this.onBoardingComplete,
+    optIntoAnalyticsWarning:
+        optIntoAnalyticsWarning ?? this.optIntoAnalyticsWarning,
+    lastUsedVersion:
+        lastUsedVersion.present ? lastUsedVersion.value : this.lastUsedVersion,
+    defaultWeightUnit:
+        defaultWeightUnit.present
+            ? defaultWeightUnit.value
+            : this.defaultWeightUnit,
+  );
+  Setting copyWithCompanion(SettingsCompanion data) {
+    return Setting(
+      settingsId:
+          data.settingsId.present ? data.settingsId.value : this.settingsId,
+      acceptedTermsAndConditions:
+          data.acceptedTermsAndConditions.present
+              ? data.acceptedTermsAndConditions.value
+              : this.acceptedTermsAndConditions,
+      onBoardingComplete:
+          data.onBoardingComplete.present
+              ? data.onBoardingComplete.value
+              : this.onBoardingComplete,
+      optIntoAnalyticsWarning:
+          data.optIntoAnalyticsWarning.present
+              ? data.optIntoAnalyticsWarning.value
+              : this.optIntoAnalyticsWarning,
+      lastUsedVersion:
+          data.lastUsedVersion.present
+              ? data.lastUsedVersion.value
+              : this.lastUsedVersion,
+      defaultWeightUnit:
+          data.defaultWeightUnit.present
+              ? data.defaultWeightUnit.value
+              : this.defaultWeightUnit,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Setting(')
+          ..write('settingsId: $settingsId, ')
+          ..write('acceptedTermsAndConditions: $acceptedTermsAndConditions, ')
+          ..write('onBoardingComplete: $onBoardingComplete, ')
+          ..write('optIntoAnalyticsWarning: $optIntoAnalyticsWarning, ')
+          ..write('lastUsedVersion: $lastUsedVersion, ')
+          ..write('defaultWeightUnit: $defaultWeightUnit')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    settingsId,
+    acceptedTermsAndConditions,
+    onBoardingComplete,
+    optIntoAnalyticsWarning,
+    lastUsedVersion,
+    defaultWeightUnit,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Setting &&
+          other.settingsId == this.settingsId &&
+          other.acceptedTermsAndConditions == this.acceptedTermsAndConditions &&
+          other.onBoardingComplete == this.onBoardingComplete &&
+          other.optIntoAnalyticsWarning == this.optIntoAnalyticsWarning &&
+          other.lastUsedVersion == this.lastUsedVersion &&
+          other.defaultWeightUnit == this.defaultWeightUnit);
+}
+
+class SettingsCompanion extends UpdateCompanion<Setting> {
+  final Value<int> settingsId;
+  final Value<bool> acceptedTermsAndConditions;
+  final Value<bool> onBoardingComplete;
+  final Value<bool> optIntoAnalyticsWarning;
+  final Value<String?> lastUsedVersion;
+  final Value<int?> defaultWeightUnit;
+  const SettingsCompanion({
+    this.settingsId = const Value.absent(),
+    this.acceptedTermsAndConditions = const Value.absent(),
+    this.onBoardingComplete = const Value.absent(),
+    this.optIntoAnalyticsWarning = const Value.absent(),
+    this.lastUsedVersion = const Value.absent(),
+    this.defaultWeightUnit = const Value.absent(),
+  });
+  SettingsCompanion.insert({
+    this.settingsId = const Value.absent(),
+    this.acceptedTermsAndConditions = const Value.absent(),
+    this.onBoardingComplete = const Value.absent(),
+    this.optIntoAnalyticsWarning = const Value.absent(),
+    this.lastUsedVersion = const Value.absent(),
+    this.defaultWeightUnit = const Value.absent(),
+  });
+  static Insertable<Setting> custom({
+    Expression<int>? settingsId,
+    Expression<bool>? acceptedTermsAndConditions,
+    Expression<bool>? onBoardingComplete,
+    Expression<bool>? optIntoAnalyticsWarning,
+    Expression<String>? lastUsedVersion,
+    Expression<int>? defaultWeightUnit,
+  }) {
+    return RawValuesInsertable({
+      if (settingsId != null) 'settings_id': settingsId,
+      if (acceptedTermsAndConditions != null)
+        'accepted_terms_and_conditions': acceptedTermsAndConditions,
+      if (onBoardingComplete != null)
+        'on_boarding_complete': onBoardingComplete,
+      if (optIntoAnalyticsWarning != null)
+        'opt_into_analytics_warning': optIntoAnalyticsWarning,
+      if (lastUsedVersion != null) 'last_used_version': lastUsedVersion,
+      if (defaultWeightUnit != null) 'default_weight_unit': defaultWeightUnit,
+    });
+  }
+
+  SettingsCompanion copyWith({
+    Value<int>? settingsId,
+    Value<bool>? acceptedTermsAndConditions,
+    Value<bool>? onBoardingComplete,
+    Value<bool>? optIntoAnalyticsWarning,
+    Value<String?>? lastUsedVersion,
+    Value<int?>? defaultWeightUnit,
+  }) {
+    return SettingsCompanion(
+      settingsId: settingsId ?? this.settingsId,
+      acceptedTermsAndConditions:
+          acceptedTermsAndConditions ?? this.acceptedTermsAndConditions,
+      onBoardingComplete: onBoardingComplete ?? this.onBoardingComplete,
+      optIntoAnalyticsWarning:
+          optIntoAnalyticsWarning ?? this.optIntoAnalyticsWarning,
+      lastUsedVersion: lastUsedVersion ?? this.lastUsedVersion,
+      defaultWeightUnit: defaultWeightUnit ?? this.defaultWeightUnit,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (settingsId.present) {
+      map['settings_id'] = Variable<int>(settingsId.value);
+    }
+    if (acceptedTermsAndConditions.present) {
+      map['accepted_terms_and_conditions'] = Variable<bool>(
+        acceptedTermsAndConditions.value,
+      );
+    }
+    if (onBoardingComplete.present) {
+      map['on_boarding_complete'] = Variable<bool>(onBoardingComplete.value);
+    }
+    if (optIntoAnalyticsWarning.present) {
+      map['opt_into_analytics_warning'] = Variable<bool>(
+        optIntoAnalyticsWarning.value,
+      );
+    }
+    if (lastUsedVersion.present) {
+      map['last_used_version'] = Variable<String>(lastUsedVersion.value);
+    }
+    if (defaultWeightUnit.present) {
+      map['default_weight_unit'] = Variable<int>(defaultWeightUnit.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingsCompanion(')
+          ..write('settingsId: $settingsId, ')
+          ..write('acceptedTermsAndConditions: $acceptedTermsAndConditions, ')
+          ..write('onBoardingComplete: $onBoardingComplete, ')
+          ..write('optIntoAnalyticsWarning: $optIntoAnalyticsWarning, ')
+          ..write('lastUsedVersion: $lastUsedVersion, ')
+          ..write('defaultWeightUnit: $defaultWeightUnit')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$DatabaseService extends GeneratedDatabase {
   _$DatabaseService(QueryExecutor e) : super(e);
   $DatabaseServiceManager get managers => $DatabaseServiceManager(this);
@@ -4059,6 +4520,7 @@ abstract class _$DatabaseService extends GeneratedDatabase {
   );
   late final $PetJournalEntriesTable petJournalEntries =
       $PetJournalEntriesTable(this);
+  late final $SettingsTable settings = $SettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4073,16 +4535,10 @@ abstract class _$DatabaseService extends GeneratedDatabase {
     journalEntries,
     journalEntryTags,
     petJournalEntries,
+    settings,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'species_types',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('pets', kind: UpdateKind.delete)],
-    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'pets',
@@ -4416,12 +4872,12 @@ typedef $$PetsTableCreateCompanionBuilder =
       Value<int> sex,
       Value<int?> age,
       Value<DateTime?> dob,
-      Value<bool?> dobEstimate,
-      Value<bool?> dobCalculated,
+      Value<bool> dobEstimate,
+      Value<bool> dobCalculated,
       Value<String?> diet,
       Value<String?> notes,
       Value<String?> history,
-      Value<bool?> isNeutered,
+      Value<bool> isNeutered,
       Value<DateTime?> neuterDate,
       Value<int> status,
       Value<DateTime> statusDate,
@@ -4436,12 +4892,12 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<int> sex,
       Value<int?> age,
       Value<DateTime?> dob,
-      Value<bool?> dobEstimate,
-      Value<bool?> dobCalculated,
+      Value<bool> dobEstimate,
+      Value<bool> dobCalculated,
       Value<String?> diet,
       Value<String?> notes,
       Value<String?> history,
-      Value<bool?> isNeutered,
+      Value<bool> isNeutered,
       Value<DateTime?> neuterDate,
       Value<int> status,
       Value<DateTime> statusDate,
@@ -5183,12 +5639,12 @@ class $$PetsTableTableManager
                 Value<int> sex = const Value.absent(),
                 Value<int?> age = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
-                Value<bool?> dobEstimate = const Value.absent(),
-                Value<bool?> dobCalculated = const Value.absent(),
+                Value<bool> dobEstimate = const Value.absent(),
+                Value<bool> dobCalculated = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> history = const Value.absent(),
-                Value<bool?> isNeutered = const Value.absent(),
+                Value<bool> isNeutered = const Value.absent(),
                 Value<DateTime?> neuterDate = const Value.absent(),
                 Value<int> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
@@ -5221,12 +5677,12 @@ class $$PetsTableTableManager
                 Value<int> sex = const Value.absent(),
                 Value<int?> age = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
-                Value<bool?> dobEstimate = const Value.absent(),
-                Value<bool?> dobCalculated = const Value.absent(),
+                Value<bool> dobEstimate = const Value.absent(),
+                Value<bool> dobCalculated = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> history = const Value.absent(),
-                Value<bool?> isNeutered = const Value.absent(),
+                Value<bool> isNeutered = const Value.absent(),
                 Value<DateTime?> neuterDate = const Value.absent(),
                 Value<int> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
@@ -7996,6 +8452,232 @@ typedef $$PetJournalEntriesTableProcessedTableManager =
       PetJournalEntry,
       PrefetchHooks Function({bool petId, bool journalEntryId})
     >;
+typedef $$SettingsTableCreateCompanionBuilder =
+    SettingsCompanion Function({
+      Value<int> settingsId,
+      Value<bool> acceptedTermsAndConditions,
+      Value<bool> onBoardingComplete,
+      Value<bool> optIntoAnalyticsWarning,
+      Value<String?> lastUsedVersion,
+      Value<int?> defaultWeightUnit,
+    });
+typedef $$SettingsTableUpdateCompanionBuilder =
+    SettingsCompanion Function({
+      Value<int> settingsId,
+      Value<bool> acceptedTermsAndConditions,
+      Value<bool> onBoardingComplete,
+      Value<bool> optIntoAnalyticsWarning,
+      Value<String?> lastUsedVersion,
+      Value<int?> defaultWeightUnit,
+    });
+
+class $$SettingsTableFilterComposer
+    extends Composer<_$DatabaseService, $SettingsTable> {
+  $$SettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get settingsId => $composableBuilder(
+    column: $table.settingsId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get acceptedTermsAndConditions => $composableBuilder(
+    column: $table.acceptedTermsAndConditions,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get onBoardingComplete => $composableBuilder(
+    column: $table.onBoardingComplete,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get optIntoAnalyticsWarning => $composableBuilder(
+    column: $table.optIntoAnalyticsWarning,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastUsedVersion => $composableBuilder(
+    column: $table.lastUsedVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get defaultWeightUnit => $composableBuilder(
+    column: $table.defaultWeightUnit,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SettingsTableOrderingComposer
+    extends Composer<_$DatabaseService, $SettingsTable> {
+  $$SettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get settingsId => $composableBuilder(
+    column: $table.settingsId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get acceptedTermsAndConditions => $composableBuilder(
+    column: $table.acceptedTermsAndConditions,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get onBoardingComplete => $composableBuilder(
+    column: $table.onBoardingComplete,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get optIntoAnalyticsWarning => $composableBuilder(
+    column: $table.optIntoAnalyticsWarning,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastUsedVersion => $composableBuilder(
+    column: $table.lastUsedVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get defaultWeightUnit => $composableBuilder(
+    column: $table.defaultWeightUnit,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SettingsTableAnnotationComposer
+    extends Composer<_$DatabaseService, $SettingsTable> {
+  $$SettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get settingsId => $composableBuilder(
+    column: $table.settingsId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get acceptedTermsAndConditions => $composableBuilder(
+    column: $table.acceptedTermsAndConditions,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get onBoardingComplete => $composableBuilder(
+    column: $table.onBoardingComplete,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get optIntoAnalyticsWarning => $composableBuilder(
+    column: $table.optIntoAnalyticsWarning,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastUsedVersion => $composableBuilder(
+    column: $table.lastUsedVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get defaultWeightUnit => $composableBuilder(
+    column: $table.defaultWeightUnit,
+    builder: (column) => column,
+  );
+}
+
+class $$SettingsTableTableManager
+    extends
+        RootTableManager<
+          _$DatabaseService,
+          $SettingsTable,
+          Setting,
+          $$SettingsTableFilterComposer,
+          $$SettingsTableOrderingComposer,
+          $$SettingsTableAnnotationComposer,
+          $$SettingsTableCreateCompanionBuilder,
+          $$SettingsTableUpdateCompanionBuilder,
+          (Setting, BaseReferences<_$DatabaseService, $SettingsTable, Setting>),
+          Setting,
+          PrefetchHooks Function()
+        > {
+  $$SettingsTableTableManager(_$DatabaseService db, $SettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$SettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer:
+              () => $$SettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer:
+              () => $$SettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> settingsId = const Value.absent(),
+                Value<bool> acceptedTermsAndConditions = const Value.absent(),
+                Value<bool> onBoardingComplete = const Value.absent(),
+                Value<bool> optIntoAnalyticsWarning = const Value.absent(),
+                Value<String?> lastUsedVersion = const Value.absent(),
+                Value<int?> defaultWeightUnit = const Value.absent(),
+              }) => SettingsCompanion(
+                settingsId: settingsId,
+                acceptedTermsAndConditions: acceptedTermsAndConditions,
+                onBoardingComplete: onBoardingComplete,
+                optIntoAnalyticsWarning: optIntoAnalyticsWarning,
+                lastUsedVersion: lastUsedVersion,
+                defaultWeightUnit: defaultWeightUnit,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> settingsId = const Value.absent(),
+                Value<bool> acceptedTermsAndConditions = const Value.absent(),
+                Value<bool> onBoardingComplete = const Value.absent(),
+                Value<bool> optIntoAnalyticsWarning = const Value.absent(),
+                Value<String?> lastUsedVersion = const Value.absent(),
+                Value<int?> defaultWeightUnit = const Value.absent(),
+              }) => SettingsCompanion.insert(
+                settingsId: settingsId,
+                acceptedTermsAndConditions: acceptedTermsAndConditions,
+                onBoardingComplete: onBoardingComplete,
+                optIntoAnalyticsWarning: optIntoAnalyticsWarning,
+                lastUsedVersion: lastUsedVersion,
+                defaultWeightUnit: defaultWeightUnit,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable(table),
+                          BaseReferences(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$DatabaseService,
+      $SettingsTable,
+      Setting,
+      $$SettingsTableFilterComposer,
+      $$SettingsTableOrderingComposer,
+      $$SettingsTableAnnotationComposer,
+      $$SettingsTableCreateCompanionBuilder,
+      $$SettingsTableUpdateCompanionBuilder,
+      (Setting, BaseReferences<_$DatabaseService, $SettingsTable, Setting>),
+      Setting,
+      PrefetchHooks Function()
+    >;
 
 class $DatabaseServiceManager {
   final _$DatabaseService _db;
@@ -8017,4 +8699,6 @@ class $DatabaseServiceManager {
       $$JournalEntryTagsTableTableManager(_db, _db.journalEntryTags);
   $$PetJournalEntriesTableTableManager get petJournalEntries =>
       $$PetJournalEntriesTableTableManager(_db, _db.petJournalEntries);
+  $$SettingsTableTableManager get settings =>
+      $$SettingsTableTableManager(_db, _db.settings);
 }
