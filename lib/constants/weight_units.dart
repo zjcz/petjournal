@@ -1,20 +1,17 @@
 enum WeightUnits implements Comparable<WeightUnits> {
-  metric(dataValue: 0),
-  imperial(dataValue: 1);
+  metric(dataValue: 0, niceName: 'Metric (kg)'),
+  imperial(dataValue: 1, niceName: 'Imperial (lbs)');
 
   final int dataValue;
+  final String niceName;
 
-  const WeightUnits({required this.dataValue});
+  const WeightUnits({required this.dataValue, required this.niceName});
 
   static WeightUnits fromDataValue(int dataValue) {
-    switch (dataValue) {
-      case 0:
-        return WeightUnits.metric;
-      case 1:
-        return WeightUnits.imperial;
-      default:
-        throw Exception('Unknown data value for WeightUnits: $dataValue');
-    }
+    return WeightUnits.values.firstWhere(
+      (unit) => unit.dataValue == dataValue,
+      orElse: () => throw Exception('Unknown data value for WeightUnits: $dataValue'),
+    );
   }
 
   @override

@@ -1,23 +1,19 @@
 enum PetSex implements Comparable<PetSex> {
-  female(dataValue: 0),
-  male(dataValue: 1),
-  unknown(dataValue: 2);
+  female(dataValue: 0, niceName: 'female'),
+  male(dataValue: 1, niceName: 'male'),
+  unknown(dataValue: 2, niceName: 'unknown');
 
   final int dataValue;
+  final String niceName;
 
-  const PetSex({required this.dataValue});
+  const PetSex({required this.dataValue, required this.niceName});
 
   static PetSex fromDataValue(int dataValue) {
-    switch (dataValue) {
-      case 0:
-        return PetSex.female;
-      case 1:
-        return PetSex.male;
-      case 2:
-        return PetSex.unknown;
-      default:
-        throw Exception('Unknown data value for PetSex: $dataValue');
-    }
+    return PetSex.values.firstWhere(
+      (sex) => sex.dataValue == dataValue,
+      orElse:
+          () => throw Exception('Unknown data value for PetSex: $dataValue'),
+    );
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:petjournal/constants/defaults.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -11,6 +12,7 @@ import 'package:petjournal/data/database/tables/pet_microchip.dart';
 import 'package:petjournal/data/database/tables/pet_vaccination.dart';
 import 'package:petjournal/data/database/tables/pet_weight.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:petjournal/data/database/tables/setting.dart';
 import 'package:petjournal/data/database/tables/species_type.dart';
 import 'package:petjournal/helpers/date_helper.dart';
 
@@ -30,6 +32,7 @@ part 'database_service.g.dart';
     JournalEntryTags,
     PetJournalEntries,
     SpeciesTypes,
+    Settings,
   ],
 )
 class DatabaseService extends _$DatabaseService {
@@ -62,6 +65,7 @@ class DatabaseService extends _$DatabaseService {
 
         if (details.wasCreated) {
           // Create default records here
+          await createDefaultSettings();
         }
       },
     );
@@ -642,6 +646,149 @@ class DatabaseService extends _$DatabaseService {
     }
   }
 
+  // List all the species types
+  Stream<List<SpeciesType>> getAllSpeciesTypes() {
+    return (select(speciesTypes)
+      ..orderBy([(v) => OrderingTerm.asc(v.name)])).watch();
+  }
+
+  // Get a single species type by its id
+  Future<SpeciesType?> getSpeciesType(int id) async {
+    try {
+      return await (select(speciesTypes)
+        ..where((s) => s.speciesId.equals(id))).getSingleOrNull();
+    } catch (e) {
+      throw Exception('Error retrieving species type: $e');
+    }
+  }
+
+  // Watch a single species type by its id
+  Stream<SpeciesType?> watchSpeciesType(int id) {
+    return (select(speciesTypes)
+      ..where((s) => s.speciesId.equals(id))).watchSingleOrNull();
+  }
+
+  // Create a new species type record
+  Future<SpeciesType?> createSpeciesType({
+    required String name,
+    required bool userAdded,
+  }) async {
+    try {
+      return await into(speciesTypes).insertReturningOrNull(
+        SpeciesTypesCompanion.insert(name: name, userAdded: Value(userAdded)),
+      );
+    } catch (e) {
+      throw Exception('Error creating species type: $e');
+    }
+  }
+
+  // Update an existing species type record
+  Future<int> updateSpeciesType({
+    required int id,
+    required String name,
+    required bool userAdded,
+  }) async {
+    try {
+      return await (update(speciesTypes)
+        ..where((s) => s.speciesId.equals(id))).write(
+        SpeciesTypesCompanion(name: Value(name), userAdded: Value(userAdded)),
+      );
+    } catch (e) {
+      throw Exception('Error updating pet vaccination: $e');
+    }
+  }
+
+  // Delete a species type record by its id
+  Future<int> deleteSpeciesType(int id) async {
+    try {
+      return await (delete(speciesTypes)
+        ..where((s) => s.speciesId.equals(id))).go();
+    } catch (e) {
+      throw Exception('Error deleting species type: $e');
+    }
+  }
+
+  // Get the settings
+  Future<Setting?> getSettings() async {
+    try {
+      return await (select(settings)..where(
+        (s) => s.settingsId.equals(defaultSettingsId),
+      )).getSingleOrNull();
+    } catch (e) {
+      throw Exception('Error retrieving settings: $e');
+    }
+  }
+
+  // Watch the settings
+  Stream<Setting?> watchSettings() {
+    return (select(settings)..where(
+      (s) => s.settingsId.equals(defaultSettingsId),
+    )).watchSingleOrNull();
+  }
+
+  // Creae the default settings record.  If the record already exists it resets it
+  Future<Setting> createDefaultSettings() async {
+    Setting newSettings = Setting(
+      settingsId: defaultSettingsId,
+      acceptedTermsAndConditions: false,
+      onBoardingComplete: false,
+      optIntoAnalyticsWarning: false,
+      lastUsedVersion: null,
+      defaultWeightUnit: null,
+    );
+
+    try {
+      bool success = await update(settings).replace(newSettings);
+      if (!success) {
+        return await into(settings).insertReturning(newSettings);
+      }
+    } catch (e) {
+      throw Exception('Error creating default settings: $e');
+    }
+    return newSettings;
+  }
+
+  // Save the onboarding settings data.
+  Future<int> saveSettingsOnboarding(
+    bool acceptedTermsAndConditions,
+    bool optIntoAnalyticsWarning,
+    bool onBoardingComplete,
+  ) async {
+    try {
+      return await (update(settings)
+        ..where((s) => s.settingsId.equals(defaultSettingsId))).write(
+        SettingsCompanion(
+          acceptedTermsAndConditions: Value(acceptedTermsAndConditions),
+          onBoardingComplete: Value(onBoardingComplete),
+          optIntoAnalyticsWarning: Value(optIntoAnalyticsWarning),
+        ),
+      );
+    } catch (e) {
+      throw Exception('Error updating onboarding settings: $e');
+    }
+  }
+
+  // Save the user settings data.
+  Future<int> saveSettingsUser(
+    WeightUnits? defaultWeightUnit,
+    bool? optIntoAnalyticsWarning,
+  ) async {
+    try {
+      return await (update(settings)
+        ..where((s) => s.settingsId.equals(defaultSettingsId))).write(
+        SettingsCompanion(
+          defaultWeightUnit: Value(defaultWeightUnit?.dataValue),
+          optIntoAnalyticsWarning:
+              optIntoAnalyticsWarning != null
+                  ? Value(optIntoAnalyticsWarning)
+                  : const Value.absent(),
+        ),
+      );
+    } catch (e) {
+      throw Exception('Error updating user settings: $e');
+    }
+  }
+
   Future<bool> testConnection() async {
     try {
       await customStatement("SELECT count(*) FROM sqlite_master");
@@ -652,11 +799,93 @@ class DatabaseService extends _$DatabaseService {
     return true;
   }
 
-  // // Clear all the data from the database
+  // Clear all the data from the database
   Future<void> clearAllData() async {
     await (delete(journalEntries)).go();
     await (delete(pets)).go();
     await (delete(speciesTypes)).go();
+    await (delete(settings)).go();
+  }
+
+  Future<void> populateSpeciesTypes() async {
+    createSpeciesType(name: 'Dog', userAdded: false);
+    createSpeciesType(name: 'Cat', userAdded: false);
+    createSpeciesType(name: 'Ferret', userAdded: false);
+    createSpeciesType(name: 'Rabbit', userAdded: false);
+    createSpeciesType(name: 'Guinea Pig', userAdded: false);
+    createSpeciesType(name: 'Hedgehog', userAdded: false);
+    createSpeciesType(name: 'Chinchilla', userAdded: false);
+    createSpeciesType(name: 'Tortoise', userAdded: false);
+    createSpeciesType(name: 'Turtle', userAdded: false);
+    createSpeciesType(name: 'Lizard', userAdded: false);
+    createSpeciesType(name: 'Snake', userAdded: false);
+    createSpeciesType(name: 'Gecko', userAdded: false);
+    createSpeciesType(name: 'Iguana', userAdded: false);
+    createSpeciesType(name: 'Chameleon', userAdded: false);
+    createSpeciesType(name: 'Reptile', userAdded: false);
+    createSpeciesType(name: 'Rodent', userAdded: false);
+    createSpeciesType(name: 'Amphibian', userAdded: false);
+    createSpeciesType(name: 'Horse', userAdded: false);
+    createSpeciesType(name: 'Donkey', userAdded: false);
+    createSpeciesType(name: 'Farm Animal', userAdded: false);
+    createSpeciesType(name: 'Other', userAdded: false);
+  }
+
+  // Populate the database with some test data
+  Future<void> populateTestData() async {
+    await createPet(
+      'Dog 1',
+      1,
+      'breed',
+      'black',
+      PetSex.male,
+      1,
+      DateTime(2025, 1, 1),
+      false,
+      true,
+      'new diet',
+      'new notes',
+      'new history',
+      false,
+      null,
+      PetStatus.active,
+    );
+
+    await createPet(
+      'Cat 1',
+      2,
+      'breed',
+      'brown',
+      PetSex.female,
+      3,
+      DateTime(2022, 1, 1),
+      false,
+      true,
+      'new diet',
+      'new notes',
+      'new history',
+      true,
+      DateTime(2023, 6, 6),
+      PetStatus.active,
+    );
+
+    await createPet(
+      'passed away',
+      3,
+      'breed',
+      'brown',
+      PetSex.unknown,
+      2,
+      DateTime(2023, 1, 1),
+      false,
+      true,
+      'new diet',
+      'new notes',
+      'new history',
+      false,
+      null,
+      PetStatus.deceased,
+    );
   }
 
   // Provider for the database service
