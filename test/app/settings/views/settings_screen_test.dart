@@ -11,7 +11,7 @@ import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/analytics_opt_in.dart';
 import 'package:petjournal/widgets/weight_units_dropdown.dart';
-
+import '../../../testhelpers/stream_helper.dart';
 import 'settings_screen_test.mocks.dart';
 
 @GenerateMocks([DatabaseService, GoRouter])
@@ -28,14 +28,6 @@ Setting createMockSettings({
     lastUsedVersion: null,
     defaultWeightUnit: weightUnit.dataValue,
   );
-}
-
-// from solution at https://stackoverflow.com/questions/54025114/generate-a-stream-with-delays-for-each-emit-in-dart
-Stream<T> streamDelayer<T>(Stream<T> inputStream, Duration delay) async* {
-  await for (final val in inputStream) {
-    await Future.delayed(delay);
-    yield val;
-  }
 }
 
 void main() {

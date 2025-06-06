@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:petjournal/app/home/controllers/pets_controller.dart';
+import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
+import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final petsData = ref.watch(petsControllerProvider);
+    final petsData = ref.watch(allPetsControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -64,13 +65,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Text('No pets found.  Click + to add one'),
                 );
               } else {
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // pets list goes here
-                    ],
-                  ),
+                return ListView.builder(
+                  itemCount: pets.length,
+                  itemBuilder: (context, index) {
+                    final pet = pets[index];
+                    return buildPetListTile(pet);
+                  },
                 );
               }
             },
@@ -79,6 +79,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  String getPetSubTitle(PetModel pet) {
+    final data = [
+      pet.species.name,
+      pet.breed,
+      pet.colour,
+      if (pet.age != null) '${pet.age} years',
+    ];
+
+    return data.join(" | ");
+  }
+
+  Widget buildPetListTile(PetModel pet) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: Icon(Icons.pets, semanticLabel: 'Pet Icon', color: Colors.white),
+      ),
+      title: Text(pet.name),
+      subtitle: Text(getPetSubTitle(pet)),
+      onTap: () async {
+        await context.push('${RouteDefs.viewPet}/${pet.petId}');
+      },
     );
   }
 

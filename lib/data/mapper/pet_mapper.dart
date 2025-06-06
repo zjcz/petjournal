@@ -1,7 +1,7 @@
 import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
-import 'package:petjournal/app/home/models/pet_model.dart';
+import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 
 class PetMapper {

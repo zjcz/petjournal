@@ -337,7 +337,7 @@ class DatabaseService extends _$DatabaseService {
     required String name,
     required DateTime administeredDate,
     required DateTime expiryDate,
-    required DateTime reminderDate,
+    DateTime? reminderDate,
     String? notes,
     required String vaccineBatchNumber,
     required String vaccineManufacturer,
@@ -350,7 +350,7 @@ class DatabaseService extends _$DatabaseService {
           name: name,
           administeredDate: administeredDate,
           expiryDate: expiryDate,
-          reminderDate: reminderDate,
+          reminderDate: Value(reminderDate),
           notes: Value(notes),
           vaccineBatchNumber: vaccineBatchNumber,
           vaccineManufacturer: vaccineManufacturer,
@@ -672,10 +672,15 @@ class DatabaseService extends _$DatabaseService {
   Future<SpeciesType?> createSpeciesType({
     required String name,
     required bool userAdded,
+    int? speciesId,
   }) async {
     try {
       return await into(speciesTypes).insertReturningOrNull(
-        SpeciesTypesCompanion.insert(name: name, userAdded: Value(userAdded)),
+        SpeciesTypesCompanion.insert(
+          name: name,
+          userAdded: Value(userAdded),
+          speciesId: Value.absentIfNull(speciesId),
+        ),
       );
     } catch (e) {
       throw Exception('Error creating species type: $e');
@@ -778,15 +783,16 @@ class DatabaseService extends _$DatabaseService {
         ..where((s) => s.settingsId.equals(defaultSettingsId))).write(
         SettingsCompanion(
           defaultWeightUnit: Value(defaultWeightUnit?.dataValue),
-          optIntoAnalyticsWarning:
-              optIntoAnalyticsWarning != null
-                  ? Value(optIntoAnalyticsWarning)
-                  : const Value.absent(),
+          optIntoAnalyticsWarning: Value.absentIfNull(optIntoAnalyticsWarning),
         ),
       );
     } catch (e) {
       throw Exception('Error updating user settings: $e');
     }
+  }
+
+  Future<int> resetSettingsUser() async {
+    return saveSettingsUser(null, false);
   }
 
   Future<bool> testConnection() async {
@@ -804,35 +810,38 @@ class DatabaseService extends _$DatabaseService {
     await (delete(journalEntries)).go();
     await (delete(pets)).go();
     await (delete(speciesTypes)).go();
-    await (delete(settings)).go();
+    await resetSettingsUser();
   }
 
   Future<void> populateSpeciesTypes() async {
-    createSpeciesType(name: 'Dog', userAdded: false);
-    createSpeciesType(name: 'Cat', userAdded: false);
-    createSpeciesType(name: 'Ferret', userAdded: false);
-    createSpeciesType(name: 'Rabbit', userAdded: false);
-    createSpeciesType(name: 'Guinea Pig', userAdded: false);
-    createSpeciesType(name: 'Hedgehog', userAdded: false);
-    createSpeciesType(name: 'Chinchilla', userAdded: false);
-    createSpeciesType(name: 'Tortoise', userAdded: false);
-    createSpeciesType(name: 'Turtle', userAdded: false);
-    createSpeciesType(name: 'Lizard', userAdded: false);
-    createSpeciesType(name: 'Snake', userAdded: false);
-    createSpeciesType(name: 'Gecko', userAdded: false);
-    createSpeciesType(name: 'Iguana', userAdded: false);
-    createSpeciesType(name: 'Chameleon', userAdded: false);
-    createSpeciesType(name: 'Reptile', userAdded: false);
-    createSpeciesType(name: 'Rodent', userAdded: false);
-    createSpeciesType(name: 'Amphibian', userAdded: false);
-    createSpeciesType(name: 'Horse', userAdded: false);
-    createSpeciesType(name: 'Donkey', userAdded: false);
-    createSpeciesType(name: 'Farm Animal', userAdded: false);
-    createSpeciesType(name: 'Other', userAdded: false);
+    createSpeciesType(speciesId: 1, name: 'Dog', userAdded: false);
+    createSpeciesType(speciesId: 2, name: 'Cat', userAdded: false);
+    createSpeciesType(speciesId: 3, name: 'Rabbit', userAdded: false);
+    createSpeciesType(speciesId: 4, name: 'Guinea Pig', userAdded: false);
+    createSpeciesType(speciesId: 5, name: 'Tortoise', userAdded: false);
+    createSpeciesType(speciesId: 6, name: 'Turtle', userAdded: false);
+    createSpeciesType(speciesId: 7, name: 'Lizard', userAdded: false);
+    createSpeciesType(speciesId: 8, name: 'Snake', userAdded: false);
+    createSpeciesType(speciesId: 9, name: 'Horse', userAdded: false);
+    createSpeciesType(speciesId: 10, name: 'Donkey', userAdded: false);
+    createSpeciesType(speciesId: 11, name: 'Ferret', userAdded: false);
+    createSpeciesType(speciesId: 12, name: 'Hedgehog', userAdded: false);
+    createSpeciesType(speciesId: 13, name: 'Chinchilla', userAdded: false);
+    createSpeciesType(speciesId: 14, name: 'Gecko', userAdded: false);
+    createSpeciesType(speciesId: 15, name: 'Iguana', userAdded: false);
+    createSpeciesType(speciesId: 16, name: 'Chameleon', userAdded: false);
+    createSpeciesType(speciesId: 17, name: 'Reptile', userAdded: false);
+    createSpeciesType(speciesId: 18, name: 'Rodent', userAdded: false);
+    createSpeciesType(speciesId: 19, name: 'Amphibian', userAdded: false);
+    createSpeciesType(speciesId: 20, name: 'Farm Animal', userAdded: false);
+    createSpeciesType(speciesId: 21, name: 'Other', userAdded: false);
   }
 
   // Populate the database with some test data
   Future<void> populateTestData() async {
+    await clearAllData();
+    await populateSpeciesTypes();
+
     await createPet(
       'Dog 1',
       1,

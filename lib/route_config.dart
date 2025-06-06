@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:petjournal/app/home/models/pet_model.dart';
+import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/app/home/views/about_screen.dart';
 import 'package:petjournal/app/home/views/home_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/home/views/policy_viewer_screen.dart';
 import 'package:petjournal/app/home/views/welcome_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_screen.dart';
+import 'package:petjournal/app/pet/views/view_pet_screen.dart';
 import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/app/settings/views/settings_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,6 +17,7 @@ part 'route_config.g.dart';
 class RouteDefs {
   static const String home = '/home';
   static const String welcome = '/welcome';
+  static const String viewPet = '/home/view_pet';
   static const String editPet = '/home/edit_pet';
   static const String aboutScreen = '/home/about_screen';
   static const String editSettings = '/home/edit_settings';
@@ -60,6 +62,16 @@ GoRouter setupRouter(Ref ref) {
             name: 'aboutScreen',
             builder: (BuildContext context, GoRouterState state) {
               return const AboutScreen();
+            },
+          ),
+          GoRoute(
+            path: '${RouteDefs.getPageName(
+              RouteDefs.viewPet,
+              parentPage: RouteDefs.home,
+            )}/:petId',
+            name: 'viewPet',
+            builder: (BuildContext context, GoRouterState state) {
+              return ViewPetScreen(petId:  int.parse(state.pathParameters['petId']!));
             },
           ),
           GoRoute(

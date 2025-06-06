@@ -11,7 +11,7 @@ class PetVaccinations extends Table {
   TextColumn get name => text().withLength(max: 100)();  
   DateTimeColumn get administeredDate => dateTime()();
   DateTimeColumn get expiryDate => dateTime()();
-  DateTimeColumn get reminderDate => dateTime()();
+  DateTimeColumn get reminderDate => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get vaccineBatchNumber => text().withLength(max: 100)();  
   TextColumn get vaccineManufacturer => text().withLength(max: 100)();  

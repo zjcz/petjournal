@@ -12,9 +12,6 @@ void main() {
   setUp(() async {
     final inMemory = DatabaseConnection(NativeDatabase.memory());
     database = DatabaseService(inMemory);
-
-    // remove all data from the database (default setting record is created on initialisation)
-    await database.clearAllData();
   });
 
   tearDown(() => database.close());
@@ -39,14 +36,6 @@ void main() {
         expect(settings?.defaultWeightUnit, match.isNull);
       },
     );
-
-    test('getSettings should return null when settings do not exist', () async {
-      // Act
-      final settings = await database.getSettings();
-
-      // Assert
-      expect(settings, match.isNull);
-    });
 
     test('getSettings should return settings when they exist', () async {
       // Arrange
@@ -168,6 +157,22 @@ void main() {
       expect(settings?.optIntoAnalyticsWarning, match.isFalse);
     });
 
+    test('resetSettingsUser should set settings to null', () async {
+      // Arrange
+      await database.createDefaultSettings();
+
+      // Act
+      await database.saveSettingsUser(WeightUnits.metric, true);
+      var updateCount = await database.resetSettingsUser();
+
+      // Assert
+      expect(updateCount, equals(1));
+
+      final settings = await database.getSettings();
+      expect(settings?.defaultWeightUnit, match.isNull);
+      expect(settings?.optIntoAnalyticsWarning, match.isFalse);
+    });
+
     test('createDefaultSettings should replace existing settings', () async {
       // Arrange
       final original = await database.createDefaultSettings();
@@ -181,11 +186,6 @@ void main() {
       expect(replaced.acceptedTermsAndConditions, equals(false));
       expect(replaced.onBoardingComplete, equals(false));
       expect(replaced.optIntoAnalyticsWarning, equals(false));
-    });
-
-    test('watchSettings should emit null when settings do not exist', () async {
-      // Act & Assert
-      expect(database.watchSettings(), emits(match.isNull));
     });
 
     test('watchSettings should emit updated settings after changes', () async {
