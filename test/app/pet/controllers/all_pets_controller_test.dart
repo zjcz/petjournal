@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:petjournal/app/home/controllers/pets_controller.dart';
+import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
 
-import 'pets_controller_test.mocks.dart';
+import 'all_pets_controller_test.mocks.dart';
 
 /// A testing utility which creates a [ProviderContainer] and automatically
 /// disposes it at the end of the test.
@@ -30,7 +30,7 @@ ProviderContainer createContainer({
 
 @GenerateMocks([DatabaseService])
 void main() {
-  group('PetsController Tests', () {
+  group('AllPetsController Tests', () {
     late MockDatabaseService mockDatabaseService;
 
     setUp(() {
@@ -51,7 +51,7 @@ void main() {
         );
 
         // ACT
-        final pets = await container.read(petsControllerProvider.future);
+        final pets = await container.read(allPetsControllerProvider.future);
 
         // ASSERT
         expect(pets, isEmpty);
@@ -117,7 +117,7 @@ void main() {
         );
 
         // ACT
-        final pets = await container.read(petsControllerProvider.future);
+        final pets = await container.read(allPetsControllerProvider.future);
 
         // ASSERT
         expect(pets.length, 2);
@@ -174,7 +174,7 @@ void main() {
 
         // ACT & ASSERT
         expect(
-          () => container.read(petsControllerProvider.future),
+          () => container.read(allPetsControllerProvider.future),
           throwsA(isA<String>()),
         );
 
@@ -246,11 +246,11 @@ void main() {
           );
 
           // ACT & ASSERT
-          final pets = await container.read(petsControllerProvider.future);
+          final pets = await container.read(allPetsControllerProvider.future);
           expect(pets, isNotNull);
 
           final emittedLists = await container.read(
-            petsControllerProvider.future,
+            allPetsControllerProvider.future,
           );
           expect(emittedLists.length, 1);
 

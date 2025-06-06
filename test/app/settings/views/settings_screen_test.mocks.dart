@@ -789,7 +789,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     required String? name,
     required DateTime? administeredDate,
     required DateTime? expiryDate,
-    required DateTime? reminderDate,
+    DateTime? reminderDate,
     String? notes,
     required String? vaccineBatchNumber,
     required String? vaccineManufacturer,
@@ -1049,11 +1049,13 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<_i3.SpeciesType?> createSpeciesType({
     required String? name,
     required bool? userAdded,
+    int? speciesId,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createSpeciesType, [], {
               #name: name,
               #userAdded: userAdded,
+              #speciesId: speciesId,
             }),
             returnValue: _i5.Future<_i3.SpeciesType?>.value(),
           )
@@ -1138,6 +1140,14 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
               defaultWeightUnit,
               optIntoAnalyticsWarning,
             ]),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
+
+  @override
+  _i5.Future<int> resetSettingsUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#resetSettingsUser, []),
             returnValue: _i5.Future<int>.value(0),
           )
           as _i5.Future<int>);

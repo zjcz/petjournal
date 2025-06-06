@@ -6,7 +6,7 @@ import 'package:petjournal/constants/custom_styles.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/route_config.dart';
 //import 'package:petjournal/app/pet/controllers/pet_controller.dart';
-import 'package:petjournal/app/home/models/pet_model.dart';
+import 'package:petjournal/app/pet/models/pet_model.dart';
 
 class EditPetScreen extends ConsumerStatefulWidget {
   static const petNameKey = Key('name');
