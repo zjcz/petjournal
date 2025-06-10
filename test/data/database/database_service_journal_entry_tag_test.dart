@@ -34,14 +34,20 @@ void main() {
       null,
       null,
       PetStatus.active,
+      null,
+      null,
+      null,
+      null,
+      null,
     );
 
     // Create a journal entry that will be used by all tests
-    journalEntry = (await database.createJournalEntryForPet(
-      petId: 1,
-      entryText: 'Test Entry',
-      entryDate: DateTime(2025, 1, 1),
-    ))!;
+    journalEntry =
+        (await database.createJournalEntryForPet(
+          petId: 1,
+          entryText: 'Test Entry',
+          entryDate: DateTime(2025, 1, 1),
+        ))!;
   });
 
   tearDown(() => database.close());
@@ -58,42 +64,60 @@ void main() {
       expect(tag?.journalEntryId, equals(journalEntry.journalEntryId));
     });
 
-    test('createJournalEntryTag should throw when journalEntryId does not exist', () async {
-      expect(
-        () => database.createJournalEntryTag(
-          journalEntryId: 999,
-          tag: 'TestTag',
-        ),
-        throwsA(isA<Exception>()),
-      );
-    });
+    test(
+      'createJournalEntryTag should throw when journalEntryId does not exist',
+      () async {
+        expect(
+          () => database.createJournalEntryTag(
+            journalEntryId: 999,
+            tag: 'TestTag',
+          ),
+          throwsA(isA<Exception>()),
+        );
+      },
+    );
 
-    test('getAllJournalEntryTagsForEntry should return empty list when no tags exist', () async {
-      final tags = await database.getAllJournalEntryTagsForEntry(journalEntry.journalEntryId).first;
-      expect(tags, isEmpty);
-    });
+    test(
+      'getAllJournalEntryTagsForEntry should return empty list when no tags exist',
+      () async {
+        final tags =
+            await database
+                .getAllJournalEntryTagsForEntry(journalEntry.journalEntryId)
+                .first;
+        expect(tags, isEmpty);
+      },
+    );
 
-    test('getAllJournalEntryTagsForEntry should return all tags for an entry', () async {
-      // Create multiple tags
-      await database.createJournalEntryTag(
-        journalEntryId: journalEntry.journalEntryId,
-        tag: 'Tag1',
-      );
-      await database.createJournalEntryTag(
-        journalEntryId: journalEntry.journalEntryId,
-        tag: 'Tag2',
-      );
+    test(
+      'getAllJournalEntryTagsForEntry should return all tags for an entry',
+      () async {
+        // Create multiple tags
+        await database.createJournalEntryTag(
+          journalEntryId: journalEntry.journalEntryId,
+          tag: 'Tag1',
+        );
+        await database.createJournalEntryTag(
+          journalEntryId: journalEntry.journalEntryId,
+          tag: 'Tag2',
+        );
 
-      final tags = await database.getAllJournalEntryTagsForEntry(journalEntry.journalEntryId).first;
-      
-      expect(tags.length, equals(2));
-      expect(tags.map((t) => t.tag).toList(), containsAll(['Tag1', 'Tag2']));
-    });
+        final tags =
+            await database
+                .getAllJournalEntryTagsForEntry(journalEntry.journalEntryId)
+                .first;
 
-    test('getAllJournalEntryTagsForEntry should return empty list for non-existent entry', () async {
-      final tags = await database.getAllJournalEntryTagsForEntry(999).first;
-      expect(tags, isEmpty);
-    });
+        expect(tags.length, equals(2));
+        expect(tags.map((t) => t.tag).toList(), containsAll(['Tag1', 'Tag2']));
+      },
+    );
+
+    test(
+      'getAllJournalEntryTagsForEntry should return empty list for non-existent entry',
+      () async {
+        final tags = await database.getAllJournalEntryTagsForEntry(999).first;
+        expect(tags, isEmpty);
+      },
+    );
 
     test('deleteJournalEntryTag should remove tag successfully', () async {
       final tag = await database.createJournalEntryTag(
@@ -101,33 +125,47 @@ void main() {
         tag: 'TestTag',
       );
 
-      final deletedCount = await database.deleteJournalEntryTag(tag!.journalEntryTagId);
+      final deletedCount = await database.deleteJournalEntryTag(
+        tag!.journalEntryTagId,
+      );
       expect(deletedCount, equals(1));
 
       // Verify tag is gone
-      final tags = await database.getAllJournalEntryTagsForEntry(journalEntry.journalEntryId).first;
+      final tags =
+          await database
+              .getAllJournalEntryTagsForEntry(journalEntry.journalEntryId)
+              .first;
       expect(tags, isEmpty);
     });
 
-    test('deleteJournalEntryTag should return 0 for non-existent tag', () async {
-      final deletedCount = await database.deleteJournalEntryTag(999);
-      expect(deletedCount, equals(0));
-    });
+    test(
+      'deleteJournalEntryTag should return 0 for non-existent tag',
+      () async {
+        final deletedCount = await database.deleteJournalEntryTag(999);
+        expect(deletedCount, equals(0));
+      },
+    );
 
-    test('journal entry deletion should cascade delete associated tags', () async {
-      // Create a tag
-      await database.createJournalEntryTag(
-        journalEntryId: journalEntry.journalEntryId,
-        tag: 'TestTag',
-      );
+    test(
+      'journal entry deletion should cascade delete associated tags',
+      () async {
+        // Create a tag
+        await database.createJournalEntryTag(
+          journalEntryId: journalEntry.journalEntryId,
+          tag: 'TestTag',
+        );
 
-      // Delete the journal entry
-      await database.deleteJournalEntry(journalEntry.journalEntryId);
+        // Delete the journal entry
+        await database.deleteJournalEntry(journalEntry.journalEntryId);
 
-      // Verify tags are gone
-      final tags = await database.getAllJournalEntryTagsForEntry(journalEntry.journalEntryId).first;
-      expect(tags, isEmpty);
-    });
+        // Verify tags are gone
+        final tags =
+            await database
+                .getAllJournalEntryTagsForEntry(journalEntry.journalEntryId)
+                .first;
+        expect(tags, isEmpty);
+      },
+    );
 
     test('should handle creating multiple tags simultaneously', () async {
       // Create multiple tags concurrently
@@ -164,7 +202,9 @@ void main() {
     });
 
     test('watch stream should emit updates when tags change', () async {
-      final stream = database.getAllJournalEntryTagsForEntry(journalEntry.journalEntryId);
+      final stream = database.getAllJournalEntryTagsForEntry(
+        journalEntry.journalEntryId,
+      );
 
       // Create a tag
       final tag = await database.createJournalEntryTag(

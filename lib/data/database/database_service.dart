@@ -8,7 +8,6 @@ import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/tables/journal_entry.dart';
 import 'package:petjournal/data/database/tables/journal_entry_tag.dart';
 import 'package:petjournal/data/database/tables/pet_journal_entry.dart';
-import 'package:petjournal/data/database/tables/pet_microchip.dart';
 import 'package:petjournal/data/database/tables/pet_vaccination.dart';
 import 'package:petjournal/data/database/tables/pet_weight.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +23,6 @@ part 'database_service.g.dart';
 @DriftDatabase(
   tables: [
     Pets,
-    PetMicrochips,
     PetMeds,
     PetVaccinations,
     PetWeights,
@@ -103,6 +101,11 @@ class DatabaseService extends _$DatabaseService {
     bool? isNeutered,
     DateTime? neuterDate,
     PetStatus status,
+    bool? isMicrochipped,
+    DateTime? microchipDate,
+    String? microchipNumber,
+    String? microchipCompany,
+    String? microchipNotes,
   ) {
     return into(pets).insertReturningOrNull(
       PetsCompanion.insert(
@@ -125,6 +128,14 @@ class DatabaseService extends _$DatabaseService {
                 : Value(DateHelper.removeTime(neuterDate)),
         status: Value(status.dataValue),
         statusDate: Value(DateTime.now()),
+        isMicrochipped: Value(isMicrochipped ?? false),
+        microchipDate:
+            microchipDate == null
+                ? Value.absent()
+                : Value(DateHelper.removeTime(microchipDate)),
+        microchipNotes: Value(microchipNotes),
+        microchipNumber: Value(microchipNumber),
+        microchipCompany: Value(microchipCompany),
       ),
     );
   }
@@ -148,6 +159,11 @@ class DatabaseService extends _$DatabaseService {
     DateTime? neuterDate,
     PetStatus status,
     DateTime statusDate,
+    bool? isMicrochipped,
+    DateTime? microchipDate,
+    String? microchipNumber,
+    String? microchipCompany,
+    String? microchipNotes,
   ) {
     return (update(pets)..where((p) => p.petId.equals(id))).write(
       PetsCompanion.insert(
@@ -170,6 +186,14 @@ class DatabaseService extends _$DatabaseService {
                 : Value(DateHelper.removeTime(neuterDate)),
         status: Value(status.dataValue),
         statusDate: Value(statusDate),
+        isMicrochipped: Value(isMicrochipped ?? false),
+        microchipDate:
+            microchipDate == null
+                ? Value.absent()
+                : Value(DateHelper.removeTime(microchipDate)),
+        microchipNotes: Value(microchipNotes),
+        microchipNumber: Value(microchipNumber),
+        microchipCompany: Value(microchipCompany),
       ),
     );
   }
@@ -400,105 +424,6 @@ class DatabaseService extends _$DatabaseService {
         ..where((v) => v.petVaccinationId.equals(id))).go();
     } catch (e) {
       throw Exception('Error deleting pet vaccination: $e');
-    }
-  }
-
-  // List all the pet microchips for a specific pet
-  Stream<List<PetMicrochip>> getAllPetMicrochipsForPet(int petId) {
-    return (select(petMicrochips)
-          ..where((m) => m.pet.equals(petId))
-          ..orderBy([(m) => OrderingTerm.asc(m.microchipDate)]))
-        .watch();
-  }
-
-  // Get a single pet microchip by its id
-  Future<PetMicrochip?> getPetMicrochip(int id) async {
-    try {
-      return await (select(petMicrochips)
-        ..where((m) => m.petMicrochipId.equals(id))).getSingleOrNull();
-    } catch (e) {
-      throw Exception('Error retrieving pet microchip: $e');
-    }
-  }
-
-  // Watch a single pet microchip by its id
-  Stream<PetMicrochip?> watchPetMicrochip(int id) {
-    return (select(petMicrochips)
-      ..where((w) => w.petMicrochipId.equals(id))).watchSingleOrNull();
-  }
-
-  // Create a new pet microchip record
-  Future<PetMicrochip?> createPetMicrochip({
-    required int petId,
-    bool? isMicrochipped,
-    DateTime? microchipDate,
-    String? microchipNotes,
-    String? microchipNumber,
-    String? microchipCompany,
-  }) async {
-    try {
-      return await into(petMicrochips).insertReturningOrNull(
-        PetMicrochipsCompanion.insert(
-          pet: petId,
-          isMicrochipped: Value(isMicrochipped ?? true),
-          microchipDate: Value(microchipDate),
-          microchipNotes: Value(microchipNotes),
-          microchipNumber: Value(microchipNumber),
-          microchipCompany: Value(microchipCompany),
-        ),
-      );
-    } catch (e) {
-      throw Exception('Error creating pet microchip: $e');
-    }
-  }
-
-  // Update an existing pet microchip record
-  Future<int> updatePetMicrochip({
-    required int id,
-    bool? isMicrochipped,
-    DateTime? microchipDate,
-    String? microchipNotes,
-    String? microchipNumber,
-    String? microchipCompany,
-  }) async {
-    try {
-      return await (update(petMicrochips)
-        ..where((m) => m.petMicrochipId.equals(id))).write(
-        PetMicrochipsCompanion(
-          isMicrochipped:
-              isMicrochipped != null
-                  ? Value(isMicrochipped)
-                  : const Value.absent(),
-          microchipDate:
-              microchipDate != null
-                  ? Value(microchipDate)
-                  : const Value.absent(),
-          microchipNotes:
-              microchipNotes != null
-                  ? Value(microchipNotes)
-                  : const Value.absent(),
-          microchipNumber:
-              microchipNumber != null
-                  ? Value(microchipNumber)
-                  : const Value.absent(),
-          microchipCompany:
-              microchipCompany != null
-                  ? Value(microchipCompany)
-                  : const Value.absent(),
-        ),
-      );
-    } catch (e) {
-      throw Exception('Error updating pet microchip: $e');
-    }
-  }
-
-  // Delete a pet microchip record by its id
-  Future<int> deletePetMicrochip(int id) async {
-    try {
-      return await (delete(petMicrochips)
-        ..where((m) => m.petMicrochipId.equals(id))).go();
-    } catch (e) {
-      throw Exception('Error deleting pet microchip: $e');
     }
   }
 
@@ -858,6 +783,11 @@ class DatabaseService extends _$DatabaseService {
       false,
       null,
       PetStatus.active,
+      true,
+      DateTime(2024, 1, 1),
+      'microchip number',
+      'microchip company',
+      'microchip notes',
     );
 
     await createPet(
@@ -876,6 +806,11 @@ class DatabaseService extends _$DatabaseService {
       true,
       DateTime(2023, 6, 6),
       PetStatus.active,
+      true,
+      DateTime(2024, 1, 1),
+      'microchip number',
+      'microchip company',
+      'microchip notes',
     );
 
     await createPet(
@@ -894,6 +829,11 @@ class DatabaseService extends _$DatabaseService {
       false,
       null,
       PetStatus.deceased,
+      false,
+      null,
+      null,
+      null,
+      null,
     );
   }
 

@@ -28,6 +28,11 @@ class PetMapper {
         name: 'Test Species',
         userAdded: false,
       ),
+      isMicrochipped: pet.isMicrochipped ?? false,
+      microchipDate: pet.microchipDate,
+      microchipNotes: pet.microchipNotes,
+      microchipNumber: pet.microchipNumber,
+      microchipCompany: pet.microchipCompany,
     );
   }
 
