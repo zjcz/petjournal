@@ -16,31 +16,78 @@ class PetWidget extends ConsumerStatefulWidget {
 class _PetWidgetState extends ConsumerState<PetWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _buildListViewItem("Name", widget.pet.name),
-        _buildListViewItem("Species", widget.pet.species.name),
-        _buildListViewItem("Breed", widget.pet.breed),
-        _buildListViewItem("Colour", widget.pet.colour),        
+    List<Widget> listViewItems = [
+      _buildListViewItem("Name", widget.pet.name),
+      _buildListViewItem("Species", widget.pet.species.name),
+      _buildListViewItem("Breed", widget.pet.breed),
+      _buildListViewItem("Colour", widget.pet.colour),
+      _buildListViewItem(
+        "Age",
+        widget.pet.age == null ? 'unknown' : widget.pet.age.toString(),
+      ),
+      if (widget.pet.dob != null)
         _buildListViewItem(
-          "Age",
-          widget.pet.age == null ? 'unknown' : widget.pet.age.toString(),
+          "Date of Birth",
+          DateHelper.formatDate(widget.pet.dob!),
         ),
-        if (widget.pet.dob != null)
+      _buildListViewItem("Diet", widget.pet.diet ?? '', isThreeLine: true),
+      _buildListViewItem(
+        "History",
+        widget.pet.history ?? '',
+        isThreeLine: true,
+      ),
+      _buildListViewItem("Notes", widget.pet.notes ?? '', isThreeLine: true),
+      _buildListViewItem(
+        "Neutered",
+        widget.pet.isNeutered
+            ? "Yes ${widget.pet.neuterDate == null ? '' : " - ${DateHelper.formatDate(widget.pet.neuterDate!)}"}"
+            : "No",
+      ),
+      _buildListViewItem("Status", widget.pet.status.niceName),
+      _buildListViewItem(
+        "Microchipped?",
+        widget.pet.isMicrochipped ? "Yes" : "No",
+      ),
+    ];
+
+    if (widget.pet.isMicrochipped) {
+      listViewItems.add(
+        _buildListViewItem(
+          "Microchip Number",
+          widget.pet.microchipNumber ?? '',
+        ),
+      );
+      if (widget.pet.microchipDate != null) {
+        listViewItems.add(
           _buildListViewItem(
-            "Date of Birth",
-            DateHelper.formatDate(widget.pet.dob!),
+            "Microchip Date",
+            DateHelper.formatDate(widget.pet.microchipDate!),
           ),
-        _buildListViewItem("Diet", widget.pet.diet ?? '', isThreeLine: true),
-        _buildListViewItem("History", widget.pet.history ?? '', isThreeLine: true),
-        _buildListViewItem("Notes", widget.pet.notes ?? '', isThreeLine: true),
-        _buildListViewItem("Neutered", widget.pet.isNeutered ? "Yes ${widget.pet.neuterDate == null ? '' : " - ${DateHelper.formatDate(widget.pet.neuterDate!)}"}" : "No"),
-        _buildListViewItem("Status", widget.pet.status.niceName),
-      ],
-    );
+        );
+      }
+      listViewItems.add(
+        _buildListViewItem(
+          "Microchip Company",
+          widget.pet.microchipCompany ?? '',
+        ),
+      );
+      listViewItems.add(
+        _buildListViewItem("Microchip Notes", widget.pet.microchipNotes ?? ''),
+      );
+    }
+
+    return ListView(children: listViewItems);
   }
 
-  Widget _buildListViewItem(String title, String value , {bool isThreeLine = false}) {
-    return ListTile(title: Text(title), subtitle: Text(value), isThreeLine: isThreeLine,);
+  Widget _buildListViewItem(
+    String title,
+    String value, {
+    bool isThreeLine = false,
+  }) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(value),
+      isThreeLine: isThreeLine,
+    );
   }
 }

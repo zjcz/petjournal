@@ -41,10 +41,7 @@ void main() {
         final longName = 'A' * 101; // Max length is 100
 
         expect(
-          () => database.createSpeciesType(
-            name: longName,
-            userAdded: true,
-          ),
+          () => database.createSpeciesType(name: longName, userAdded: true),
           throwsA(isA<Exception>()),
         );
       },
@@ -54,10 +51,7 @@ void main() {
       'createSpeciesType should enforce case-sensitive unique names',
       () async {
         // Create first species type
-        await database.createSpeciesType(
-          name: 'Dog',
-          userAdded: true,
-        );
+        await database.createSpeciesType(name: 'Dog', userAdded: true);
 
         // Should allow different case
         final differentCase = await database.createSpeciesType(
@@ -98,20 +92,11 @@ void main() {
       'getAllSpeciesTypes should return correctly ordered list of species types',
       () async {
         // Create multiple species types
-        await database.createSpeciesType(
-          name: 'Dog',
-          userAdded: true,
-        );
+        await database.createSpeciesType(name: 'Dog', userAdded: true);
 
-        await database.createSpeciesType(
-          name: 'Cat',
-          userAdded: true,
-        );
+        await database.createSpeciesType(name: 'Cat', userAdded: true);
 
-        await database.createSpeciesType(
-          name: 'Bird',
-          userAdded: true,
-        );
+        await database.createSpeciesType(name: 'Bird', userAdded: true);
 
         // Get all species types and verify
         final speciesTypes = await database.getAllSpeciesTypes().first;
@@ -134,10 +119,7 @@ void main() {
     test('getAllSpeciesTypes should handle large number of species', () async {
       // Create 100 species types
       for (var i = 1; i <= 100; i++) {
-        await database.createSpeciesType(
-          name: 'Species $i',
-          userAdded: true,
-        );
+        await database.createSpeciesType(name: 'Species $i', userAdded: true);
       }
 
       final speciesTypes = await database.getAllSpeciesTypes().first;
@@ -214,10 +196,7 @@ void main() {
 
     test('updateSpeciesType should enforce unique names', () async {
       // Create two species types
-      await database.createSpeciesType(
-        name: 'Dog',
-        userAdded: true,
-      );
+      await database.createSpeciesType(name: 'Dog', userAdded: true);
       final cat = await database.createSpeciesType(
         name: 'Cat',
         userAdded: true,
@@ -225,7 +204,11 @@ void main() {
 
       // Attempt to update second species to use first species name
       expect(
-        () => database.updateSpeciesType(id: cat!.speciesId, name: 'Dog', userAdded: true),
+        () => database.updateSpeciesType(
+          id: cat!.speciesId,
+          name: 'Dog',
+          userAdded: true,
+        ),
         throwsA(isA<Exception>()),
       );
     });
@@ -239,7 +222,9 @@ void main() {
       expect(speciesType, match.isNotNull);
 
       // Delete the species type
-      final deleteCount = await database.deleteSpeciesType(speciesType!.speciesId);
+      final deleteCount = await database.deleteSpeciesType(
+        speciesType!.speciesId,
+      );
       expect(deleteCount, equals(1));
 
       // Verify the species type is deleted
@@ -282,10 +267,18 @@ void main() {
           null,
           null,
           PetStatus.active,
+          null,
+          null,
+          null,
+          null,
+          null,
         );
 
         // Attempt to delete the species type should throw an exception
-        expect(() => database.deleteSpeciesType(speciesType.speciesId), throwsA(isA<Exception>()));
+        expect(
+          () => database.deleteSpeciesType(speciesType.speciesId),
+          throwsA(isA<Exception>()),
+        );
       },
     );
 
@@ -301,7 +294,11 @@ void main() {
       final stream = database.watchSpeciesType(speciesType!.speciesId);
 
       // Update the species type
-      await database.updateSpeciesType(id: speciesType.speciesId, name: 'Canine', userAdded: false);
+      await database.updateSpeciesType(
+        id: speciesType.speciesId,
+        name: 'Canine',
+        userAdded: false,
+      );
 
       // Verify the stream emits the updated species type
       final updated = await stream.first;

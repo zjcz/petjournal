@@ -35,6 +35,11 @@ void main() {
       const dobCalc = false;
       const testIsNeutered = true;
       final testNeuterDate = DateTime(2021, 1, 1);
+      final testIsMicrochipped = true;
+      final testMicrochipDate = DateTime(2021, 1, 1);
+      final testMicrochipNumber = '12345';
+      final testMicrochipNotes = 'Test notes';
+      final testMicrochipCompany = 'Test company';
 
       final pet = await database.createPet(
         testName,
@@ -52,6 +57,11 @@ void main() {
         testIsNeutered,
         testNeuterDate,
         PetStatus.active,
+        testIsMicrochipped,
+        testMicrochipDate,
+        testMicrochipNumber,
+        testMicrochipCompany,
+        testMicrochipNotes,
       );
 
       expect(pet, match.isNotNull);
@@ -70,6 +80,11 @@ void main() {
       expect(pet?.neuterDate, equals(testNeuterDate));
       expect(pet?.status, equals(PetStatus.active.dataValue));
       expect(pet?.statusDate, match.isNotNull);
+      expect(pet?.isMicrochipped, equals(testIsMicrochipped));
+      expect(pet?.microchipDate, equals(testMicrochipDate));
+      expect(pet?.microchipNumber, equals(testMicrochipNumber));
+      expect(pet?.microchipCompany, equals(testMicrochipCompany));
+      expect(pet?.microchipNotes, equals(testMicrochipNotes));
     });
 
     test('create pet with minimal required fields', () async {
@@ -89,6 +104,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(pet, match.isNotNull);
@@ -107,6 +127,11 @@ void main() {
       expect(pet?.neuterDate, match.isNull);
       expect(pet?.status, equals(PetStatus.active.dataValue));
       expect(pet?.statusDate, match.isNotNull);
+      expect(pet?.isMicrochipped, equals(false));
+      expect(pet?.microchipDate, match.isNull);
+      expect(pet?.microchipNumber, match.isNull);
+      expect(pet?.microchipCompany, match.isNull);
+      expect(pet?.microchipNotes, match.isNull);
     });
 
     test('get pet by id returns correct pet', () async {
@@ -127,6 +152,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(createdPet, match.isNotNull);
@@ -164,6 +194,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       await database.createPet(
@@ -182,6 +217,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       // Get all pets and verify
@@ -208,6 +248,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(pet, match.isNotNull);
@@ -216,6 +261,7 @@ void main() {
       final updateDate = DateTime.now();
       final dob = DateTime(2020, 1, 1);
       final neuterDate = DateTime(2021, 1, 1);
+      final microchipDate = DateTime(2025, 2, 2);
 
       // Update the pet
       final updatedCount = await database.updatePet(
@@ -236,6 +282,11 @@ void main() {
         neuterDate,
         PetStatus.deceased,
         updateDate,
+        true,
+        microchipDate,
+        '12345',
+        'New Microchip Company',
+        'New Microchip Notes',
       );
 
       expect(updatedCount, equals(1));
@@ -256,6 +307,11 @@ void main() {
       expect(updatedPet?.neuterDate, equals(neuterDate));
       expect(updatedPet?.status, equals(PetStatus.deceased.dataValue));
       expect(updatedPet?.statusDate, equals(updateDate));
+      expect(updatedPet?.isMicrochipped, equals(true));
+      expect(updatedPet?.microchipDate, equals(microchipDate));
+      expect(updatedPet?.microchipNumber, equals('12345'));
+      expect(updatedPet?.microchipCompany, equals('New Microchip Company'));
+      expect(updatedPet?.microchipNotes, equals('New Microchip Notes'));
     });
 
     test('update non-existent pet returns zero', () async {
@@ -278,6 +334,11 @@ void main() {
         null,
         PetStatus.active,
         updateDate,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(updateCount, equals(0));
@@ -301,6 +362,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(pet, match.isNotNull);
@@ -338,6 +404,11 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
+        null,
+        null,
+        null,
+        null,
       );
 
       expect(pet, match.isNotNull);
@@ -366,12 +437,18 @@ void main() {
         null,
         PetStatus.deceased,
         updateDate,
+        true,
+        null,
+        '12345',
+        'New Microchip Company',
+        'New Microchip Notes',
       );
 
       // Verify the stream emits the updated pet
       final updatedPet = await stream.first;
       expect(updatedPet?.name, equals('Luna Updated'));
       expect(updatedPet?.breed, equals('Poodle'));
+      expect(updatedPet?.microchipNumber, equals('12345'));
     });
   });
 }

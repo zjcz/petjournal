@@ -460,6 +460,66 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _isMicrochippedMeta = const VerificationMeta(
+    'isMicrochipped',
+  );
+  @override
+  late final GeneratedColumn<bool> isMicrochipped = GeneratedColumn<bool>(
+    'is_microchipped',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_microchipped" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _microchipDateMeta = const VerificationMeta(
+    'microchipDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> microchipDate =
+      GeneratedColumn<DateTime>(
+        'microchip_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _microchipNotesMeta = const VerificationMeta(
+    'microchipNotes',
+  );
+  @override
+  late final GeneratedColumn<String> microchipNotes = GeneratedColumn<String>(
+    'microchip_notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _microchipNumberMeta = const VerificationMeta(
+    'microchipNumber',
+  );
+  @override
+  late final GeneratedColumn<String> microchipNumber = GeneratedColumn<String>(
+    'microchip_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _microchipCompanyMeta = const VerificationMeta(
+    'microchipCompany',
+  );
+  @override
+  late final GeneratedColumn<String> microchipCompany = GeneratedColumn<String>(
+    'microchip_company',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     petId,
@@ -479,6 +539,11 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     neuterDate,
     status,
     statusDate,
+    isMicrochipped,
+    microchipDate,
+    microchipNotes,
+    microchipNumber,
+    microchipCompany,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -608,6 +673,51 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         statusDate.isAcceptableOrUnknown(data['status_date']!, _statusDateMeta),
       );
     }
+    if (data.containsKey('is_microchipped')) {
+      context.handle(
+        _isMicrochippedMeta,
+        isMicrochipped.isAcceptableOrUnknown(
+          data['is_microchipped']!,
+          _isMicrochippedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('microchip_date')) {
+      context.handle(
+        _microchipDateMeta,
+        microchipDate.isAcceptableOrUnknown(
+          data['microchip_date']!,
+          _microchipDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('microchip_notes')) {
+      context.handle(
+        _microchipNotesMeta,
+        microchipNotes.isAcceptableOrUnknown(
+          data['microchip_notes']!,
+          _microchipNotesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('microchip_number')) {
+      context.handle(
+        _microchipNumberMeta,
+        microchipNumber.isAcceptableOrUnknown(
+          data['microchip_number']!,
+          _microchipNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('microchip_company')) {
+      context.handle(
+        _microchipCompanyMeta,
+        microchipCompany.isAcceptableOrUnknown(
+          data['microchip_company']!,
+          _microchipCompanyMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -696,6 +806,26 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
             DriftSqlType.dateTime,
             data['${effectivePrefix}status_date'],
           )!,
+      isMicrochipped: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_microchipped'],
+      ),
+      microchipDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}microchip_date'],
+      ),
+      microchipNotes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}microchip_notes'],
+      ),
+      microchipNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}microchip_number'],
+      ),
+      microchipCompany: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}microchip_company'],
+      ),
     );
   }
 
@@ -723,6 +853,11 @@ class Pet extends DataClass implements Insertable<Pet> {
   final DateTime? neuterDate;
   final int status;
   final DateTime statusDate;
+  final bool? isMicrochipped;
+  final DateTime? microchipDate;
+  final String? microchipNotes;
+  final String? microchipNumber;
+  final String? microchipCompany;
   const Pet({
     required this.petId,
     required this.name,
@@ -741,6 +876,11 @@ class Pet extends DataClass implements Insertable<Pet> {
     this.neuterDate,
     required this.status,
     required this.statusDate,
+    this.isMicrochipped,
+    this.microchipDate,
+    this.microchipNotes,
+    this.microchipNumber,
+    this.microchipCompany,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -774,6 +914,21 @@ class Pet extends DataClass implements Insertable<Pet> {
     }
     map['status'] = Variable<int>(status);
     map['status_date'] = Variable<DateTime>(statusDate);
+    if (!nullToAbsent || isMicrochipped != null) {
+      map['is_microchipped'] = Variable<bool>(isMicrochipped);
+    }
+    if (!nullToAbsent || microchipDate != null) {
+      map['microchip_date'] = Variable<DateTime>(microchipDate);
+    }
+    if (!nullToAbsent || microchipNotes != null) {
+      map['microchip_notes'] = Variable<String>(microchipNotes);
+    }
+    if (!nullToAbsent || microchipNumber != null) {
+      map['microchip_number'] = Variable<String>(microchipNumber);
+    }
+    if (!nullToAbsent || microchipCompany != null) {
+      map['microchip_company'] = Variable<String>(microchipCompany);
+    }
     return map;
   }
 
@@ -803,6 +958,26 @@ class Pet extends DataClass implements Insertable<Pet> {
               : Value(neuterDate),
       status: Value(status),
       statusDate: Value(statusDate),
+      isMicrochipped:
+          isMicrochipped == null && nullToAbsent
+              ? const Value.absent()
+              : Value(isMicrochipped),
+      microchipDate:
+          microchipDate == null && nullToAbsent
+              ? const Value.absent()
+              : Value(microchipDate),
+      microchipNotes:
+          microchipNotes == null && nullToAbsent
+              ? const Value.absent()
+              : Value(microchipNotes),
+      microchipNumber:
+          microchipNumber == null && nullToAbsent
+              ? const Value.absent()
+              : Value(microchipNumber),
+      microchipCompany:
+          microchipCompany == null && nullToAbsent
+              ? const Value.absent()
+              : Value(microchipCompany),
     );
   }
 
@@ -829,6 +1004,11 @@ class Pet extends DataClass implements Insertable<Pet> {
       neuterDate: serializer.fromJson<DateTime?>(json['neuterDate']),
       status: serializer.fromJson<int>(json['status']),
       statusDate: serializer.fromJson<DateTime>(json['statusDate']),
+      isMicrochipped: serializer.fromJson<bool?>(json['isMicrochipped']),
+      microchipDate: serializer.fromJson<DateTime?>(json['microchipDate']),
+      microchipNotes: serializer.fromJson<String?>(json['microchipNotes']),
+      microchipNumber: serializer.fromJson<String?>(json['microchipNumber']),
+      microchipCompany: serializer.fromJson<String?>(json['microchipCompany']),
     );
   }
   @override
@@ -852,6 +1032,11 @@ class Pet extends DataClass implements Insertable<Pet> {
       'neuterDate': serializer.toJson<DateTime?>(neuterDate),
       'status': serializer.toJson<int>(status),
       'statusDate': serializer.toJson<DateTime>(statusDate),
+      'isMicrochipped': serializer.toJson<bool?>(isMicrochipped),
+      'microchipDate': serializer.toJson<DateTime?>(microchipDate),
+      'microchipNotes': serializer.toJson<String?>(microchipNotes),
+      'microchipNumber': serializer.toJson<String?>(microchipNumber),
+      'microchipCompany': serializer.toJson<String?>(microchipCompany),
     };
   }
 
@@ -873,6 +1058,11 @@ class Pet extends DataClass implements Insertable<Pet> {
     Value<DateTime?> neuterDate = const Value.absent(),
     int? status,
     DateTime? statusDate,
+    Value<bool?> isMicrochipped = const Value.absent(),
+    Value<DateTime?> microchipDate = const Value.absent(),
+    Value<String?> microchipNotes = const Value.absent(),
+    Value<String?> microchipNumber = const Value.absent(),
+    Value<String?> microchipCompany = const Value.absent(),
   }) => Pet(
     petId: petId ?? this.petId,
     name: name ?? this.name,
@@ -891,6 +1081,18 @@ class Pet extends DataClass implements Insertable<Pet> {
     neuterDate: neuterDate.present ? neuterDate.value : this.neuterDate,
     status: status ?? this.status,
     statusDate: statusDate ?? this.statusDate,
+    isMicrochipped:
+        isMicrochipped.present ? isMicrochipped.value : this.isMicrochipped,
+    microchipDate:
+        microchipDate.present ? microchipDate.value : this.microchipDate,
+    microchipNotes:
+        microchipNotes.present ? microchipNotes.value : this.microchipNotes,
+    microchipNumber:
+        microchipNumber.present ? microchipNumber.value : this.microchipNumber,
+    microchipCompany:
+        microchipCompany.present
+            ? microchipCompany.value
+            : this.microchipCompany,
   );
   Pet copyWithCompanion(PetsCompanion data) {
     return Pet(
@@ -918,6 +1120,26 @@ class Pet extends DataClass implements Insertable<Pet> {
       status: data.status.present ? data.status.value : this.status,
       statusDate:
           data.statusDate.present ? data.statusDate.value : this.statusDate,
+      isMicrochipped:
+          data.isMicrochipped.present
+              ? data.isMicrochipped.value
+              : this.isMicrochipped,
+      microchipDate:
+          data.microchipDate.present
+              ? data.microchipDate.value
+              : this.microchipDate,
+      microchipNotes:
+          data.microchipNotes.present
+              ? data.microchipNotes.value
+              : this.microchipNotes,
+      microchipNumber:
+          data.microchipNumber.present
+              ? data.microchipNumber.value
+              : this.microchipNumber,
+      microchipCompany:
+          data.microchipCompany.present
+              ? data.microchipCompany.value
+              : this.microchipCompany,
     );
   }
 
@@ -940,13 +1162,18 @@ class Pet extends DataClass implements Insertable<Pet> {
           ..write('isNeutered: $isNeutered, ')
           ..write('neuterDate: $neuterDate, ')
           ..write('status: $status, ')
-          ..write('statusDate: $statusDate')
+          ..write('statusDate: $statusDate, ')
+          ..write('isMicrochipped: $isMicrochipped, ')
+          ..write('microchipDate: $microchipDate, ')
+          ..write('microchipNotes: $microchipNotes, ')
+          ..write('microchipNumber: $microchipNumber, ')
+          ..write('microchipCompany: $microchipCompany')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     petId,
     name,
     speciesId,
@@ -964,7 +1191,12 @@ class Pet extends DataClass implements Insertable<Pet> {
     neuterDate,
     status,
     statusDate,
-  );
+    isMicrochipped,
+    microchipDate,
+    microchipNotes,
+    microchipNumber,
+    microchipCompany,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -985,7 +1217,12 @@ class Pet extends DataClass implements Insertable<Pet> {
           other.isNeutered == this.isNeutered &&
           other.neuterDate == this.neuterDate &&
           other.status == this.status &&
-          other.statusDate == this.statusDate);
+          other.statusDate == this.statusDate &&
+          other.isMicrochipped == this.isMicrochipped &&
+          other.microchipDate == this.microchipDate &&
+          other.microchipNotes == this.microchipNotes &&
+          other.microchipNumber == this.microchipNumber &&
+          other.microchipCompany == this.microchipCompany);
 }
 
 class PetsCompanion extends UpdateCompanion<Pet> {
@@ -1006,6 +1243,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<DateTime?> neuterDate;
   final Value<int> status;
   final Value<DateTime> statusDate;
+  final Value<bool?> isMicrochipped;
+  final Value<DateTime?> microchipDate;
+  final Value<String?> microchipNotes;
+  final Value<String?> microchipNumber;
+  final Value<String?> microchipCompany;
   const PetsCompanion({
     this.petId = const Value.absent(),
     this.name = const Value.absent(),
@@ -1024,6 +1266,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     this.neuterDate = const Value.absent(),
     this.status = const Value.absent(),
     this.statusDate = const Value.absent(),
+    this.isMicrochipped = const Value.absent(),
+    this.microchipDate = const Value.absent(),
+    this.microchipNotes = const Value.absent(),
+    this.microchipNumber = const Value.absent(),
+    this.microchipCompany = const Value.absent(),
   });
   PetsCompanion.insert({
     this.petId = const Value.absent(),
@@ -1043,6 +1290,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     this.neuterDate = const Value.absent(),
     this.status = const Value.absent(),
     this.statusDate = const Value.absent(),
+    this.isMicrochipped = const Value.absent(),
+    this.microchipDate = const Value.absent(),
+    this.microchipNotes = const Value.absent(),
+    this.microchipNumber = const Value.absent(),
+    this.microchipCompany = const Value.absent(),
   }) : name = Value(name),
        speciesId = Value(speciesId),
        breed = Value(breed),
@@ -1065,6 +1317,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Expression<DateTime>? neuterDate,
     Expression<int>? status,
     Expression<DateTime>? statusDate,
+    Expression<bool>? isMicrochipped,
+    Expression<DateTime>? microchipDate,
+    Expression<String>? microchipNotes,
+    Expression<String>? microchipNumber,
+    Expression<String>? microchipCompany,
   }) {
     return RawValuesInsertable({
       if (petId != null) 'pet_id': petId,
@@ -1084,6 +1341,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       if (neuterDate != null) 'neuter_date': neuterDate,
       if (status != null) 'status': status,
       if (statusDate != null) 'status_date': statusDate,
+      if (isMicrochipped != null) 'is_microchipped': isMicrochipped,
+      if (microchipDate != null) 'microchip_date': microchipDate,
+      if (microchipNotes != null) 'microchip_notes': microchipNotes,
+      if (microchipNumber != null) 'microchip_number': microchipNumber,
+      if (microchipCompany != null) 'microchip_company': microchipCompany,
     });
   }
 
@@ -1105,6 +1367,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<DateTime?>? neuterDate,
     Value<int>? status,
     Value<DateTime>? statusDate,
+    Value<bool?>? isMicrochipped,
+    Value<DateTime?>? microchipDate,
+    Value<String?>? microchipNotes,
+    Value<String?>? microchipNumber,
+    Value<String?>? microchipCompany,
   }) {
     return PetsCompanion(
       petId: petId ?? this.petId,
@@ -1124,6 +1391,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       neuterDate: neuterDate ?? this.neuterDate,
       status: status ?? this.status,
       statusDate: statusDate ?? this.statusDate,
+      isMicrochipped: isMicrochipped ?? this.isMicrochipped,
+      microchipDate: microchipDate ?? this.microchipDate,
+      microchipNotes: microchipNotes ?? this.microchipNotes,
+      microchipNumber: microchipNumber ?? this.microchipNumber,
+      microchipCompany: microchipCompany ?? this.microchipCompany,
     );
   }
 
@@ -1181,6 +1453,21 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     if (statusDate.present) {
       map['status_date'] = Variable<DateTime>(statusDate.value);
     }
+    if (isMicrochipped.present) {
+      map['is_microchipped'] = Variable<bool>(isMicrochipped.value);
+    }
+    if (microchipDate.present) {
+      map['microchip_date'] = Variable<DateTime>(microchipDate.value);
+    }
+    if (microchipNotes.present) {
+      map['microchip_notes'] = Variable<String>(microchipNotes.value);
+    }
+    if (microchipNumber.present) {
+      map['microchip_number'] = Variable<String>(microchipNumber.value);
+    }
+    if (microchipCompany.present) {
+      map['microchip_company'] = Variable<String>(microchipCompany.value);
+    }
     return map;
   }
 
@@ -1203,522 +1490,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
           ..write('isNeutered: $isNeutered, ')
           ..write('neuterDate: $neuterDate, ')
           ..write('status: $status, ')
-          ..write('statusDate: $statusDate')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $PetMicrochipsTable extends PetMicrochips
-    with TableInfo<$PetMicrochipsTable, PetMicrochip> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $PetMicrochipsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _petMicrochipIdMeta = const VerificationMeta(
-    'petMicrochipId',
-  );
-  @override
-  late final GeneratedColumn<int> petMicrochipId = GeneratedColumn<int>(
-    'pet_microchip_id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _petMeta = const VerificationMeta('pet');
-  @override
-  late final GeneratedColumn<int> pet = GeneratedColumn<int>(
-    'pet',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES pets (pet_id) ON DELETE CASCADE',
-    ),
-  );
-  static const VerificationMeta _isMicrochippedMeta = const VerificationMeta(
-    'isMicrochipped',
-  );
-  @override
-  late final GeneratedColumn<bool> isMicrochipped = GeneratedColumn<bool>(
-    'is_microchipped',
-    aliasedName,
-    true,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_microchipped" IN (0, 1))',
-    ),
-    defaultValue: const Constant(true),
-  );
-  static const VerificationMeta _microchipDateMeta = const VerificationMeta(
-    'microchipDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> microchipDate =
-      GeneratedColumn<DateTime>(
-        'microchip_date',
-        aliasedName,
-        true,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: false,
-      );
-  static const VerificationMeta _microchipNotesMeta = const VerificationMeta(
-    'microchipNotes',
-  );
-  @override
-  late final GeneratedColumn<String> microchipNotes = GeneratedColumn<String>(
-    'microchip_notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _microchipNumberMeta = const VerificationMeta(
-    'microchipNumber',
-  );
-  @override
-  late final GeneratedColumn<String> microchipNumber = GeneratedColumn<String>(
-    'microchip_number',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _microchipCompanyMeta = const VerificationMeta(
-    'microchipCompany',
-  );
-  @override
-  late final GeneratedColumn<String> microchipCompany = GeneratedColumn<String>(
-    'microchip_company',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    petMicrochipId,
-    pet,
-    isMicrochipped,
-    microchipDate,
-    microchipNotes,
-    microchipNumber,
-    microchipCompany,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'pet_microchips';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<PetMicrochip> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('pet_microchip_id')) {
-      context.handle(
-        _petMicrochipIdMeta,
-        petMicrochipId.isAcceptableOrUnknown(
-          data['pet_microchip_id']!,
-          _petMicrochipIdMeta,
-        ),
-      );
-    }
-    if (data.containsKey('pet')) {
-      context.handle(
-        _petMeta,
-        pet.isAcceptableOrUnknown(data['pet']!, _petMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_petMeta);
-    }
-    if (data.containsKey('is_microchipped')) {
-      context.handle(
-        _isMicrochippedMeta,
-        isMicrochipped.isAcceptableOrUnknown(
-          data['is_microchipped']!,
-          _isMicrochippedMeta,
-        ),
-      );
-    }
-    if (data.containsKey('microchip_date')) {
-      context.handle(
-        _microchipDateMeta,
-        microchipDate.isAcceptableOrUnknown(
-          data['microchip_date']!,
-          _microchipDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('microchip_notes')) {
-      context.handle(
-        _microchipNotesMeta,
-        microchipNotes.isAcceptableOrUnknown(
-          data['microchip_notes']!,
-          _microchipNotesMeta,
-        ),
-      );
-    }
-    if (data.containsKey('microchip_number')) {
-      context.handle(
-        _microchipNumberMeta,
-        microchipNumber.isAcceptableOrUnknown(
-          data['microchip_number']!,
-          _microchipNumberMeta,
-        ),
-      );
-    }
-    if (data.containsKey('microchip_company')) {
-      context.handle(
-        _microchipCompanyMeta,
-        microchipCompany.isAcceptableOrUnknown(
-          data['microchip_company']!,
-          _microchipCompanyMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {petMicrochipId};
-  @override
-  PetMicrochip map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PetMicrochip(
-      petMicrochipId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_microchip_id'],
-          )!,
-      pet:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet'],
-          )!,
-      isMicrochipped: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_microchipped'],
-      ),
-      microchipDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}microchip_date'],
-      ),
-      microchipNotes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}microchip_notes'],
-      ),
-      microchipNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}microchip_number'],
-      ),
-      microchipCompany: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}microchip_company'],
-      ),
-    );
-  }
-
-  @override
-  $PetMicrochipsTable createAlias(String alias) {
-    return $PetMicrochipsTable(attachedDatabase, alias);
-  }
-}
-
-class PetMicrochip extends DataClass implements Insertable<PetMicrochip> {
-  final int petMicrochipId;
-  final int pet;
-  final bool? isMicrochipped;
-  final DateTime? microchipDate;
-  final String? microchipNotes;
-  final String? microchipNumber;
-  final String? microchipCompany;
-  const PetMicrochip({
-    required this.petMicrochipId,
-    required this.pet,
-    this.isMicrochipped,
-    this.microchipDate,
-    this.microchipNotes,
-    this.microchipNumber,
-    this.microchipCompany,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['pet_microchip_id'] = Variable<int>(petMicrochipId);
-    map['pet'] = Variable<int>(pet);
-    if (!nullToAbsent || isMicrochipped != null) {
-      map['is_microchipped'] = Variable<bool>(isMicrochipped);
-    }
-    if (!nullToAbsent || microchipDate != null) {
-      map['microchip_date'] = Variable<DateTime>(microchipDate);
-    }
-    if (!nullToAbsent || microchipNotes != null) {
-      map['microchip_notes'] = Variable<String>(microchipNotes);
-    }
-    if (!nullToAbsent || microchipNumber != null) {
-      map['microchip_number'] = Variable<String>(microchipNumber);
-    }
-    if (!nullToAbsent || microchipCompany != null) {
-      map['microchip_company'] = Variable<String>(microchipCompany);
-    }
-    return map;
-  }
-
-  PetMicrochipsCompanion toCompanion(bool nullToAbsent) {
-    return PetMicrochipsCompanion(
-      petMicrochipId: Value(petMicrochipId),
-      pet: Value(pet),
-      isMicrochipped:
-          isMicrochipped == null && nullToAbsent
-              ? const Value.absent()
-              : Value(isMicrochipped),
-      microchipDate:
-          microchipDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipDate),
-      microchipNotes:
-          microchipNotes == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipNotes),
-      microchipNumber:
-          microchipNumber == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipNumber),
-      microchipCompany:
-          microchipCompany == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipCompany),
-    );
-  }
-
-  factory PetMicrochip.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PetMicrochip(
-      petMicrochipId: serializer.fromJson<int>(json['petMicrochipId']),
-      pet: serializer.fromJson<int>(json['pet']),
-      isMicrochipped: serializer.fromJson<bool?>(json['isMicrochipped']),
-      microchipDate: serializer.fromJson<DateTime?>(json['microchipDate']),
-      microchipNotes: serializer.fromJson<String?>(json['microchipNotes']),
-      microchipNumber: serializer.fromJson<String?>(json['microchipNumber']),
-      microchipCompany: serializer.fromJson<String?>(json['microchipCompany']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'petMicrochipId': serializer.toJson<int>(petMicrochipId),
-      'pet': serializer.toJson<int>(pet),
-      'isMicrochipped': serializer.toJson<bool?>(isMicrochipped),
-      'microchipDate': serializer.toJson<DateTime?>(microchipDate),
-      'microchipNotes': serializer.toJson<String?>(microchipNotes),
-      'microchipNumber': serializer.toJson<String?>(microchipNumber),
-      'microchipCompany': serializer.toJson<String?>(microchipCompany),
-    };
-  }
-
-  PetMicrochip copyWith({
-    int? petMicrochipId,
-    int? pet,
-    Value<bool?> isMicrochipped = const Value.absent(),
-    Value<DateTime?> microchipDate = const Value.absent(),
-    Value<String?> microchipNotes = const Value.absent(),
-    Value<String?> microchipNumber = const Value.absent(),
-    Value<String?> microchipCompany = const Value.absent(),
-  }) => PetMicrochip(
-    petMicrochipId: petMicrochipId ?? this.petMicrochipId,
-    pet: pet ?? this.pet,
-    isMicrochipped:
-        isMicrochipped.present ? isMicrochipped.value : this.isMicrochipped,
-    microchipDate:
-        microchipDate.present ? microchipDate.value : this.microchipDate,
-    microchipNotes:
-        microchipNotes.present ? microchipNotes.value : this.microchipNotes,
-    microchipNumber:
-        microchipNumber.present ? microchipNumber.value : this.microchipNumber,
-    microchipCompany:
-        microchipCompany.present
-            ? microchipCompany.value
-            : this.microchipCompany,
-  );
-  PetMicrochip copyWithCompanion(PetMicrochipsCompanion data) {
-    return PetMicrochip(
-      petMicrochipId:
-          data.petMicrochipId.present
-              ? data.petMicrochipId.value
-              : this.petMicrochipId,
-      pet: data.pet.present ? data.pet.value : this.pet,
-      isMicrochipped:
-          data.isMicrochipped.present
-              ? data.isMicrochipped.value
-              : this.isMicrochipped,
-      microchipDate:
-          data.microchipDate.present
-              ? data.microchipDate.value
-              : this.microchipDate,
-      microchipNotes:
-          data.microchipNotes.present
-              ? data.microchipNotes.value
-              : this.microchipNotes,
-      microchipNumber:
-          data.microchipNumber.present
-              ? data.microchipNumber.value
-              : this.microchipNumber,
-      microchipCompany:
-          data.microchipCompany.present
-              ? data.microchipCompany.value
-              : this.microchipCompany,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('PetMicrochip(')
-          ..write('petMicrochipId: $petMicrochipId, ')
-          ..write('pet: $pet, ')
-          ..write('isMicrochipped: $isMicrochipped, ')
-          ..write('microchipDate: $microchipDate, ')
-          ..write('microchipNotes: $microchipNotes, ')
-          ..write('microchipNumber: $microchipNumber, ')
-          ..write('microchipCompany: $microchipCompany')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    petMicrochipId,
-    pet,
-    isMicrochipped,
-    microchipDate,
-    microchipNotes,
-    microchipNumber,
-    microchipCompany,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is PetMicrochip &&
-          other.petMicrochipId == this.petMicrochipId &&
-          other.pet == this.pet &&
-          other.isMicrochipped == this.isMicrochipped &&
-          other.microchipDate == this.microchipDate &&
-          other.microchipNotes == this.microchipNotes &&
-          other.microchipNumber == this.microchipNumber &&
-          other.microchipCompany == this.microchipCompany);
-}
-
-class PetMicrochipsCompanion extends UpdateCompanion<PetMicrochip> {
-  final Value<int> petMicrochipId;
-  final Value<int> pet;
-  final Value<bool?> isMicrochipped;
-  final Value<DateTime?> microchipDate;
-  final Value<String?> microchipNotes;
-  final Value<String?> microchipNumber;
-  final Value<String?> microchipCompany;
-  const PetMicrochipsCompanion({
-    this.petMicrochipId = const Value.absent(),
-    this.pet = const Value.absent(),
-    this.isMicrochipped = const Value.absent(),
-    this.microchipDate = const Value.absent(),
-    this.microchipNotes = const Value.absent(),
-    this.microchipNumber = const Value.absent(),
-    this.microchipCompany = const Value.absent(),
-  });
-  PetMicrochipsCompanion.insert({
-    this.petMicrochipId = const Value.absent(),
-    required int pet,
-    this.isMicrochipped = const Value.absent(),
-    this.microchipDate = const Value.absent(),
-    this.microchipNotes = const Value.absent(),
-    this.microchipNumber = const Value.absent(),
-    this.microchipCompany = const Value.absent(),
-  }) : pet = Value(pet);
-  static Insertable<PetMicrochip> custom({
-    Expression<int>? petMicrochipId,
-    Expression<int>? pet,
-    Expression<bool>? isMicrochipped,
-    Expression<DateTime>? microchipDate,
-    Expression<String>? microchipNotes,
-    Expression<String>? microchipNumber,
-    Expression<String>? microchipCompany,
-  }) {
-    return RawValuesInsertable({
-      if (petMicrochipId != null) 'pet_microchip_id': petMicrochipId,
-      if (pet != null) 'pet': pet,
-      if (isMicrochipped != null) 'is_microchipped': isMicrochipped,
-      if (microchipDate != null) 'microchip_date': microchipDate,
-      if (microchipNotes != null) 'microchip_notes': microchipNotes,
-      if (microchipNumber != null) 'microchip_number': microchipNumber,
-      if (microchipCompany != null) 'microchip_company': microchipCompany,
-    });
-  }
-
-  PetMicrochipsCompanion copyWith({
-    Value<int>? petMicrochipId,
-    Value<int>? pet,
-    Value<bool?>? isMicrochipped,
-    Value<DateTime?>? microchipDate,
-    Value<String?>? microchipNotes,
-    Value<String?>? microchipNumber,
-    Value<String?>? microchipCompany,
-  }) {
-    return PetMicrochipsCompanion(
-      petMicrochipId: petMicrochipId ?? this.petMicrochipId,
-      pet: pet ?? this.pet,
-      isMicrochipped: isMicrochipped ?? this.isMicrochipped,
-      microchipDate: microchipDate ?? this.microchipDate,
-      microchipNotes: microchipNotes ?? this.microchipNotes,
-      microchipNumber: microchipNumber ?? this.microchipNumber,
-      microchipCompany: microchipCompany ?? this.microchipCompany,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (petMicrochipId.present) {
-      map['pet_microchip_id'] = Variable<int>(petMicrochipId.value);
-    }
-    if (pet.present) {
-      map['pet'] = Variable<int>(pet.value);
-    }
-    if (isMicrochipped.present) {
-      map['is_microchipped'] = Variable<bool>(isMicrochipped.value);
-    }
-    if (microchipDate.present) {
-      map['microchip_date'] = Variable<DateTime>(microchipDate.value);
-    }
-    if (microchipNotes.present) {
-      map['microchip_notes'] = Variable<String>(microchipNotes.value);
-    }
-    if (microchipNumber.present) {
-      map['microchip_number'] = Variable<String>(microchipNumber.value);
-    }
-    if (microchipCompany.present) {
-      map['microchip_company'] = Variable<String>(microchipCompany.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('PetMicrochipsCompanion(')
-          ..write('petMicrochipId: $petMicrochipId, ')
-          ..write('pet: $pet, ')
+          ..write('statusDate: $statusDate, ')
           ..write('isMicrochipped: $isMicrochipped, ')
           ..write('microchipDate: $microchipDate, ')
           ..write('microchipNotes: $microchipNotes, ')
@@ -4509,7 +4281,6 @@ abstract class _$DatabaseService extends GeneratedDatabase {
   $DatabaseServiceManager get managers => $DatabaseServiceManager(this);
   late final $SpeciesTypesTable speciesTypes = $SpeciesTypesTable(this);
   late final $PetsTable pets = $PetsTable(this);
-  late final $PetMicrochipsTable petMicrochips = $PetMicrochipsTable(this);
   late final $PetMedsTable petMeds = $PetMedsTable(this);
   late final $PetVaccinationsTable petVaccinations = $PetVaccinationsTable(
     this,
@@ -4529,7 +4300,6 @@ abstract class _$DatabaseService extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     speciesTypes,
     pets,
-    petMicrochips,
     petMeds,
     petVaccinations,
     petWeights,
@@ -4540,13 +4310,6 @@ abstract class _$DatabaseService extends GeneratedDatabase {
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'pets',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('pet_microchips', kind: UpdateKind.delete)],
-    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'pets',
@@ -4882,6 +4645,11 @@ typedef $$PetsTableCreateCompanionBuilder =
       Value<DateTime?> neuterDate,
       Value<int> status,
       Value<DateTime> statusDate,
+      Value<bool?> isMicrochipped,
+      Value<DateTime?> microchipDate,
+      Value<String?> microchipNotes,
+      Value<String?> microchipNumber,
+      Value<String?> microchipCompany,
     });
 typedef $$PetsTableUpdateCompanionBuilder =
     PetsCompanion Function({
@@ -4902,6 +4670,11 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<DateTime?> neuterDate,
       Value<int> status,
       Value<DateTime> statusDate,
+      Value<bool?> isMicrochipped,
+      Value<DateTime?> microchipDate,
+      Value<String?> microchipNotes,
+      Value<String?> microchipNumber,
+      Value<String?> microchipCompany,
     });
 
 final class $$PetsTableReferences
@@ -4924,25 +4697,6 @@ final class $$PetsTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static MultiTypedResultKey<$PetMicrochipsTable, List<PetMicrochip>>
-  _petMicrochipsRefsTable(_$DatabaseService db) =>
-      MultiTypedResultKey.fromTable(
-        db.petMicrochips,
-        aliasName: $_aliasNameGenerator(db.pets.petId, db.petMicrochips.pet),
-      );
-
-  $$PetMicrochipsTableProcessedTableManager get petMicrochipsRefs {
-    final manager = $$PetMicrochipsTableTableManager(
-      $_db,
-      $_db.petMicrochips,
-    ).filter((f) => f.pet.petId.sqlEquals($_itemColumn<int>('pet_id')!));
-
-    final cache = $_typedResult.readTableOrNull(_petMicrochipsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 
@@ -5118,6 +4872,31 @@ class $$PetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isMicrochipped => $composableBuilder(
+    column: $table.isMicrochipped,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get microchipDate => $composableBuilder(
+    column: $table.microchipDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get microchipNotes => $composableBuilder(
+    column: $table.microchipNotes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get microchipNumber => $composableBuilder(
+    column: $table.microchipNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get microchipCompany => $composableBuilder(
+    column: $table.microchipCompany,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$SpeciesTypesTableFilterComposer get speciesId {
     final $$SpeciesTypesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -5139,31 +4918,6 @@ class $$PetsTableFilterComposer
           ),
     );
     return composer;
-  }
-
-  Expression<bool> petMicrochipsRefs(
-    Expression<bool> Function($$PetMicrochipsTableFilterComposer f) f,
-  ) {
-    final $$PetMicrochipsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.petId,
-      referencedTable: $db.petMicrochips,
-      getReferencedColumn: (t) => t.pet,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PetMicrochipsTableFilterComposer(
-            $db: $db,
-            $table: $db.petMicrochips,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
   }
 
   Expression<bool> petMedsRefs(
@@ -5356,6 +5110,31 @@ class $$PetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isMicrochipped => $composableBuilder(
+    column: $table.isMicrochipped,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get microchipDate => $composableBuilder(
+    column: $table.microchipDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get microchipNotes => $composableBuilder(
+    column: $table.microchipNotes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get microchipNumber => $composableBuilder(
+    column: $table.microchipNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get microchipCompany => $composableBuilder(
+    column: $table.microchipCompany,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$SpeciesTypesTableOrderingComposer get speciesId {
     final $$SpeciesTypesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5447,6 +5226,31 @@ class $$PetsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<bool> get isMicrochipped => $composableBuilder(
+    column: $table.isMicrochipped,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get microchipDate => $composableBuilder(
+    column: $table.microchipDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get microchipNotes => $composableBuilder(
+    column: $table.microchipNotes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get microchipNumber => $composableBuilder(
+    column: $table.microchipNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get microchipCompany => $composableBuilder(
+    column: $table.microchipCompany,
+    builder: (column) => column,
+  );
+
   $$SpeciesTypesTableAnnotationComposer get speciesId {
     final $$SpeciesTypesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -5468,31 +5272,6 @@ class $$PetsTableAnnotationComposer
           ),
     );
     return composer;
-  }
-
-  Expression<T> petMicrochipsRefs<T extends Object>(
-    Expression<T> Function($$PetMicrochipsTableAnnotationComposer a) f,
-  ) {
-    final $$PetMicrochipsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.petId,
-      referencedTable: $db.petMicrochips,
-      getReferencedColumn: (t) => t.pet,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PetMicrochipsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.petMicrochips,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
   }
 
   Expression<T> petMedsRefs<T extends Object>(
@@ -5612,7 +5391,6 @@ class $$PetsTableTableManager
           Pet,
           PrefetchHooks Function({
             bool speciesId,
-            bool petMicrochipsRefs,
             bool petMedsRefs,
             bool petVaccinationsRefs,
             bool petWeightsRefs,
@@ -5649,6 +5427,11 @@ class $$PetsTableTableManager
                 Value<DateTime?> neuterDate = const Value.absent(),
                 Value<int> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
+                Value<bool?> isMicrochipped = const Value.absent(),
+                Value<DateTime?> microchipDate = const Value.absent(),
+                Value<String?> microchipNotes = const Value.absent(),
+                Value<String?> microchipNumber = const Value.absent(),
+                Value<String?> microchipCompany = const Value.absent(),
               }) => PetsCompanion(
                 petId: petId,
                 name: name,
@@ -5667,6 +5450,11 @@ class $$PetsTableTableManager
                 neuterDate: neuterDate,
                 status: status,
                 statusDate: statusDate,
+                isMicrochipped: isMicrochipped,
+                microchipDate: microchipDate,
+                microchipNotes: microchipNotes,
+                microchipNumber: microchipNumber,
+                microchipCompany: microchipCompany,
               ),
           createCompanionCallback:
               ({
@@ -5687,6 +5475,11 @@ class $$PetsTableTableManager
                 Value<DateTime?> neuterDate = const Value.absent(),
                 Value<int> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
+                Value<bool?> isMicrochipped = const Value.absent(),
+                Value<DateTime?> microchipDate = const Value.absent(),
+                Value<String?> microchipNotes = const Value.absent(),
+                Value<String?> microchipNumber = const Value.absent(),
+                Value<String?> microchipCompany = const Value.absent(),
               }) => PetsCompanion.insert(
                 petId: petId,
                 name: name,
@@ -5705,6 +5498,11 @@ class $$PetsTableTableManager
                 neuterDate: neuterDate,
                 status: status,
                 statusDate: statusDate,
+                isMicrochipped: isMicrochipped,
+                microchipDate: microchipDate,
+                microchipNotes: microchipNotes,
+                microchipNumber: microchipNumber,
+                microchipCompany: microchipCompany,
               ),
           withReferenceMapper:
               (p0) =>
@@ -5718,7 +5516,6 @@ class $$PetsTableTableManager
                       .toList(),
           prefetchHooksCallback: ({
             speciesId = false,
-            petMicrochipsRefs = false,
             petMedsRefs = false,
             petVaccinationsRefs = false,
             petWeightsRefs = false,
@@ -5727,7 +5524,6 @@ class $$PetsTableTableManager
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
-                if (petMicrochipsRefs) db.petMicrochips,
                 if (petMedsRefs) db.petMeds,
                 if (petVaccinationsRefs) db.petVaccinations,
                 if (petWeightsRefs) db.petWeights,
@@ -5767,23 +5563,6 @@ class $$PetsTableTableManager
               },
               getPrefetchedDataCallback: (items) async {
                 return [
-                  if (petMicrochipsRefs)
-                    await $_getPrefetchedData<Pet, $PetsTable, PetMicrochip>(
-                      currentTable: table,
-                      referencedTable: $$PetsTableReferences
-                          ._petMicrochipsRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
-                              $$PetsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).petMicrochipsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) =>
-                              referencedItems.where((e) => e.pet == item.petId),
-                      typedResults: items,
-                    ),
                   if (petMedsRefs)
                     await $_getPrefetchedData<Pet, $PetsTable, PetMed>(
                       currentTable: table,
@@ -5872,387 +5651,11 @@ typedef $$PetsTableProcessedTableManager =
       Pet,
       PrefetchHooks Function({
         bool speciesId,
-        bool petMicrochipsRefs,
         bool petMedsRefs,
         bool petVaccinationsRefs,
         bool petWeightsRefs,
         bool petJournalEntriesRefs,
       })
-    >;
-typedef $$PetMicrochipsTableCreateCompanionBuilder =
-    PetMicrochipsCompanion Function({
-      Value<int> petMicrochipId,
-      required int pet,
-      Value<bool?> isMicrochipped,
-      Value<DateTime?> microchipDate,
-      Value<String?> microchipNotes,
-      Value<String?> microchipNumber,
-      Value<String?> microchipCompany,
-    });
-typedef $$PetMicrochipsTableUpdateCompanionBuilder =
-    PetMicrochipsCompanion Function({
-      Value<int> petMicrochipId,
-      Value<int> pet,
-      Value<bool?> isMicrochipped,
-      Value<DateTime?> microchipDate,
-      Value<String?> microchipNotes,
-      Value<String?> microchipNumber,
-      Value<String?> microchipCompany,
-    });
-
-final class $$PetMicrochipsTableReferences
-    extends
-        BaseReferences<_$DatabaseService, $PetMicrochipsTable, PetMicrochip> {
-  $$PetMicrochipsTableReferences(
-    super.$_db,
-    super.$_table,
-    super.$_typedResult,
-  );
-
-  static $PetsTable _petTable(_$DatabaseService db) => db.pets.createAlias(
-    $_aliasNameGenerator(db.petMicrochips.pet, db.pets.petId),
-  );
-
-  $$PetsTableProcessedTableManager get pet {
-    final $_column = $_itemColumn<int>('pet')!;
-
-    final manager = $$PetsTableTableManager(
-      $_db,
-      $_db.pets,
-    ).filter((f) => f.petId.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_petTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $$PetMicrochipsTableFilterComposer
-    extends Composer<_$DatabaseService, $PetMicrochipsTable> {
-  $$PetMicrochipsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get petMicrochipId => $composableBuilder(
-    column: $table.petMicrochipId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isMicrochipped => $composableBuilder(
-    column: $table.isMicrochipped,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get microchipDate => $composableBuilder(
-    column: $table.microchipDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get microchipNotes => $composableBuilder(
-    column: $table.microchipNotes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get microchipNumber => $composableBuilder(
-    column: $table.microchipNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get microchipCompany => $composableBuilder(
-    column: $table.microchipCompany,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $$PetsTableFilterComposer get pet {
-    final $$PetsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.pet,
-      referencedTable: $db.pets,
-      getReferencedColumn: (t) => t.petId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PetsTableFilterComposer(
-            $db: $db,
-            $table: $db.pets,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$PetMicrochipsTableOrderingComposer
-    extends Composer<_$DatabaseService, $PetMicrochipsTable> {
-  $$PetMicrochipsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get petMicrochipId => $composableBuilder(
-    column: $table.petMicrochipId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isMicrochipped => $composableBuilder(
-    column: $table.isMicrochipped,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get microchipDate => $composableBuilder(
-    column: $table.microchipDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get microchipNotes => $composableBuilder(
-    column: $table.microchipNotes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get microchipNumber => $composableBuilder(
-    column: $table.microchipNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get microchipCompany => $composableBuilder(
-    column: $table.microchipCompany,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $$PetsTableOrderingComposer get pet {
-    final $$PetsTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.pet,
-      referencedTable: $db.pets,
-      getReferencedColumn: (t) => t.petId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PetsTableOrderingComposer(
-            $db: $db,
-            $table: $db.pets,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$PetMicrochipsTableAnnotationComposer
-    extends Composer<_$DatabaseService, $PetMicrochipsTable> {
-  $$PetMicrochipsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get petMicrochipId => $composableBuilder(
-    column: $table.petMicrochipId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get isMicrochipped => $composableBuilder(
-    column: $table.isMicrochipped,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get microchipDate => $composableBuilder(
-    column: $table.microchipDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get microchipNotes => $composableBuilder(
-    column: $table.microchipNotes,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get microchipNumber => $composableBuilder(
-    column: $table.microchipNumber,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get microchipCompany => $composableBuilder(
-    column: $table.microchipCompany,
-    builder: (column) => column,
-  );
-
-  $$PetsTableAnnotationComposer get pet {
-    final $$PetsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.pet,
-      referencedTable: $db.pets,
-      getReferencedColumn: (t) => t.petId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PetsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.pets,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$PetMicrochipsTableTableManager
-    extends
-        RootTableManager<
-          _$DatabaseService,
-          $PetMicrochipsTable,
-          PetMicrochip,
-          $$PetMicrochipsTableFilterComposer,
-          $$PetMicrochipsTableOrderingComposer,
-          $$PetMicrochipsTableAnnotationComposer,
-          $$PetMicrochipsTableCreateCompanionBuilder,
-          $$PetMicrochipsTableUpdateCompanionBuilder,
-          (PetMicrochip, $$PetMicrochipsTableReferences),
-          PetMicrochip,
-          PrefetchHooks Function({bool pet})
-        > {
-  $$PetMicrochipsTableTableManager(
-    _$DatabaseService db,
-    $PetMicrochipsTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer:
-              () => $$PetMicrochipsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () =>
-                  $$PetMicrochipsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PetMicrochipsTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<int> petMicrochipId = const Value.absent(),
-                Value<int> pet = const Value.absent(),
-                Value<bool?> isMicrochipped = const Value.absent(),
-                Value<DateTime?> microchipDate = const Value.absent(),
-                Value<String?> microchipNotes = const Value.absent(),
-                Value<String?> microchipNumber = const Value.absent(),
-                Value<String?> microchipCompany = const Value.absent(),
-              }) => PetMicrochipsCompanion(
-                petMicrochipId: petMicrochipId,
-                pet: pet,
-                isMicrochipped: isMicrochipped,
-                microchipDate: microchipDate,
-                microchipNotes: microchipNotes,
-                microchipNumber: microchipNumber,
-                microchipCompany: microchipCompany,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> petMicrochipId = const Value.absent(),
-                required int pet,
-                Value<bool?> isMicrochipped = const Value.absent(),
-                Value<DateTime?> microchipDate = const Value.absent(),
-                Value<String?> microchipNotes = const Value.absent(),
-                Value<String?> microchipNumber = const Value.absent(),
-                Value<String?> microchipCompany = const Value.absent(),
-              }) => PetMicrochipsCompanion.insert(
-                petMicrochipId: petMicrochipId,
-                pet: pet,
-                isMicrochipped: isMicrochipped,
-                microchipDate: microchipDate,
-                microchipNotes: microchipNotes,
-                microchipNumber: microchipNumber,
-                microchipCompany: microchipCompany,
-              ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetMicrochipsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
-          prefetchHooksCallback: ({pet = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (pet) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.pet,
-                            referencedTable: $$PetMicrochipsTableReferences
-                                ._petTable(db),
-                            referencedColumn:
-                                $$PetMicrochipsTableReferences
-                                    ._petTable(db)
-                                    .petId,
-                          )
-                          as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
-        ),
-      );
-}
-
-typedef $$PetMicrochipsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$DatabaseService,
-      $PetMicrochipsTable,
-      PetMicrochip,
-      $$PetMicrochipsTableFilterComposer,
-      $$PetMicrochipsTableOrderingComposer,
-      $$PetMicrochipsTableAnnotationComposer,
-      $$PetMicrochipsTableCreateCompanionBuilder,
-      $$PetMicrochipsTableUpdateCompanionBuilder,
-      (PetMicrochip, $$PetMicrochipsTableReferences),
-      PetMicrochip,
-      PrefetchHooks Function({bool pet})
     >;
 typedef $$PetMedsTableCreateCompanionBuilder =
     PetMedsCompanion Function({
@@ -8686,8 +8089,6 @@ class $DatabaseServiceManager {
   $$SpeciesTypesTableTableManager get speciesTypes =>
       $$SpeciesTypesTableTableManager(_db, _db.speciesTypes);
   $$PetsTableTableManager get pets => $$PetsTableTableManager(_db, _db.pets);
-  $$PetMicrochipsTableTableManager get petMicrochips =>
-      $$PetMicrochipsTableTableManager(_db, _db.petMicrochips);
   $$PetMedsTableTableManager get petMeds =>
       $$PetMedsTableTableManager(_db, _db.petMeds);
   $$PetVaccinationsTableTableManager get petVaccinations =>

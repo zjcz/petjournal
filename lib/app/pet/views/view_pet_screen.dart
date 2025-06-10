@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_controller.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_meds_widget.dart';
-import 'package:petjournal/app/pet/views/widgets/pet_microchip_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_vaccinations_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_weights_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_widget.dart';
@@ -66,13 +65,7 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
   Widget _buildGeneralInfoTab(PetModel pet) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: PetWidget(pet: pet)),
-          Expanded(child: PetMicrochipWidget(petId: pet.petId!)),
-        ],
-      ),
+      child: PetWidget(pet: pet),
     );
   }
 

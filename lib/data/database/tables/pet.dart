@@ -34,4 +34,11 @@ class Pets extends Table {
   IntColumn get status =>
       integer().withDefault(Constant(PetStatus.active.dataValue))();
   DateTimeColumn get statusDate => dateTime().withDefault(currentDateAndTime)();
+
+  BoolColumn get isMicrochipped =>
+      boolean().nullable().withDefault(const Constant(true))();
+  DateTimeColumn get microchipDate => dateTime().nullable()();
+  TextColumn get microchipNotes => text().nullable()();
+  TextColumn get microchipNumber => text().nullable()();
+  TextColumn get microchipCompany => text().nullable()();
 }

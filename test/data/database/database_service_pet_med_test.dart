@@ -33,6 +33,11 @@ void main() {
       null,
       null,
       PetStatus.active,
+      null,
+      null,
+      null,
+      null,
+      null,
     );
   });
 

@@ -28,6 +28,11 @@ void main() {
         neuterDate: testDate,
         status: PetStatus.active.dataValue,
         statusDate: testDate,
+        isMicrochipped: true,
+        microchipDate: DateTime(2024, 5, 28),
+        microchipNotes: 'Healthy',
+        microchipNumber: '123456789',
+        microchipCompany: 'PetSafe',
       );
 
       // Act
@@ -51,6 +56,11 @@ void main() {
       expect(model.neuterDate, equals(testDate));
       expect(model.status, equals(PetStatus.active));
       expect(model.statusDate, equals(testDate));
+      expect(model.isMicrochipped, equals(true));
+      expect(model.microchipDate, equals(DateTime(2024, 5, 28)));
+      expect(model.microchipNotes, equals('Healthy'));
+      expect(model.microchipNumber, equals('123456789'));
+      expect(model.microchipCompany, equals('PetSafe'));
     });
 
     test('mapToModel should handle null optional fields', () {
@@ -73,6 +83,11 @@ void main() {
         neuterDate: null,
         status: PetStatus.active.dataValue,
         statusDate: DateTime.now(),
+        isMicrochipped: null,
+        microchipDate: null,
+        microchipNotes: null,
+        microchipNumber: null,
+        microchipCompany: null,
       );
 
       // Act
@@ -88,6 +103,11 @@ void main() {
       expect(model.history, isEmpty);
       expect(model.isNeutered, equals(false));
       expect(model.neuterDate, match.isNull);
+      expect(model.isMicrochipped, match.isFalse);
+      expect(model.microchipDate, match.isNull);
+      expect(model.microchipNotes, match.isNull);
+      expect(model.microchipNumber, match.isNull);
+      expect(model.microchipCompany, match.isNull);
     });
 
     test('mapToModelList should correctly map a list of Pets to PetModels', () {
@@ -111,6 +131,11 @@ void main() {
           neuterDate: null,
           status: PetStatus.active.dataValue,
           statusDate: DateTime.now(),
+          isMicrochipped: null,
+          microchipDate: null,
+          microchipNotes: null,
+          microchipNumber: null,
+          microchipCompany: null,
         ),
         Pet(
           petId: 2,
@@ -130,6 +155,11 @@ void main() {
           neuterDate: null,
           status: PetStatus.active.dataValue,
           statusDate: DateTime.now(),
+          isMicrochipped: true,
+          microchipDate: DateTime(2024, 5, 28),
+          microchipNotes: 'Healthy',
+          microchipNumber: '123456789',
+          microchipCompany: 'PetSafe',
         ),
       ];
 
@@ -140,8 +170,10 @@ void main() {
       expect(models.length, equals(2));
       expect(models[0].name, equals('Rex'));
       expect(models[0].breed, equals('German Shepherd'));
+      expect(models[0].isMicrochipped, match.isFalse);
       expect(models[1].name, equals('Luna'));
       expect(models[1].breed, equals('Labrador'));
+      expect(models[1].isMicrochipped, match.isTrue);
     });
 
     test('mapToModelList should return empty list for empty input', () {

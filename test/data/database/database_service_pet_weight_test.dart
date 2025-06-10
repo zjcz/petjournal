@@ -34,6 +34,11 @@ void main() {
       null,
       null,
       PetStatus.active,
+      null,
+      null,
+      null,
+      null,
+      null,
     );
   });
 
@@ -106,45 +111,56 @@ void main() {
       expect(retrievedPetWeight, match.isNotNull);
       expect(retrievedPetWeight?.date, equals(testDate));
       expect(retrievedPetWeight?.weight, equals(10.5));
-      expect(retrievedPetWeight?.weightUnit, equals(WeightUnits.metric.dataValue));
+      expect(
+        retrievedPetWeight?.weightUnit,
+        equals(WeightUnits.metric.dataValue),
+      );
       expect(retrievedPetWeight?.notes, equals('Test Notes'));
     });
 
-    test('getAllPetWeightsForPet returns empty list when no weights exist', () async {
-      final pet = await database.getPet(1);
-      expect(pet, match.isNotNull);
+    test(
+      'getAllPetWeightsForPet returns empty list when no weights exist',
+      () async {
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
 
-      final petWeights = await database.getAllPetWeightsForPet(pet!.petId).first;
-      expect(petWeights, isEmpty);
-    });
+        final petWeights =
+            await database.getAllPetWeightsForPet(pet!.petId).first;
+        expect(petWeights, isEmpty);
+      },
+    );
 
-    test('getAllPetWeightsForPet returns all weights for a pet sorted by date', () async {
-      final pet = await database.getPet(1);
-      expect(pet, match.isNotNull);
+    test(
+      'getAllPetWeightsForPet returns all weights for a pet sorted by date',
+      () async {
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
 
-      // Create multiple pet weights with different dates
-      await database.createPetWeight(
-        pet!.petId,
-        DateTime(2025, 1, 1),
-        10.5,
-        WeightUnits.metric,
-        'Notes 1',
-      );
+        // Create multiple pet weights with different dates
+        await database.createPetWeight(
+          pet!.petId,
+          DateTime(2025, 1, 1),
+          10.5,
+          WeightUnits.metric,
+          'Notes 1',
+        );
 
-      await database.createPetWeight(
-        pet.petId,
-        DateTime(2025, 2, 1),
-        11.0,
-        WeightUnits.imperial,
-        'Notes 2',
-      );
+        await database.createPetWeight(
+          pet.petId,
+          DateTime(2025, 2, 1),
+          11.0,
+          WeightUnits.imperial,
+          'Notes 2',
+        );
 
-      final petWeights = await database.getAllPetWeightsForPet(pet.petId).first;
-      expect(petWeights.length, equals(2));
-      // Verify they're ordered by date descending
-      expect(petWeights[0].date, equals(DateTime(2025, 2, 1)));
-      expect(petWeights[1].date, equals(DateTime(2025, 1, 1)));
-    });
+        final petWeights =
+            await database.getAllPetWeightsForPet(pet.petId).first;
+        expect(petWeights.length, equals(2));
+        // Verify they're ordered by date descending
+        expect(petWeights[0].date, equals(DateTime(2025, 2, 1)));
+        expect(petWeights[1].date, equals(DateTime(2025, 1, 1)));
+      },
+    );
 
     test('update pet weight updates all fields correctly', () async {
       // First create a pet weight
@@ -176,7 +192,10 @@ void main() {
       final updatedPetWeight = await database.getPetWeight(petWeightId);
       expect(updatedPetWeight?.date, equals(newDate));
       expect(updatedPetWeight?.weight, equals(12.0));
-      expect(updatedPetWeight?.weightUnit, equals(WeightUnits.imperial.dataValue));
+      expect(
+        updatedPetWeight?.weightUnit,
+        equals(WeightUnits.imperial.dataValue),
+      );
       expect(updatedPetWeight?.notes, equals('Updated Notes'));
     });
 

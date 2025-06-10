@@ -27,6 +27,11 @@ abstract class PetModel with _$PetModel {
     required PetStatus status,
     required DateTime statusDate,
     required SpeciesModel species,
+    required bool isMicrochipped,
+    DateTime? microchipDate,
+    String? microchipNotes,
+    String? microchipNumber,
+    String? microchipCompany,
   }) = _PetModel;
 
   factory PetModel.fromJson(Map<String, Object?> json) =>
