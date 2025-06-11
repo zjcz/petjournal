@@ -23,12 +23,12 @@ class _PetWidgetState extends ConsumerState<PetWidget> {
       _buildListViewItem("Colour", widget.pet.colour),
       _buildListViewItem(
         "Age",
-        widget.pet.age == null ? 'unknown' : widget.pet.age.toString(),
+        widget.pet.dob == null ? 'unknown' : widget.pet.getAge()!,
       ),
       if (widget.pet.dob != null)
         _buildListViewItem(
           "Date of Birth",
-          DateHelper.formatDate(widget.pet.dob!),
+          '${DateHelper.formatDate(widget.pet.dob!)}${widget.pet.dobEstimate ? ' (estimated)' : ''}',
         ),
       _buildListViewItem("Diet", widget.pet.diet ?? '', isThreeLine: true),
       _buildListViewItem(

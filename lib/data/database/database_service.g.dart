@@ -335,15 +335,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     requiredDuringInsert: false,
     defaultValue: Constant(PetSex.unknown.dataValue),
   );
-  static const VerificationMeta _ageMeta = const VerificationMeta('age');
-  @override
-  late final GeneratedColumn<int> age = GeneratedColumn<int>(
-    'age',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _dobMeta = const VerificationMeta('dob');
   @override
   late final GeneratedColumn<DateTime> dob = GeneratedColumn<DateTime>(
@@ -365,21 +356,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'CHECK ("dob_estimate" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _dobCalculatedMeta = const VerificationMeta(
-    'dobCalculated',
-  );
-  @override
-  late final GeneratedColumn<bool> dobCalculated = GeneratedColumn<bool>(
-    'dob_calculated',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("dob_calculated" IN (0, 1))',
     ),
     defaultValue: const Constant(false),
   );
@@ -528,10 +504,8 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     breed,
     colour,
     sex,
-    age,
     dob,
     dobEstimate,
-    dobCalculated,
     diet,
     notes,
     history,
@@ -601,12 +575,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         sex.isAcceptableOrUnknown(data['sex']!, _sexMeta),
       );
     }
-    if (data.containsKey('age')) {
-      context.handle(
-        _ageMeta,
-        age.isAcceptableOrUnknown(data['age']!, _ageMeta),
-      );
-    }
     if (data.containsKey('dob')) {
       context.handle(
         _dobMeta,
@@ -619,15 +587,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         dobEstimate.isAcceptableOrUnknown(
           data['dob_estimate']!,
           _dobEstimateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('dob_calculated')) {
-      context.handle(
-        _dobCalculatedMeta,
-        dobCalculated.isAcceptableOrUnknown(
-          data['dob_calculated']!,
-          _dobCalculatedMeta,
         ),
       );
     }
@@ -757,10 +716,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
             DriftSqlType.int,
             data['${effectivePrefix}sex'],
           )!,
-      age: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}age'],
-      ),
       dob: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}dob'],
@@ -769,11 +724,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
           attachedDatabase.typeMapping.read(
             DriftSqlType.bool,
             data['${effectivePrefix}dob_estimate'],
-          )!,
-      dobCalculated:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}dob_calculated'],
           )!,
       diet: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -842,10 +792,8 @@ class Pet extends DataClass implements Insertable<Pet> {
   final String breed;
   final String colour;
   final int sex;
-  final int? age;
   final DateTime? dob;
   final bool dobEstimate;
-  final bool dobCalculated;
   final String? diet;
   final String? notes;
   final String? history;
@@ -865,10 +813,8 @@ class Pet extends DataClass implements Insertable<Pet> {
     required this.breed,
     required this.colour,
     required this.sex,
-    this.age,
     this.dob,
     required this.dobEstimate,
-    required this.dobCalculated,
     this.diet,
     this.notes,
     this.history,
@@ -891,14 +837,10 @@ class Pet extends DataClass implements Insertable<Pet> {
     map['breed'] = Variable<String>(breed);
     map['colour'] = Variable<String>(colour);
     map['sex'] = Variable<int>(sex);
-    if (!nullToAbsent || age != null) {
-      map['age'] = Variable<int>(age);
-    }
     if (!nullToAbsent || dob != null) {
       map['dob'] = Variable<DateTime>(dob);
     }
     map['dob_estimate'] = Variable<bool>(dobEstimate);
-    map['dob_calculated'] = Variable<bool>(dobCalculated);
     if (!nullToAbsent || diet != null) {
       map['diet'] = Variable<String>(diet);
     }
@@ -940,10 +882,8 @@ class Pet extends DataClass implements Insertable<Pet> {
       breed: Value(breed),
       colour: Value(colour),
       sex: Value(sex),
-      age: age == null && nullToAbsent ? const Value.absent() : Value(age),
       dob: dob == null && nullToAbsent ? const Value.absent() : Value(dob),
       dobEstimate: Value(dobEstimate),
-      dobCalculated: Value(dobCalculated),
       diet: diet == null && nullToAbsent ? const Value.absent() : Value(diet),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
@@ -993,10 +933,8 @@ class Pet extends DataClass implements Insertable<Pet> {
       breed: serializer.fromJson<String>(json['breed']),
       colour: serializer.fromJson<String>(json['colour']),
       sex: serializer.fromJson<int>(json['sex']),
-      age: serializer.fromJson<int?>(json['age']),
       dob: serializer.fromJson<DateTime?>(json['dob']),
       dobEstimate: serializer.fromJson<bool>(json['dobEstimate']),
-      dobCalculated: serializer.fromJson<bool>(json['dobCalculated']),
       diet: serializer.fromJson<String?>(json['diet']),
       notes: serializer.fromJson<String?>(json['notes']),
       history: serializer.fromJson<String?>(json['history']),
@@ -1021,10 +959,8 @@ class Pet extends DataClass implements Insertable<Pet> {
       'breed': serializer.toJson<String>(breed),
       'colour': serializer.toJson<String>(colour),
       'sex': serializer.toJson<int>(sex),
-      'age': serializer.toJson<int?>(age),
       'dob': serializer.toJson<DateTime?>(dob),
       'dobEstimate': serializer.toJson<bool>(dobEstimate),
-      'dobCalculated': serializer.toJson<bool>(dobCalculated),
       'diet': serializer.toJson<String?>(diet),
       'notes': serializer.toJson<String?>(notes),
       'history': serializer.toJson<String?>(history),
@@ -1047,10 +983,8 @@ class Pet extends DataClass implements Insertable<Pet> {
     String? breed,
     String? colour,
     int? sex,
-    Value<int?> age = const Value.absent(),
     Value<DateTime?> dob = const Value.absent(),
     bool? dobEstimate,
-    bool? dobCalculated,
     Value<String?> diet = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     Value<String?> history = const Value.absent(),
@@ -1070,10 +1004,8 @@ class Pet extends DataClass implements Insertable<Pet> {
     breed: breed ?? this.breed,
     colour: colour ?? this.colour,
     sex: sex ?? this.sex,
-    age: age.present ? age.value : this.age,
     dob: dob.present ? dob.value : this.dob,
     dobEstimate: dobEstimate ?? this.dobEstimate,
-    dobCalculated: dobCalculated ?? this.dobCalculated,
     diet: diet.present ? diet.value : this.diet,
     notes: notes.present ? notes.value : this.notes,
     history: history.present ? history.value : this.history,
@@ -1102,14 +1034,9 @@ class Pet extends DataClass implements Insertable<Pet> {
       breed: data.breed.present ? data.breed.value : this.breed,
       colour: data.colour.present ? data.colour.value : this.colour,
       sex: data.sex.present ? data.sex.value : this.sex,
-      age: data.age.present ? data.age.value : this.age,
       dob: data.dob.present ? data.dob.value : this.dob,
       dobEstimate:
           data.dobEstimate.present ? data.dobEstimate.value : this.dobEstimate,
-      dobCalculated:
-          data.dobCalculated.present
-              ? data.dobCalculated.value
-              : this.dobCalculated,
       diet: data.diet.present ? data.diet.value : this.diet,
       notes: data.notes.present ? data.notes.value : this.notes,
       history: data.history.present ? data.history.value : this.history,
@@ -1152,10 +1079,8 @@ class Pet extends DataClass implements Insertable<Pet> {
           ..write('breed: $breed, ')
           ..write('colour: $colour, ')
           ..write('sex: $sex, ')
-          ..write('age: $age, ')
           ..write('dob: $dob, ')
           ..write('dobEstimate: $dobEstimate, ')
-          ..write('dobCalculated: $dobCalculated, ')
           ..write('diet: $diet, ')
           ..write('notes: $notes, ')
           ..write('history: $history, ')
@@ -1173,17 +1098,15 @@ class Pet extends DataClass implements Insertable<Pet> {
   }
 
   @override
-  int get hashCode => Object.hashAll([
+  int get hashCode => Object.hash(
     petId,
     name,
     speciesId,
     breed,
     colour,
     sex,
-    age,
     dob,
     dobEstimate,
-    dobCalculated,
     diet,
     notes,
     history,
@@ -1196,7 +1119,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     microchipNotes,
     microchipNumber,
     microchipCompany,
-  ]);
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1207,10 +1130,8 @@ class Pet extends DataClass implements Insertable<Pet> {
           other.breed == this.breed &&
           other.colour == this.colour &&
           other.sex == this.sex &&
-          other.age == this.age &&
           other.dob == this.dob &&
           other.dobEstimate == this.dobEstimate &&
-          other.dobCalculated == this.dobCalculated &&
           other.diet == this.diet &&
           other.notes == this.notes &&
           other.history == this.history &&
@@ -1232,10 +1153,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<String> breed;
   final Value<String> colour;
   final Value<int> sex;
-  final Value<int?> age;
   final Value<DateTime?> dob;
   final Value<bool> dobEstimate;
-  final Value<bool> dobCalculated;
   final Value<String?> diet;
   final Value<String?> notes;
   final Value<String?> history;
@@ -1255,10 +1174,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     this.breed = const Value.absent(),
     this.colour = const Value.absent(),
     this.sex = const Value.absent(),
-    this.age = const Value.absent(),
     this.dob = const Value.absent(),
     this.dobEstimate = const Value.absent(),
-    this.dobCalculated = const Value.absent(),
     this.diet = const Value.absent(),
     this.notes = const Value.absent(),
     this.history = const Value.absent(),
@@ -1279,10 +1196,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     required String breed,
     required String colour,
     this.sex = const Value.absent(),
-    this.age = const Value.absent(),
     this.dob = const Value.absent(),
     this.dobEstimate = const Value.absent(),
-    this.dobCalculated = const Value.absent(),
     this.diet = const Value.absent(),
     this.notes = const Value.absent(),
     this.history = const Value.absent(),
@@ -1306,10 +1221,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Expression<String>? breed,
     Expression<String>? colour,
     Expression<int>? sex,
-    Expression<int>? age,
     Expression<DateTime>? dob,
     Expression<bool>? dobEstimate,
-    Expression<bool>? dobCalculated,
     Expression<String>? diet,
     Expression<String>? notes,
     Expression<String>? history,
@@ -1330,10 +1243,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       if (breed != null) 'breed': breed,
       if (colour != null) 'colour': colour,
       if (sex != null) 'sex': sex,
-      if (age != null) 'age': age,
       if (dob != null) 'dob': dob,
       if (dobEstimate != null) 'dob_estimate': dobEstimate,
-      if (dobCalculated != null) 'dob_calculated': dobCalculated,
       if (diet != null) 'diet': diet,
       if (notes != null) 'notes': notes,
       if (history != null) 'history': history,
@@ -1356,10 +1267,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<String>? breed,
     Value<String>? colour,
     Value<int>? sex,
-    Value<int?>? age,
     Value<DateTime?>? dob,
     Value<bool>? dobEstimate,
-    Value<bool>? dobCalculated,
     Value<String?>? diet,
     Value<String?>? notes,
     Value<String?>? history,
@@ -1380,10 +1289,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       breed: breed ?? this.breed,
       colour: colour ?? this.colour,
       sex: sex ?? this.sex,
-      age: age ?? this.age,
       dob: dob ?? this.dob,
       dobEstimate: dobEstimate ?? this.dobEstimate,
-      dobCalculated: dobCalculated ?? this.dobCalculated,
       diet: diet ?? this.diet,
       notes: notes ?? this.notes,
       history: history ?? this.history,
@@ -1420,17 +1327,11 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     if (sex.present) {
       map['sex'] = Variable<int>(sex.value);
     }
-    if (age.present) {
-      map['age'] = Variable<int>(age.value);
-    }
     if (dob.present) {
       map['dob'] = Variable<DateTime>(dob.value);
     }
     if (dobEstimate.present) {
       map['dob_estimate'] = Variable<bool>(dobEstimate.value);
-    }
-    if (dobCalculated.present) {
-      map['dob_calculated'] = Variable<bool>(dobCalculated.value);
     }
     if (diet.present) {
       map['diet'] = Variable<String>(diet.value);
@@ -1480,10 +1381,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
           ..write('breed: $breed, ')
           ..write('colour: $colour, ')
           ..write('sex: $sex, ')
-          ..write('age: $age, ')
           ..write('dob: $dob, ')
           ..write('dobEstimate: $dobEstimate, ')
-          ..write('dobCalculated: $dobCalculated, ')
           ..write('diet: $diet, ')
           ..write('notes: $notes, ')
           ..write('history: $history, ')
@@ -4634,10 +4533,8 @@ typedef $$PetsTableCreateCompanionBuilder =
       required String breed,
       required String colour,
       Value<int> sex,
-      Value<int?> age,
       Value<DateTime?> dob,
       Value<bool> dobEstimate,
-      Value<bool> dobCalculated,
       Value<String?> diet,
       Value<String?> notes,
       Value<String?> history,
@@ -4659,10 +4556,8 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<String> breed,
       Value<String> colour,
       Value<int> sex,
-      Value<int?> age,
       Value<DateTime?> dob,
       Value<bool> dobEstimate,
-      Value<bool> dobCalculated,
       Value<String?> diet,
       Value<String?> notes,
       Value<String?> history,
@@ -4817,11 +4712,6 @@ class $$PetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get age => $composableBuilder(
-    column: $table.age,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<DateTime> get dob => $composableBuilder(
     column: $table.dob,
     builder: (column) => ColumnFilters(column),
@@ -4829,11 +4719,6 @@ class $$PetsTableFilterComposer
 
   ColumnFilters<bool> get dobEstimate => $composableBuilder(
     column: $table.dobEstimate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get dobCalculated => $composableBuilder(
-    column: $table.dobCalculated,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5055,11 +4940,6 @@ class $$PetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get age => $composableBuilder(
-    column: $table.age,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get dob => $composableBuilder(
     column: $table.dob,
     builder: (column) => ColumnOrderings(column),
@@ -5067,11 +4947,6 @@ class $$PetsTableOrderingComposer
 
   ColumnOrderings<bool> get dobEstimate => $composableBuilder(
     column: $table.dobEstimate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get dobCalculated => $composableBuilder(
-    column: $table.dobCalculated,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5183,19 +5058,11 @@ class $$PetsTableAnnotationComposer
   GeneratedColumn<int> get sex =>
       $composableBuilder(column: $table.sex, builder: (column) => column);
 
-  GeneratedColumn<int> get age =>
-      $composableBuilder(column: $table.age, builder: (column) => column);
-
   GeneratedColumn<DateTime> get dob =>
       $composableBuilder(column: $table.dob, builder: (column) => column);
 
   GeneratedColumn<bool> get dobEstimate => $composableBuilder(
     column: $table.dobEstimate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get dobCalculated => $composableBuilder(
-    column: $table.dobCalculated,
     builder: (column) => column,
   );
 
@@ -5416,10 +5283,8 @@ class $$PetsTableTableManager
                 Value<String> breed = const Value.absent(),
                 Value<String> colour = const Value.absent(),
                 Value<int> sex = const Value.absent(),
-                Value<int?> age = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
                 Value<bool> dobEstimate = const Value.absent(),
-                Value<bool> dobCalculated = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> history = const Value.absent(),
@@ -5439,10 +5304,8 @@ class $$PetsTableTableManager
                 breed: breed,
                 colour: colour,
                 sex: sex,
-                age: age,
                 dob: dob,
                 dobEstimate: dobEstimate,
-                dobCalculated: dobCalculated,
                 diet: diet,
                 notes: notes,
                 history: history,
@@ -5464,10 +5327,8 @@ class $$PetsTableTableManager
                 required String breed,
                 required String colour,
                 Value<int> sex = const Value.absent(),
-                Value<int?> age = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
                 Value<bool> dobEstimate = const Value.absent(),
-                Value<bool> dobCalculated = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String?> history = const Value.absent(),
@@ -5487,10 +5348,8 @@ class $$PetsTableTableManager
                 breed: breed,
                 colour: colour,
                 sex: sex,
-                age: age,
                 dob: dob,
                 dobEstimate: dobEstimate,
-                dobCalculated: dobCalculated,
                 diet: diet,
                 notes: notes,
                 history: history,

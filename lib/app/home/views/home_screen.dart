@@ -87,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       pet.species.name,
       pet.breed,
       pet.colour,
-      if (pet.age != null) '${pet.age} years',
+      ?pet.getAge(longFormat: false),
     ];
 
     return data.join(" | ");

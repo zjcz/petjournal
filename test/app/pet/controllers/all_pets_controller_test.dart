@@ -73,10 +73,8 @@ void main() {
             breed: 'Labrador',
             colour: 'Black',
             sex: PetSex.male.dataValue,
-            age: 3,
             dob: null,
             dobEstimate: false,
-            dobCalculated: false,
             diet: 'Regular',
             notes: 'Good boy',
             history: 'Adopted',
@@ -92,10 +90,8 @@ void main() {
             breed: 'Persian',
             colour: 'White',
             sex: PetSex.female.dataValue,
-            age: 2,
             dob: null,
             dobEstimate: false,
-            dobCalculated: false,
             diet: 'Special',
             notes: 'Sweet girl',
             history: 'Rescued',
@@ -129,7 +125,6 @@ void main() {
         expect(pets[0].breed, 'Labrador');
         expect(pets[0].colour, 'Black');
         expect(pets[0].petSex, PetSex.male);
-        expect(pets[0].age, 3);
         expect(pets[0].dob, isNull);
         expect(pets[0].diet, 'Regular');
         expect(pets[0].notes, 'Good boy');
@@ -144,7 +139,6 @@ void main() {
         expect(pets[1].breed, 'Persian');
         expect(pets[1].colour, 'White');
         expect(pets[1].petSex, PetSex.female);
-        expect(pets[1].age, 2);
         expect(pets[1].dob, isNull);
         expect(pets[1].diet, 'Special');
         expect(pets[1].notes, 'Sweet girl');
@@ -196,10 +190,8 @@ void main() {
             breed: 'Labrador',
             colour: 'Black',
             sex: PetSex.male.dataValue,
-            age: 3,
             dob: null,
             dobEstimate: false,
-            dobCalculated: false,
             diet: 'Regular',
             notes: 'Good boy',
             history: 'Adopted',
@@ -218,10 +210,8 @@ void main() {
               breed: 'Persian',
               colour: 'White',
               sex: PetSex.female.dataValue,
-              age: 2,
               dob: null,
               dobEstimate: false,
-              dobCalculated: false,
               diet: 'Special',
               notes: 'Sweet girl',
               history: 'Rescued',

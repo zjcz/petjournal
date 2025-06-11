@@ -19,11 +19,8 @@ class Pets extends Table {
   TextColumn get colour => text().withLength(max: 100)();
   IntColumn get sex =>
       integer().withDefault(Constant(PetSex.unknown.dataValue))();
-  IntColumn get age => integer().nullable()();
   DateTimeColumn get dob => dateTime().nullable()();
   BoolColumn get dobEstimate => boolean().withDefault(const Constant(false))();
-  BoolColumn get dobCalculated =>
-      boolean().withDefault(const Constant(false))();
   TextColumn get diet => text().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get history => text().nullable()();

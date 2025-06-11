@@ -74,10 +74,8 @@ void main() {
           breed: 'Labrador',
           colour: 'Black',
           sex: PetSex.male.dataValue,
-          age: 3,
           dob: null,
           dobEstimate: false,
-          dobCalculated: false,
           diet: 'Regular',
           notes: 'Good boy',
           history: 'Adopted',
@@ -110,7 +108,6 @@ void main() {
         expect(pet.breed, 'Labrador');
         expect(pet.colour, 'Black');
         expect(pet.petSex, PetSex.male);
-        expect(pet.age, 3);
         expect(pet.dob, isNull);
         expect(pet.diet, 'Regular');
         expect(pet.notes, 'Good boy');
@@ -162,10 +159,8 @@ void main() {
             breed: 'Labrador',
             colour: 'Black',
             sex: PetSex.male.dataValue,
-            age: 3,
             dob: null,
             dobEstimate: false,
-            dobCalculated: false,
             diet: 'Regular',
             notes: 'Good boy',
             history: 'Adopted',
@@ -182,10 +177,8 @@ void main() {
             breed: 'Persian',
             colour: 'White',
             sex: PetSex.female.dataValue,
-            age: 2,
             dob: null,
             dobEstimate: false,
-            dobCalculated: false,
             diet: 'Special',
             notes: 'Sweet girl',
             history: 'Rescued',

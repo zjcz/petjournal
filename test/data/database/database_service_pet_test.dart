@@ -26,13 +26,11 @@ void main() {
       const testBreed = 'German Shepherd';
       const testColour = 'Black and Tan';
       const testSex = PetSex.male;
-      const testAge = 3;
       const testDiet = 'Test food';
       const testNotes = 'Test notes';
       const testHistory = 'Test history';
       final testDob = DateTime(2020, 1, 1);
       const dobEstimate = false;
-      const dobCalc = false;
       const testIsNeutered = true;
       final testNeuterDate = DateTime(2021, 1, 1);
       final testIsMicrochipped = true;
@@ -47,10 +45,8 @@ void main() {
         testBreed,
         testColour,
         testSex,
-        testAge,
         testDob,
         dobEstimate,
-        dobCalc,
         testDiet,
         testNotes,
         testHistory,
@@ -69,10 +65,8 @@ void main() {
       expect(pet?.breed, equals(testBreed));
       expect(pet?.colour, equals(testColour));
       expect(pet?.sex, equals(testSex.dataValue));
-      expect(pet?.age, equals(testAge));
       expect(pet?.dob, equals(testDob));
       expect(pet?.dobEstimate, equals(dobEstimate));
-      expect(pet?.dobCalculated, equals(dobCalc));
       expect(pet?.diet, equals(testDiet));
       expect(pet?.notes, equals(testNotes));
       expect(pet?.history, equals(testHistory));
@@ -96,8 +90,6 @@ void main() {
         PetSex.male,
         null,
         null,
-        null,
-        null,
         '',
         '',
         '',
@@ -116,10 +108,8 @@ void main() {
       expect(pet?.breed, equals('Mixed'));
       expect(pet?.colour, equals('Brown'));
       expect(pet?.sex, equals(PetSex.male.dataValue));
-      expect(pet?.age, match.isNull);
       expect(pet?.dob, match.isNull);
       expect(pet?.dobEstimate, equals(false));
-      expect(pet?.dobCalculated, equals(false));
       expect(pet?.diet, isEmpty);
       expect(pet?.notes, isEmpty);
       expect(pet?.history, isEmpty);
@@ -142,8 +132,6 @@ void main() {
         'Mixed',
         'White',
         PetSex.female,
-        2,
-        null,
         null,
         null,
         '',
@@ -184,8 +172,6 @@ void main() {
         'Mixed',
         'White',
         PetSex.female,
-        2,
-        null,
         null,
         null,
         '',
@@ -207,8 +193,6 @@ void main() {
         'Mixed',
         'Black',
         PetSex.male,
-        3,
-        null,
         null,
         null,
         '',
@@ -238,8 +222,6 @@ void main() {
         'Mixed',
         'White',
         PetSex.female,
-        2,
-        null,
         null,
         null,
         '',
@@ -271,10 +253,8 @@ void main() {
         'Poodle',
         'Brown',
         PetSex.female,
-        3,
         dob,
         true,
-        false,
         'New Diet',
         'New Notes',
         'New History',
@@ -296,10 +276,8 @@ void main() {
       expect(updatedPet?.name, equals('Luna Updated'));
       expect(updatedPet?.breed, equals('Poodle'));
       expect(updatedPet?.colour, equals('Brown'));
-      expect(updatedPet?.age, equals(3));
       expect(updatedPet?.dob, equals(dob));
       expect(updatedPet?.dobEstimate, equals(true));
-      expect(updatedPet?.dobCalculated, equals(false));
       expect(updatedPet?.diet, equals('New Diet'));
       expect(updatedPet?.notes, equals('New Notes'));
       expect(updatedPet?.history, equals('New History'));
@@ -323,8 +301,6 @@ void main() {
         'Mixed',
         'Brown',
         PetSex.male,
-        null,
-        null,
         null,
         null,
         '',
@@ -352,8 +328,6 @@ void main() {
         'Mixed',
         'White',
         PetSex.female,
-        2,
-        null,
         null,
         null,
         '',
@@ -394,8 +368,6 @@ void main() {
         'Mixed',
         'White',
         PetSex.female,
-        2,
-        null,
         null,
         null,
         '',
@@ -426,8 +398,6 @@ void main() {
         'Poodle',
         'Brown',
         PetSex.female,
-        3,
-        null,
         null,
         null,
         'New Diet',

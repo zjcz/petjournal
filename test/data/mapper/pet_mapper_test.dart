@@ -17,10 +17,8 @@ void main() {
         breed: 'German Shepherd',
         colour: 'Black and Tan',
         sex: PetSex.male.dataValue,
-        age: 3,
         dob: testDate,
         dobEstimate: true,
-        dobCalculated: false,
         diet: 'Premium Dog Food',
         notes: 'Friendly dog',
         history: 'Rescued',
@@ -45,10 +43,8 @@ void main() {
       expect(model.breed, equals('German Shepherd'));
       expect(model.colour, equals('Black and Tan'));
       expect(model.petSex, equals(PetSex.male));
-      expect(model.age, equals(3));
       expect(model.dob, equals(testDate));
       expect(model.dobEstimate, equals(true));
-      expect(model.dobCalculated, equals(false));
       expect(model.diet, equals('Premium Dog Food'));
       expect(model.notes, equals('Friendly dog'));
       expect(model.history, equals('Rescued'));
@@ -72,10 +68,8 @@ void main() {
         breed: 'Mixed',
         colour: 'Brown',
         sex: PetSex.male.dataValue,
-        age: null,
         dob: null,
         dobEstimate: false,
-        dobCalculated: false,
         diet: '',
         notes: '',
         history: '',
@@ -94,10 +88,8 @@ void main() {
       final model = PetMapper.mapToModel(pet);
 
       // Assert
-      expect(model.age, match.isNull);
       expect(model.dob, match.isNull);
       expect(model.dobEstimate, equals(false));
-      expect(model.dobCalculated, equals(false));
       expect(model.diet, isEmpty);
       expect(model.notes, isEmpty);
       expect(model.history, isEmpty);
@@ -120,10 +112,8 @@ void main() {
           breed: 'German Shepherd',
           colour: 'Black',
           sex: PetSex.male.dataValue,
-          age: 3,
           dob: null,
           dobEstimate: false,
-          dobCalculated: false,
           diet: '',
           notes: '',
           history: '',
@@ -144,10 +134,8 @@ void main() {
           breed: 'Labrador',
           colour: 'White',
           sex: PetSex.female.dataValue,
-          age: 2,
           dob: null,
           dobEstimate: false,
-          dobCalculated: false,
           diet: '',
           notes: '',
           history: '',
