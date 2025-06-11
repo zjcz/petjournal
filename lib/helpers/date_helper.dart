@@ -23,7 +23,12 @@ class DateHelper {
   }
 
   // Format the difference between 2 dates.  If the difference is 1 year or over, return "X Years", otherwise return "X Months", or "X Days"
-  static String formatDifference(DateTime startDate, DateTime endDate) {
+  static String formatDifference(
+    DateTime startDate, {
+    DateTime? endDate,
+    bool showMonthsWithYears = false,
+  }) {
+    endDate ??= DateTime.now();
     Duration difference = endDate.difference(startDate);
 
     if (difference.isNegative) {
@@ -34,12 +39,19 @@ class DateHelper {
     int months = difference.inDays ~/ 30;
     int days = difference.inDays;
 
+    String ret = '';
     if (years > 0) {
-      return '$years Year${years == 1 ? '' : 's'}';
+      ret = '$years Year${years == 1 ? '' : 's'}';
+      if (showMonthsWithYears) {
+        int remainingMonths = months - (years * 12);
+        ret += ', $remainingMonths Month${remainingMonths == 1 ? '' : 's'}';
+      }
     } else if (months > 0) {
-      return '$months Month${months == 1 ? '' : 's'}';
+      ret = '$months Month${months == 1 ? '' : 's'}';
     } else {
-      return '$days Day${days == 1 ? '' : 's'}';
+      ret = '$days Day${days == 1 ? '' : 's'}';
     }
+
+    return ret;
   }
 }
