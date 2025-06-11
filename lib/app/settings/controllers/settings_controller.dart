@@ -9,8 +9,8 @@ part 'settings_controller.g.dart';
 @riverpod
 class SettingsController extends _$SettingsController {
   late final DatabaseService _databaseService =
-  // ignore: avoid_manual_providers_as_generated_provider_dependency
-  ref.read(DatabaseService.provider);
+      // ignore: avoid_manual_providers_as_generated_provider_dependency
+      ref.read(DatabaseService.provider);
 
   @override
   Stream<SettingsModel> build() {
@@ -29,7 +29,13 @@ class SettingsController extends _$SettingsController {
       optIntoAnalyticsWarning,
       onBoardingComplete,
     );
-    return updateCount == 1;
+
+    if (updateCount == 1) {
+      ref.invalidateSelf();
+      return true;
+    }
+
+    return false;
   }
 
   Future<bool> saveUserSettings(
@@ -40,6 +46,12 @@ class SettingsController extends _$SettingsController {
       defaultWeightUnit,
       optIntoAnalyticsWarning,
     );
-    return updateCount == 1;
+
+    if (updateCount == 1) {
+      ref.invalidateSelf();
+      return true;
+    }
+
+    return false;
   }
 }
