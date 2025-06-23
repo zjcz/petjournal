@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_controller.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_meds_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_vaccinations_widget.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/constants/custom_styles.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
+
+import '../../../route_config.dart';
 
 class ViewPetScreen extends ConsumerStatefulWidget {
   final int petId;
@@ -41,6 +44,14 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(pet.name),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () async {
+                await context.push(RouteDefs.editPet, extra: pet);
+              },
+            ),
+          ],
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.info), text: 'General'),

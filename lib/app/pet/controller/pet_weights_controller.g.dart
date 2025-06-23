@@ -87,10 +87,9 @@ class PetWeightsControllerProvider
         () => PetWeightsController()..petId = petId,
         from: petWeightsControllerProvider,
         name: r'petWeightsControllerProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$petWeightsControllerHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$petWeightsControllerHash,
         dependencies: PetWeightsControllerFamily._dependencies,
         allTransitiveDependencies:
             PetWeightsControllerFamily._allTransitiveDependencies,

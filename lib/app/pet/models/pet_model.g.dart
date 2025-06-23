@@ -18,18 +18,16 @@ _PetModel _$PetModelFromJson(Map<String, dynamic> json) => _PetModel(
   notes: json['notes'] as String?,
   history: json['history'] as String?,
   isNeutered: json['isNeutered'] as bool,
-  neuterDate:
-      json['neuterDate'] == null
-          ? null
-          : DateTime.parse(json['neuterDate'] as String),
+  neuterDate: json['neuterDate'] == null
+      ? null
+      : DateTime.parse(json['neuterDate'] as String),
   status: $enumDecode(_$PetStatusEnumMap, json['status']),
   statusDate: DateTime.parse(json['statusDate'] as String),
   species: SpeciesModel.fromJson(json['species'] as Map<String, dynamic>),
   isMicrochipped: json['isMicrochipped'] as bool,
-  microchipDate:
-      json['microchipDate'] == null
-          ? null
-          : DateTime.parse(json['microchipDate'] as String),
+  microchipDate: json['microchipDate'] == null
+      ? null
+      : DateTime.parse(json['microchipDate'] as String),
   microchipNotes: json['microchipNotes'] as String?,
   microchipNumber: json['microchipNumber'] as String?,
   microchipCompany: json['microchipCompany'] as String?,

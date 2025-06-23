@@ -81,10 +81,9 @@ class PetControllerProvider
         () => PetController()..petId = petId,
         from: petControllerProvider,
         name: r'petControllerProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$petControllerHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$petControllerHash,
         dependencies: PetControllerFamily._dependencies,
         allTransitiveDependencies:
             PetControllerFamily._allTransitiveDependencies,

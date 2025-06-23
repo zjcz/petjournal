@@ -10,19 +10,19 @@ String _$speciesControllerHash() => r'1a9baa36b55147981bbf84b5e82772a91fc3c3fb';
 
 /// See also [SpeciesController].
 @ProviderFor(SpeciesController)
-final speciesControllerProvider = AutoDisposeStreamNotifierProvider<
-  SpeciesController,
-  List<SpeciesModel>
->.internal(
-  SpeciesController.new,
-  name: r'speciesControllerProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
+final speciesControllerProvider =
+    AutoDisposeStreamNotifierProvider<
+      SpeciesController,
+      List<SpeciesModel>
+    >.internal(
+      SpeciesController.new,
+      name: r'speciesControllerProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$speciesControllerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$SpeciesController = AutoDisposeStreamNotifier<List<SpeciesModel>>;
 // ignore_for_file: type=lint

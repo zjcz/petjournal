@@ -6,8 +6,7 @@ import 'package:petjournal/data/database/database_service.dart';
 part 'pet_controller.g.dart';
 
 @riverpod
-class PetController
-    extends _$PetController {
+class PetController extends _$PetController {
   late final DatabaseService _databaseService =
       // ignore: avoid_manual_providers_as_generated_provider_dependency
       ref.read(DatabaseService.provider);

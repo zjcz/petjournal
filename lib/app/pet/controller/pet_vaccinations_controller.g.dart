@@ -87,10 +87,9 @@ class PetVaccinationControllerProvider
         () => PetVaccinationController()..petId = petId,
         from: petVaccinationControllerProvider,
         name: r'petVaccinationControllerProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$petVaccinationControllerHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$petVaccinationControllerHash,
         dependencies: PetVaccinationControllerFamily._dependencies,
         allTransitiveDependencies:
             PetVaccinationControllerFamily._allTransitiveDependencies,
