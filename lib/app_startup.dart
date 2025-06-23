@@ -44,7 +44,17 @@ class AppStartupLoadingWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: const Center(
-        child: CircularProgressIndicator(),
+        child: Column(
+          spacing: 20,
+          children: [
+            Text(
+              'Loading pet data',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            CircularProgressIndicator(),
+            Text('Please wait a moment...'),
+          ],
+        ),
       ),
     );
   }
@@ -52,8 +62,11 @@ class AppStartupLoadingWidget extends StatelessWidget {
 
 /// Widget to show if initialization fails
 class AppStartupErrorWidget extends StatelessWidget {
-  const AppStartupErrorWidget(
-      {super.key, required this.message, required this.onRetry});
+  const AppStartupErrorWidget({
+    super.key,
+    required this.message,
+    required this.onRetry,
+  });
   final String message;
   final VoidCallback onRetry;
 
@@ -67,10 +80,7 @@ class AppStartupErrorWidget extends StatelessWidget {
           spacing: 20,
           children: [
             Text(message, style: Theme.of(context).textTheme.headlineSmall),
-            ElevatedButton(
-              onPressed: onRetry,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
           ],
         ),
       ),

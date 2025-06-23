@@ -93,21 +93,18 @@ class $SpeciesTypesTable extends SpeciesTypes
   SpeciesType map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SpeciesType(
-      speciesId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}species_id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      userAdded:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}user_added'],
-          )!,
+      speciesId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}species_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      userAdded: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}user_added'],
+      )!,
     );
   }
 
@@ -686,45 +683,38 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
   Pet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Pet(
-      petId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      speciesId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}species_id'],
-          )!,
-      breed:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}breed'],
-          )!,
-      colour:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}colour'],
-          )!,
-      sex:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}sex'],
-          )!,
+      petId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      speciesId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}species_id'],
+      )!,
+      breed: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}breed'],
+      )!,
+      colour: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}colour'],
+      )!,
+      sex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sex'],
+      )!,
       dob: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}dob'],
       ),
-      dobEstimate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}dob_estimate'],
-          )!,
+      dobEstimate: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}dob_estimate'],
+      )!,
       diet: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}diet'],
@@ -737,25 +727,22 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.string,
         data['${effectivePrefix}history'],
       ),
-      isNeutered:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}is_neutered'],
-          )!,
+      isNeutered: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_neutered'],
+      )!,
       neuterDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}neuter_date'],
       ),
-      status:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}status'],
-          )!,
-      statusDate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}status_date'],
-          )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}status'],
+      )!,
+      statusDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}status_date'],
+      )!,
       isMicrochipped: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_microchipped'],
@@ -885,39 +872,33 @@ class Pet extends DataClass implements Insertable<Pet> {
       dob: dob == null && nullToAbsent ? const Value.absent() : Value(dob),
       dobEstimate: Value(dobEstimate),
       diet: diet == null && nullToAbsent ? const Value.absent() : Value(diet),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      history:
-          history == null && nullToAbsent
-              ? const Value.absent()
-              : Value(history),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      history: history == null && nullToAbsent
+          ? const Value.absent()
+          : Value(history),
       isNeutered: Value(isNeutered),
-      neuterDate:
-          neuterDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(neuterDate),
+      neuterDate: neuterDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(neuterDate),
       status: Value(status),
       statusDate: Value(statusDate),
-      isMicrochipped:
-          isMicrochipped == null && nullToAbsent
-              ? const Value.absent()
-              : Value(isMicrochipped),
-      microchipDate:
-          microchipDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipDate),
-      microchipNotes:
-          microchipNotes == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipNotes),
-      microchipNumber:
-          microchipNumber == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipNumber),
-      microchipCompany:
-          microchipCompany == null && nullToAbsent
-              ? const Value.absent()
-              : Value(microchipCompany),
+      isMicrochipped: isMicrochipped == null && nullToAbsent
+          ? const Value.absent()
+          : Value(isMicrochipped),
+      microchipDate: microchipDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(microchipDate),
+      microchipNotes: microchipNotes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(microchipNotes),
+      microchipNumber: microchipNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(microchipNumber),
+      microchipCompany: microchipCompany == null && nullToAbsent
+          ? const Value.absent()
+          : Value(microchipCompany),
     );
   }
 
@@ -1013,18 +994,21 @@ class Pet extends DataClass implements Insertable<Pet> {
     neuterDate: neuterDate.present ? neuterDate.value : this.neuterDate,
     status: status ?? this.status,
     statusDate: statusDate ?? this.statusDate,
-    isMicrochipped:
-        isMicrochipped.present ? isMicrochipped.value : this.isMicrochipped,
-    microchipDate:
-        microchipDate.present ? microchipDate.value : this.microchipDate,
-    microchipNotes:
-        microchipNotes.present ? microchipNotes.value : this.microchipNotes,
-    microchipNumber:
-        microchipNumber.present ? microchipNumber.value : this.microchipNumber,
-    microchipCompany:
-        microchipCompany.present
-            ? microchipCompany.value
-            : this.microchipCompany,
+    isMicrochipped: isMicrochipped.present
+        ? isMicrochipped.value
+        : this.isMicrochipped,
+    microchipDate: microchipDate.present
+        ? microchipDate.value
+        : this.microchipDate,
+    microchipNotes: microchipNotes.present
+        ? microchipNotes.value
+        : this.microchipNotes,
+    microchipNumber: microchipNumber.present
+        ? microchipNumber.value
+        : this.microchipNumber,
+    microchipCompany: microchipCompany.present
+        ? microchipCompany.value
+        : this.microchipCompany,
   );
   Pet copyWithCompanion(PetsCompanion data) {
     return Pet(
@@ -1035,38 +1019,37 @@ class Pet extends DataClass implements Insertable<Pet> {
       colour: data.colour.present ? data.colour.value : this.colour,
       sex: data.sex.present ? data.sex.value : this.sex,
       dob: data.dob.present ? data.dob.value : this.dob,
-      dobEstimate:
-          data.dobEstimate.present ? data.dobEstimate.value : this.dobEstimate,
+      dobEstimate: data.dobEstimate.present
+          ? data.dobEstimate.value
+          : this.dobEstimate,
       diet: data.diet.present ? data.diet.value : this.diet,
       notes: data.notes.present ? data.notes.value : this.notes,
       history: data.history.present ? data.history.value : this.history,
-      isNeutered:
-          data.isNeutered.present ? data.isNeutered.value : this.isNeutered,
-      neuterDate:
-          data.neuterDate.present ? data.neuterDate.value : this.neuterDate,
+      isNeutered: data.isNeutered.present
+          ? data.isNeutered.value
+          : this.isNeutered,
+      neuterDate: data.neuterDate.present
+          ? data.neuterDate.value
+          : this.neuterDate,
       status: data.status.present ? data.status.value : this.status,
-      statusDate:
-          data.statusDate.present ? data.statusDate.value : this.statusDate,
-      isMicrochipped:
-          data.isMicrochipped.present
-              ? data.isMicrochipped.value
-              : this.isMicrochipped,
-      microchipDate:
-          data.microchipDate.present
-              ? data.microchipDate.value
-              : this.microchipDate,
-      microchipNotes:
-          data.microchipNotes.present
-              ? data.microchipNotes.value
-              : this.microchipNotes,
-      microchipNumber:
-          data.microchipNumber.present
-              ? data.microchipNumber.value
-              : this.microchipNumber,
-      microchipCompany:
-          data.microchipCompany.present
-              ? data.microchipCompany.value
-              : this.microchipCompany,
+      statusDate: data.statusDate.present
+          ? data.statusDate.value
+          : this.statusDate,
+      isMicrochipped: data.isMicrochipped.present
+          ? data.isMicrochipped.value
+          : this.isMicrochipped,
+      microchipDate: data.microchipDate.present
+          ? data.microchipDate.value
+          : this.microchipDate,
+      microchipNotes: data.microchipNotes.present
+          ? data.microchipNotes.value
+          : this.microchipNotes,
+      microchipNumber: data.microchipNumber.present
+          ? data.microchipNumber.value
+          : this.microchipNumber,
+      microchipCompany: data.microchipCompany.present
+          ? data.microchipCompany.value
+          : this.microchipCompany,
     );
   }
 
@@ -1563,31 +1546,26 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
   PetMed map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PetMed(
-      petMedId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_med_id'],
-          )!,
-      pet:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      dose:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}dose'],
-          )!,
-      startDate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}start_date'],
-          )!,
+      petMedId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet_med_id'],
+      )!,
+      pet: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      dose: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dose'],
+      )!,
+      startDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_date'],
+      )!,
       endDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}end_date'],
@@ -1646,12 +1624,12 @@ class PetMed extends DataClass implements Insertable<PetMed> {
       name: Value(name),
       dose: Value(dose),
       startDate: Value(startDate),
-      endDate:
-          endDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(endDate),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
     );
   }
 
@@ -2102,31 +2080,26 @@ class $PetVaccinationsTable extends PetVaccinations
   PetVaccination map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PetVaccination(
-      petVaccinationId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_vaccination_id'],
-          )!,
-      pet:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      administeredDate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}administered_date'],
-          )!,
-      expiryDate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}expiry_date'],
-          )!,
+      petVaccinationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet_vaccination_id'],
+      )!,
+      pet: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      administeredDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}administered_date'],
+      )!,
+      expiryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expiry_date'],
+      )!,
       reminderDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}reminder_date'],
@@ -2135,21 +2108,18 @@ class $PetVaccinationsTable extends PetVaccinations
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
-      vaccineBatchNumber:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}vaccine_batch_number'],
-          )!,
-      vaccineManufacturer:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}vaccine_manufacturer'],
-          )!,
-      administeredBy:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}administered_by'],
-          )!,
+      vaccineBatchNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vaccine_batch_number'],
+      )!,
+      vaccineManufacturer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vaccine_manufacturer'],
+      )!,
+      administeredBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}administered_by'],
+      )!,
     );
   }
 
@@ -2209,12 +2179,12 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
       name: Value(name),
       administeredDate: Value(administeredDate),
       expiryDate: Value(expiryDate),
-      reminderDate:
-          reminderDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(reminderDate),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      reminderDate: reminderDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reminderDate),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
       vaccineBatchNumber: Value(vaccineBatchNumber),
       vaccineManufacturer: Value(vaccineManufacturer),
       administeredBy: Value(administeredBy),
@@ -2285,35 +2255,30 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
   );
   PetVaccination copyWithCompanion(PetVaccinationsCompanion data) {
     return PetVaccination(
-      petVaccinationId:
-          data.petVaccinationId.present
-              ? data.petVaccinationId.value
-              : this.petVaccinationId,
+      petVaccinationId: data.petVaccinationId.present
+          ? data.petVaccinationId.value
+          : this.petVaccinationId,
       pet: data.pet.present ? data.pet.value : this.pet,
       name: data.name.present ? data.name.value : this.name,
-      administeredDate:
-          data.administeredDate.present
-              ? data.administeredDate.value
-              : this.administeredDate,
-      expiryDate:
-          data.expiryDate.present ? data.expiryDate.value : this.expiryDate,
-      reminderDate:
-          data.reminderDate.present
-              ? data.reminderDate.value
-              : this.reminderDate,
+      administeredDate: data.administeredDate.present
+          ? data.administeredDate.value
+          : this.administeredDate,
+      expiryDate: data.expiryDate.present
+          ? data.expiryDate.value
+          : this.expiryDate,
+      reminderDate: data.reminderDate.present
+          ? data.reminderDate.value
+          : this.reminderDate,
       notes: data.notes.present ? data.notes.value : this.notes,
-      vaccineBatchNumber:
-          data.vaccineBatchNumber.present
-              ? data.vaccineBatchNumber.value
-              : this.vaccineBatchNumber,
-      vaccineManufacturer:
-          data.vaccineManufacturer.present
-              ? data.vaccineManufacturer.value
-              : this.vaccineManufacturer,
-      administeredBy:
-          data.administeredBy.present
-              ? data.administeredBy.value
-              : this.administeredBy,
+      vaccineBatchNumber: data.vaccineBatchNumber.present
+          ? data.vaccineBatchNumber.value
+          : this.vaccineBatchNumber,
+      vaccineManufacturer: data.vaccineManufacturer.present
+          ? data.vaccineManufacturer.value
+          : this.vaccineManufacturer,
+      administeredBy: data.administeredBy.present
+          ? data.administeredBy.value
+          : this.administeredBy,
     );
   }
 
@@ -2659,31 +2624,26 @@ class $PetWeightsTable extends PetWeights
   PetWeight map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PetWeight(
-      petWeightId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_weight_id'],
-          )!,
-      pet:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet'],
-          )!,
-      date:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}date'],
-          )!,
-      weight:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.double,
-            data['${effectivePrefix}weight'],
-          )!,
-      weightUnit:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}weight_unit'],
-          )!,
+      petWeightId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet_weight_id'],
+      )!,
+      pet: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      weight: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}weight'],
+      )!,
+      weightUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weight_unit'],
+      )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -2733,8 +2693,9 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       date: Value(date),
       weight: Value(weight),
       weightUnit: Value(weightUnit),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
     );
   }
 
@@ -2782,13 +2743,15 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
   );
   PetWeight copyWithCompanion(PetWeightsCompanion data) {
     return PetWeight(
-      petWeightId:
-          data.petWeightId.present ? data.petWeightId.value : this.petWeightId,
+      petWeightId: data.petWeightId.present
+          ? data.petWeightId.value
+          : this.petWeightId,
       pet: data.pet.present ? data.pet.value : this.pet,
       date: data.date.present ? data.date.value : this.date,
       weight: data.weight.present ? data.weight.value : this.weight,
-      weightUnit:
-          data.weightUnit.present ? data.weightUnit.value : this.weightUnit,
+      weightUnit: data.weightUnit.present
+          ? data.weightUnit.value
+          : this.weightUnit,
       notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
@@ -3008,20 +2971,18 @@ class $JournalEntriesTable extends JournalEntries
   JournalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return JournalEntry(
-      journalEntryId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}journal_entry_id'],
-          )!,
+      journalEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}journal_entry_id'],
+      )!,
       entryText: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entry_text'],
       ),
-      entryDate:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}entry_date'],
-          )!,
+      entryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}entry_date'],
+      )!,
     );
   }
 
@@ -3054,10 +3015,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   JournalEntriesCompanion toCompanion(bool nullToAbsent) {
     return JournalEntriesCompanion(
       journalEntryId: Value(journalEntryId),
-      entryText:
-          entryText == null && nullToAbsent
-              ? const Value.absent()
-              : Value(entryText),
+      entryText: entryText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(entryText),
       entryDate: Value(entryDate),
     );
   }
@@ -3094,10 +3054,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   );
   JournalEntry copyWithCompanion(JournalEntriesCompanion data) {
     return JournalEntry(
-      journalEntryId:
-          data.journalEntryId.present
-              ? data.journalEntryId.value
-              : this.journalEntryId,
+      journalEntryId: data.journalEntryId.present
+          ? data.journalEntryId.value
+          : this.journalEntryId,
       entryText: data.entryText.present ? data.entryText.value : this.entryText,
       entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
     );
@@ -3291,21 +3250,18 @@ class $JournalEntryTagsTable extends JournalEntryTags
   JournalEntryTag map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return JournalEntryTag(
-      journalEntryTagId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}journal_entry_tag_id'],
-          )!,
-      journalEntryId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}journal_entry_id'],
-          )!,
-      tag:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}tag'],
-          )!,
+      journalEntryTagId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}journal_entry_tag_id'],
+      )!,
+      journalEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}journal_entry_id'],
+      )!,
+      tag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tag'],
+      )!,
     );
   }
 
@@ -3373,14 +3329,12 @@ class JournalEntryTag extends DataClass implements Insertable<JournalEntryTag> {
   );
   JournalEntryTag copyWithCompanion(JournalEntryTagsCompanion data) {
     return JournalEntryTag(
-      journalEntryTagId:
-          data.journalEntryTagId.present
-              ? data.journalEntryTagId.value
-              : this.journalEntryTagId,
-      journalEntryId:
-          data.journalEntryId.present
-              ? data.journalEntryId.value
-              : this.journalEntryId,
+      journalEntryTagId: data.journalEntryTagId.present
+          ? data.journalEntryTagId.value
+          : this.journalEntryTagId,
+      journalEntryId: data.journalEntryId.present
+          ? data.journalEntryId.value
+          : this.journalEntryId,
       tag: data.tag.present ? data.tag.value : this.tag,
     );
   }
@@ -3545,16 +3499,14 @@ class $PetJournalEntriesTable extends PetJournalEntries
   PetJournalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PetJournalEntry(
-      petId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}pet_id'],
-          )!,
-      journalEntryId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}journal_entry_id'],
-          )!,
+      petId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pet_id'],
+      )!,
+      journalEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}journal_entry_id'],
+      )!,
     );
   }
 
@@ -3610,10 +3562,9 @@ class PetJournalEntry extends DataClass implements Insertable<PetJournalEntry> {
   PetJournalEntry copyWithCompanion(PetJournalEntriesCompanion data) {
     return PetJournalEntry(
       petId: data.petId.present ? data.petId.value : this.petId,
-      journalEntryId:
-          data.journalEntryId.present
-              ? data.journalEntryId.value
-              : this.journalEntryId,
+      journalEntryId: data.journalEntryId.present
+          ? data.journalEntryId.value
+          : this.journalEntryId,
     );
   }
 
@@ -3865,26 +3816,22 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
   Setting map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Setting(
-      settingsId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}settings_id'],
-          )!,
-      acceptedTermsAndConditions:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}accepted_terms_and_conditions'],
-          )!,
-      onBoardingComplete:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}on_boarding_complete'],
-          )!,
-      optIntoAnalyticsWarning:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}opt_into_analytics_warning'],
-          )!,
+      settingsId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}settings_id'],
+      )!,
+      acceptedTermsAndConditions: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}accepted_terms_and_conditions'],
+      )!,
+      onBoardingComplete: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}on_boarding_complete'],
+      )!,
+      optIntoAnalyticsWarning: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}opt_into_analytics_warning'],
+      )!,
       lastUsedVersion: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_used_version'],
@@ -3941,14 +3888,12 @@ class Setting extends DataClass implements Insertable<Setting> {
       acceptedTermsAndConditions: Value(acceptedTermsAndConditions),
       onBoardingComplete: Value(onBoardingComplete),
       optIntoAnalyticsWarning: Value(optIntoAnalyticsWarning),
-      lastUsedVersion:
-          lastUsedVersion == null && nullToAbsent
-              ? const Value.absent()
-              : Value(lastUsedVersion),
-      defaultWeightUnit:
-          defaultWeightUnit == null && nullToAbsent
-              ? const Value.absent()
-              : Value(defaultWeightUnit),
+      lastUsedVersion: lastUsedVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastUsedVersion),
+      defaultWeightUnit: defaultWeightUnit == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultWeightUnit),
     );
   }
 
@@ -4001,37 +3946,33 @@ class Setting extends DataClass implements Insertable<Setting> {
     onBoardingComplete: onBoardingComplete ?? this.onBoardingComplete,
     optIntoAnalyticsWarning:
         optIntoAnalyticsWarning ?? this.optIntoAnalyticsWarning,
-    lastUsedVersion:
-        lastUsedVersion.present ? lastUsedVersion.value : this.lastUsedVersion,
-    defaultWeightUnit:
-        defaultWeightUnit.present
-            ? defaultWeightUnit.value
-            : this.defaultWeightUnit,
+    lastUsedVersion: lastUsedVersion.present
+        ? lastUsedVersion.value
+        : this.lastUsedVersion,
+    defaultWeightUnit: defaultWeightUnit.present
+        ? defaultWeightUnit.value
+        : this.defaultWeightUnit,
   );
   Setting copyWithCompanion(SettingsCompanion data) {
     return Setting(
-      settingsId:
-          data.settingsId.present ? data.settingsId.value : this.settingsId,
-      acceptedTermsAndConditions:
-          data.acceptedTermsAndConditions.present
-              ? data.acceptedTermsAndConditions.value
-              : this.acceptedTermsAndConditions,
-      onBoardingComplete:
-          data.onBoardingComplete.present
-              ? data.onBoardingComplete.value
-              : this.onBoardingComplete,
-      optIntoAnalyticsWarning:
-          data.optIntoAnalyticsWarning.present
-              ? data.optIntoAnalyticsWarning.value
-              : this.optIntoAnalyticsWarning,
-      lastUsedVersion:
-          data.lastUsedVersion.present
-              ? data.lastUsedVersion.value
-              : this.lastUsedVersion,
-      defaultWeightUnit:
-          data.defaultWeightUnit.present
-              ? data.defaultWeightUnit.value
-              : this.defaultWeightUnit,
+      settingsId: data.settingsId.present
+          ? data.settingsId.value
+          : this.settingsId,
+      acceptedTermsAndConditions: data.acceptedTermsAndConditions.present
+          ? data.acceptedTermsAndConditions.value
+          : this.acceptedTermsAndConditions,
+      onBoardingComplete: data.onBoardingComplete.present
+          ? data.onBoardingComplete.value
+          : this.onBoardingComplete,
+      optIntoAnalyticsWarning: data.optIntoAnalyticsWarning.present
+          ? data.optIntoAnalyticsWarning.value
+          : this.optIntoAnalyticsWarning,
+      lastUsedVersion: data.lastUsedVersion.present
+          ? data.lastUsedVersion.value
+          : this.lastUsedVersion,
+      defaultWeightUnit: data.defaultWeightUnit.present
+          ? data.defaultWeightUnit.value
+          : this.defaultWeightUnit,
     );
   }
 
@@ -4437,13 +4378,12 @@ class $$SpeciesTypesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$SpeciesTypesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$SpeciesTypesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () =>
-                  $$SpeciesTypesTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$SpeciesTypesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SpeciesTypesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SpeciesTypesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> speciesId = const Value.absent(),
@@ -4464,16 +4404,14 @@ class $$SpeciesTypesTableTableManager
                 name: name,
                 userAdded: userAdded,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$SpeciesTypesTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SpeciesTypesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({petsRefs = false}) {
             return PrefetchHooks(
               db: db,
@@ -4490,15 +4428,10 @@ class $$SpeciesTypesTableTableManager
                       currentTable: table,
                       referencedTable: $$SpeciesTypesTableReferences
                           ._petsRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
-                              $$SpeciesTypesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).petsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) => referencedItems.where(
+                      managerFromTypedResult: (p0) =>
+                          $$SpeciesTypesTableReferences(db, table, p0).petsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
                             (e) => e.speciesId == item.speciesId,
                           ),
                       typedResults: items,
@@ -5269,12 +5202,12 @@ class $$PetsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PetsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$PetsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PetsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$PetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PetsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> petId = const Value.absent(),
@@ -5363,135 +5296,135 @@ class $$PetsTableTableManager
                 microchipNumber: microchipNumber,
                 microchipCompany: microchipCompany,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
-          prefetchHooksCallback: ({
-            speciesId = false,
-            petMedsRefs = false,
-            petVaccinationsRefs = false,
-            petWeightsRefs = false,
-            petJournalEntriesRefs = false,
-          }) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (petMedsRefs) db.petMeds,
-                if (petVaccinationsRefs) db.petVaccinations,
-                if (petWeightsRefs) db.petWeights,
-                if (petJournalEntriesRefs) db.petJournalEntries,
-              ],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (speciesId) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.speciesId,
-                            referencedTable: $$PetsTableReferences
-                                ._speciesIdTable(db),
-                            referencedColumn:
-                                $$PetsTableReferences
-                                    ._speciesIdTable(db)
-                                    .speciesId,
-                          )
-                          as T;
-                }
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$PetsTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                speciesId = false,
+                petMedsRefs = false,
+                petVaccinationsRefs = false,
+                petWeightsRefs = false,
+                petJournalEntriesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (petMedsRefs) db.petMeds,
+                    if (petVaccinationsRefs) db.petVaccinations,
+                    if (petWeightsRefs) db.petWeights,
+                    if (petJournalEntriesRefs) db.petJournalEntries,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (speciesId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.speciesId,
+                                    referencedTable: $$PetsTableReferences
+                                        ._speciesIdTable(db),
+                                    referencedColumn: $$PetsTableReferences
+                                        ._speciesIdTable(db)
+                                        .speciesId,
+                                  )
+                                  as T;
+                        }
 
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (petMedsRefs)
-                    await $_getPrefetchedData<Pet, $PetsTable, PetMed>(
-                      currentTable: table,
-                      referencedTable: $$PetsTableReferences._petMedsRefsTable(
-                        db,
-                      ),
-                      managerFromTypedResult:
-                          (p0) =>
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (petMedsRefs)
+                        await $_getPrefetchedData<Pet, $PetsTable, PetMed>(
+                          currentTable: table,
+                          referencedTable: $$PetsTableReferences
+                              ._petMedsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
                               $$PetsTableReferences(db, table, p0).petMedsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) =>
-                              referencedItems.where((e) => e.pet == item.petId),
-                      typedResults: items,
-                    ),
-                  if (petVaccinationsRefs)
-                    await $_getPrefetchedData<Pet, $PetsTable, PetVaccination>(
-                      currentTable: table,
-                      referencedTable: $$PetsTableReferences
-                          ._petVaccinationsRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
-                              $$PetsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).petVaccinationsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) =>
-                              referencedItems.where((e) => e.pet == item.petId),
-                      typedResults: items,
-                    ),
-                  if (petWeightsRefs)
-                    await $_getPrefetchedData<Pet, $PetsTable, PetWeight>(
-                      currentTable: table,
-                      referencedTable: $$PetsTableReferences
-                          ._petWeightsRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
-                              $$PetsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).petWeightsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) =>
-                              referencedItems.where((e) => e.pet == item.petId),
-                      typedResults: items,
-                    ),
-                  if (petJournalEntriesRefs)
-                    await $_getPrefetchedData<Pet, $PetsTable, PetJournalEntry>(
-                      currentTable: table,
-                      referencedTable: $$PetsTableReferences
-                          ._petJournalEntriesRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
-                              $$PetsTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).petJournalEntriesRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) => referencedItems.where(
-                            (e) => e.petId == item.petId,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pet == item.petId,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (petVaccinationsRefs)
+                        await $_getPrefetchedData<
+                          Pet,
+                          $PetsTable,
+                          PetVaccination
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PetsTableReferences
+                              ._petVaccinationsRefsTable(db),
+                          managerFromTypedResult: (p0) => $$PetsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).petVaccinationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pet == item.petId,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (petWeightsRefs)
+                        await $_getPrefetchedData<Pet, $PetsTable, PetWeight>(
+                          currentTable: table,
+                          referencedTable: $$PetsTableReferences
+                              ._petWeightsRefsTable(db),
+                          managerFromTypedResult: (p0) => $$PetsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).petWeightsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pet == item.petId,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (petJournalEntriesRefs)
+                        await $_getPrefetchedData<
+                          Pet,
+                          $PetsTable,
+                          PetJournalEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PetsTableReferences
+                              ._petJournalEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) => $$PetsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).petJournalEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.petId == item.petId,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5756,12 +5689,12 @@ class $$PetMedsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PetMedsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$PetMedsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PetMedsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$PetMedsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PetMedsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PetMedsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> petMedId = const Value.absent(),
@@ -5798,51 +5731,50 @@ class $$PetMedsTableTableManager
                 endDate: endDate,
                 notes: notes,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetMedsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PetMedsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({pet = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (pet) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.pet,
-                            referencedTable: $$PetMedsTableReferences._petTable(
-                              db,
-                            ),
-                            referencedColumn:
-                                $$PetMedsTableReferences._petTable(db).petId,
-                          )
-                          as T;
-                }
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (pet) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pet,
+                                referencedTable: $$PetMedsTableReferences
+                                    ._petTable(db),
+                                referencedColumn: $$PetMedsTableReferences
+                                    ._petTable(db)
+                                    .petId,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
@@ -6177,19 +6109,12 @@ class $$PetVaccinationsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () =>
-                  $$PetVaccinationsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$PetVaccinationsTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer:
-              () => $$PetVaccinationsTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () =>
+              $$PetVaccinationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PetVaccinationsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PetVaccinationsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> petVaccinationId = const Value.absent(),
@@ -6238,52 +6163,53 @@ class $$PetVaccinationsTableTableManager
                 vaccineManufacturer: vaccineManufacturer,
                 administeredBy: administeredBy,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetVaccinationsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PetVaccinationsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({pet = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (pet) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.pet,
-                            referencedTable: $$PetVaccinationsTableReferences
-                                ._petTable(db),
-                            referencedColumn:
-                                $$PetVaccinationsTableReferences
-                                    ._petTable(db)
-                                    .petId,
-                          )
-                          as T;
-                }
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (pet) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pet,
+                                referencedTable:
+                                    $$PetVaccinationsTableReferences._petTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$PetVaccinationsTableReferences
+                                        ._petTable(db)
+                                        .petId,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
@@ -6537,12 +6463,12 @@ class $$PetWeightsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PetWeightsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$PetWeightsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PetWeightsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$PetWeightsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PetWeightsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PetWeightsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> petWeightId = const Value.absent(),
@@ -6575,50 +6501,50 @@ class $$PetWeightsTableTableManager
                 weightUnit: weightUnit,
                 notes: notes,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetWeightsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PetWeightsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({pet = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (pet) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.pet,
-                            referencedTable: $$PetWeightsTableReferences
-                                ._petTable(db),
-                            referencedColumn:
-                                $$PetWeightsTableReferences._petTable(db).petId,
-                          )
-                          as T;
-                }
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (pet) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pet,
+                                referencedTable: $$PetWeightsTableReferences
+                                    ._petTable(db),
+                                referencedColumn: $$PetWeightsTableReferences
+                                    ._petTable(db)
+                                    .petId,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
@@ -6675,14 +6601,12 @@ final class $$JournalEntriesTableReferences
       );
 
   $$JournalEntryTagsTableProcessedTableManager get journalEntryTagsRefs {
-    final manager = $$JournalEntryTagsTableTableManager(
-      $_db,
-      $_db.journalEntryTags,
-    ).filter(
-      (f) => f.journalEntryId.journalEntryId.sqlEquals(
-        $_itemColumn<int>('journal_entry_id')!,
-      ),
-    );
+    final manager =
+        $$JournalEntryTagsTableTableManager($_db, $_db.journalEntryTags).filter(
+          (f) => f.journalEntryId.journalEntryId.sqlEquals(
+            $_itemColumn<int>('journal_entry_id')!,
+          ),
+        );
 
     final cache = $_typedResult.readTableOrNull(
       _journalEntryTagsRefsTable($_db),
@@ -6703,14 +6627,15 @@ final class $$JournalEntriesTableReferences
       );
 
   $$PetJournalEntriesTableProcessedTableManager get petJournalEntriesRefs {
-    final manager = $$PetJournalEntriesTableTableManager(
-      $_db,
-      $_db.petJournalEntries,
-    ).filter(
-      (f) => f.journalEntryId.journalEntryId.sqlEquals(
-        $_itemColumn<int>('journal_entry_id')!,
-      ),
-    );
+    final manager =
+        $$PetJournalEntriesTableTableManager(
+          $_db,
+          $_db.petJournalEntries,
+        ).filter(
+          (f) => f.journalEntryId.journalEntryId.sqlEquals(
+            $_itemColumn<int>('journal_entry_id')!,
+          ),
+        );
 
     final cache = $_typedResult.readTableOrNull(
       _petJournalEntriesRefsTable($_db),
@@ -6918,16 +6843,12 @@ class $$JournalEntriesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$JournalEntriesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () =>
-                  $$JournalEntriesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$JournalEntriesTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () =>
+              $$JournalEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JournalEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JournalEntriesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> journalEntryId = const Value.absent(),
@@ -6948,77 +6869,71 @@ class $$JournalEntriesTableTableManager
                 entryText: entryText,
                 entryDate: entryDate,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$JournalEntriesTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
-          prefetchHooksCallback: ({
-            journalEntryTagsRefs = false,
-            petJournalEntriesRefs = false,
-          }) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (journalEntryTagsRefs) db.journalEntryTags,
-                if (petJournalEntriesRefs) db.petJournalEntries,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (journalEntryTagsRefs)
-                    await $_getPrefetchedData<
-                      JournalEntry,
-                      $JournalEntriesTable,
-                      JournalEntryTag
-                    >(
-                      currentTable: table,
-                      referencedTable: $$JournalEntriesTableReferences
-                          ._journalEntryTagsRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$JournalEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({journalEntryTagsRefs = false, petJournalEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (journalEntryTagsRefs) db.journalEntryTags,
+                    if (petJournalEntriesRefs) db.petJournalEntries,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (journalEntryTagsRefs)
+                        await $_getPrefetchedData<
+                          JournalEntry,
+                          $JournalEntriesTable,
+                          JournalEntryTag
+                        >(
+                          currentTable: table,
+                          referencedTable: $$JournalEntriesTableReferences
+                              ._journalEntryTagsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
                               $$JournalEntriesTableReferences(
                                 db,
                                 table,
                                 p0,
                               ).journalEntryTagsRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) => referencedItems.where(
-                            (e) => e.journalEntryId == item.journalEntryId,
-                          ),
-                      typedResults: items,
-                    ),
-                  if (petJournalEntriesRefs)
-                    await $_getPrefetchedData<
-                      JournalEntry,
-                      $JournalEntriesTable,
-                      PetJournalEntry
-                    >(
-                      currentTable: table,
-                      referencedTable: $$JournalEntriesTableReferences
-                          ._petJournalEntriesRefsTable(db),
-                      managerFromTypedResult:
-                          (p0) =>
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.journalEntryId == item.journalEntryId,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (petJournalEntriesRefs)
+                        await $_getPrefetchedData<
+                          JournalEntry,
+                          $JournalEntriesTable,
+                          PetJournalEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$JournalEntriesTableReferences
+                              ._petJournalEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
                               $$JournalEntriesTableReferences(
                                 db,
                                 table,
                                 p0,
                               ).petJournalEntriesRefs,
-                      referencedItemsForCurrentItem:
-                          (item, referencedItems) => referencedItems.where(
-                            (e) => e.journalEntryId == item.journalEntryId,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.journalEntryId == item.journalEntryId,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -7238,19 +7153,12 @@ class $$JournalEntryTagsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () =>
-                  $$JournalEntryTagsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$JournalEntryTagsTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer:
-              () => $$JournalEntryTagsTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () =>
+              $$JournalEntryTagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JournalEntryTagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JournalEntryTagsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> journalEntryTagId = const Value.absent(),
@@ -7271,52 +7179,52 @@ class $$JournalEntryTagsTableTableManager
                 journalEntryId: journalEntryId,
                 tag: tag,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$JournalEntryTagsTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$JournalEntryTagsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({journalEntryId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (journalEntryId) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.journalEntryId,
-                            referencedTable: $$JournalEntryTagsTableReferences
-                                ._journalEntryIdTable(db),
-                            referencedColumn:
-                                $$JournalEntryTagsTableReferences
-                                    ._journalEntryIdTable(db)
-                                    .journalEntryId,
-                          )
-                          as T;
-                }
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (journalEntryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.journalEntryId,
+                                referencedTable:
+                                    $$JournalEntryTagsTableReferences
+                                        ._journalEntryIdTable(db),
+                                referencedColumn:
+                                    $$JournalEntryTagsTableReferences
+                                        ._journalEntryIdTable(db)
+                                        .journalEntryId,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
@@ -7597,18 +7505,12 @@ class $$PetJournalEntriesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PetJournalEntriesTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer:
-              () => $$PetJournalEntriesTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer:
-              () => $$PetJournalEntriesTableAnnotationComposer(
+          createFilteringComposer: () =>
+              $$PetJournalEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PetJournalEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PetJournalEntriesTableAnnotationComposer(
                 $db: db,
                 $table: table,
               ),
@@ -7632,66 +7534,67 @@ class $$PetJournalEntriesTableTableManager
                 journalEntryId: journalEntryId,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          $$PetJournalEntriesTableReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PetJournalEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: ({petId = false, journalEntryId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                T extends TableManagerState<
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic,
-                  dynamic
-                >
-              >(state) {
-                if (petId) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.petId,
-                            referencedTable: $$PetJournalEntriesTableReferences
-                                ._petIdTable(db),
-                            referencedColumn:
-                                $$PetJournalEntriesTableReferences
-                                    ._petIdTable(db)
-                                    .petId,
-                          )
-                          as T;
-                }
-                if (journalEntryId) {
-                  state =
-                      state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.journalEntryId,
-                            referencedTable: $$PetJournalEntriesTableReferences
-                                ._journalEntryIdTable(db),
-                            referencedColumn:
-                                $$PetJournalEntriesTableReferences
-                                    ._journalEntryIdTable(db)
-                                    .journalEntryId,
-                          )
-                          as T;
-                }
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (petId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.petId,
+                                referencedTable:
+                                    $$PetJournalEntriesTableReferences
+                                        ._petIdTable(db),
+                                referencedColumn:
+                                    $$PetJournalEntriesTableReferences
+                                        ._petIdTable(db)
+                                        .petId,
+                              )
+                              as T;
+                    }
+                    if (journalEntryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.journalEntryId,
+                                referencedTable:
+                                    $$PetJournalEntriesTableReferences
+                                        ._journalEntryIdTable(db),
+                                referencedColumn:
+                                    $$PetJournalEntriesTableReferences
+                                        ._journalEntryIdTable(db)
+                                        .journalEntryId,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
@@ -7874,12 +7777,12 @@ class $$SettingsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$SettingsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$SettingsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$SettingsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$SettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettingsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> settingsId = const Value.absent(),
@@ -7912,16 +7815,9 @@ class $$SettingsTableTableManager
                 lastUsedVersion: lastUsedVersion,
                 defaultWeightUnit: defaultWeightUnit,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );

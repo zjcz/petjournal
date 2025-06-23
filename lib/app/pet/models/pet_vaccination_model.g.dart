@@ -13,10 +13,9 @@ _PetVaccinationModel _$PetVaccinationModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       administeredDate: DateTime.parse(json['administeredDate'] as String),
       expiryDate: DateTime.parse(json['expiryDate'] as String),
-      reminderDate:
-          json['reminderDate'] == null
-              ? null
-              : DateTime.parse(json['reminderDate'] as String),
+      reminderDate: json['reminderDate'] == null
+          ? null
+          : DateTime.parse(json['reminderDate'] as String),
       notes: json['notes'] as String?,
       vaccineBatchNumber: json['vaccineBatchNumber'] as String?,
       vaccineManufacturer: json['vaccineManufacturer'] as String?,

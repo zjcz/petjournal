@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
+import 'package:petjournal/app/pet/models/pet_model.dart';
+import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
@@ -250,6 +252,259 @@ void main() {
           await tester.pumpAndSettle();
         },
       );
+    });
+
+    group('save', () {
+      testWidgets('Should call createPet When petId is null', (tester) async {
+        final initialPet = Pet(
+          petId: 1,
+          name: 'Max',
+          speciesId: 1,
+          breed: 'Labrador',
+          colour: 'Black',
+          sex: PetSex.male.dataValue,
+          dob: null,
+          dobEstimate: false,
+          diet: 'Regular',
+          notes: 'Good boy',
+          history: 'Adopted',
+          isNeutered: true,
+          neuterDate: null,
+          status: PetStatus.active.dataValue,
+          statusDate: DateTime.now(),
+        );
+
+        final initialPetModel = PetModel(
+          petId: null,
+          name: initialPet.name,
+          species: SpeciesModel(
+            speciesId: initialPet.speciesId,
+            name: 'test',
+            userAdded: false,
+          ),
+          breed: initialPet.breed,
+          colour: initialPet.colour,
+          petSex: PetSex.fromDataValue(initialPet.sex),
+          dob: initialPet.dob,
+          dobEstimate: initialPet.dobEstimate,
+          diet: initialPet.diet,
+          notes: initialPet.notes,
+          history: initialPet.history,
+          isNeutered: initialPet.isNeutered,
+          neuterDate: initialPet.neuterDate,
+          status: PetStatus.fromDataValue(initialPet.status),
+          statusDate: initialPet.statusDate,
+          isMicrochipped: false,
+        );
+
+        when(
+          mockDatabaseService.getAllPets(),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.createPet(
+            initialPetModel.name,
+            initialPetModel.species.speciesId,
+            initialPetModel.breed,
+            initialPetModel.colour,
+            initialPetModel.petSex,
+            initialPetModel.dob,
+            initialPetModel.dobEstimate,
+            initialPetModel.diet,
+            initialPetModel.notes,
+            initialPetModel.history,
+            initialPetModel.isNeutered,
+            initialPetModel.neuterDate,
+            initialPetModel.status,
+            initialPetModel.isMicrochipped,
+            initialPetModel.microchipDate,
+            initialPetModel.microchipNumber,
+            initialPetModel.microchipCompany,
+            initialPetModel.microchipNotes,
+          ),
+        ).thenAnswer((_) => Future.value(initialPet));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(allPetsControllerProvider.notifier);
+        PetModel? savedPet = await provider.save(initialPetModel);
+
+        // ASSERT
+        expect(savedPet, isNotNull);
+        expect(savedPet!.petId, initialPet.petId);
+
+        verify(
+          mockDatabaseService.createPet(
+            initialPetModel.name,
+            initialPetModel.species.speciesId,
+            initialPetModel.breed,
+            initialPetModel.colour,
+            initialPetModel.petSex,
+            initialPetModel.dob,
+            initialPetModel.dobEstimate,
+            initialPetModel.diet,
+            initialPetModel.notes,
+            initialPetModel.history,
+            initialPetModel.isNeutered,
+            initialPetModel.neuterDate,
+            initialPetModel.status,
+            initialPetModel.isMicrochipped,
+            initialPetModel.microchipDate,
+            initialPetModel.microchipNumber,
+            initialPetModel.microchipCompany,
+            initialPetModel.microchipNotes,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+
+      testWidgets('Should call updatePet When petId is not null', (
+        tester,
+      ) async {
+        final initialPet = Pet(
+          petId: 1,
+          name: 'Max',
+          speciesId: 1,
+          breed: 'Labrador',
+          colour: 'Black',
+          sex: PetSex.male.dataValue,
+          dob: null,
+          dobEstimate: false,
+          diet: 'Regular',
+          notes: 'Good boy',
+          history: 'Adopted',
+          isNeutered: true,
+          neuterDate: null,
+          status: PetStatus.active.dataValue,
+          statusDate: DateTime.now(),
+        );
+
+        final initialPetModel = PetModel(
+          petId: initialPet.petId,
+          name: initialPet.name,
+          species: SpeciesModel(
+            speciesId: initialPet.speciesId,
+            name: 'test',
+            userAdded: false,
+          ),
+          breed: initialPet.breed,
+          colour: initialPet.colour,
+          petSex: PetSex.fromDataValue(initialPet.sex),
+          dob: initialPet.dob,
+          dobEstimate: initialPet.dobEstimate,
+          diet: initialPet.diet,
+          notes: initialPet.notes,
+          history: initialPet.history,
+          isNeutered: initialPet.isNeutered,
+          neuterDate: initialPet.neuterDate,
+          status: PetStatus.fromDataValue(initialPet.status),
+          statusDate: initialPet.statusDate,
+          isMicrochipped: false,
+        );
+
+        when(
+          mockDatabaseService.getAllPets(),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.updatePet(
+            initialPetModel.petId,
+            initialPetModel.name,
+            initialPetModel.species.speciesId,
+            initialPetModel.breed,
+            initialPetModel.colour,
+            initialPetModel.petSex,
+            initialPetModel.dob,
+            initialPetModel.dobEstimate,
+            initialPetModel.diet,
+            initialPetModel.notes,
+            initialPetModel.history,
+            initialPetModel.isNeutered,
+            initialPetModel.neuterDate,
+            initialPetModel.status,
+            initialPetModel.statusDate,
+            initialPetModel.isMicrochipped,
+            initialPetModel.microchipDate,
+            initialPetModel.microchipNumber,
+            initialPetModel.microchipCompany,
+            initialPetModel.microchipNotes,
+          ),
+        ).thenAnswer((_) => Future.value(1));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(allPetsControllerProvider.notifier);
+        PetModel? savedPet = await provider.save(initialPetModel);
+
+        // ASSERT
+        expect(savedPet, isNotNull);
+        expect(savedPet!.petId, initialPet.petId);
+
+        verify(
+          mockDatabaseService.updatePet(
+            initialPetModel.petId,
+            initialPetModel.name,
+            initialPetModel.species.speciesId,
+            initialPetModel.breed,
+            initialPetModel.colour,
+            initialPetModel.petSex,
+            initialPetModel.dob,
+            initialPetModel.dobEstimate,
+            initialPetModel.diet,
+            initialPetModel.notes,
+            initialPetModel.history,
+            initialPetModel.isNeutered,
+            initialPetModel.neuterDate,
+            initialPetModel.status,
+            initialPetModel.statusDate,
+            initialPetModel.isMicrochipped,
+            initialPetModel.microchipDate,
+            initialPetModel.microchipNumber,
+            initialPetModel.microchipCompany,
+            initialPetModel.microchipNotes,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('delete', () {
+      testWidgets('Should call deletePet When petId is null', (tester) async {
+        int petId = 1;
+        final databaseService = MockDatabaseService();
+        when(
+          databaseService.deletePet(petId),
+        ).thenAnswer((_) async => petId);
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(databaseService),
+          ],
+        );
+        final provider = container.read(allPetsControllerProvider.notifier);
+        int result = await provider.deletePet(petId);
+
+        expect(result, petId);
+        verify(databaseService.deletePet(petId)).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
     });
   });
 }

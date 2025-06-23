@@ -12,10 +12,9 @@ _PetMedModel _$PetMedModelFromJson(Map<String, dynamic> json) => _PetMedModel(
   name: json['name'] as String,
   dose: json['dose'] as String,
   startDate: DateTime.parse(json['startDate'] as String),
-  endDate:
-      json['endDate'] == null
-          ? null
-          : DateTime.parse(json['endDate'] as String),
+  endDate: json['endDate'] == null
+      ? null
+      : DateTime.parse(json['endDate'] as String),
   notes: json['notes'] as String?,
 );
 
