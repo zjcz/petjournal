@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/constants/custom_styles.dart';
 import 'package:petjournal/helpers/date_helper.dart';
+import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
 // Widget to display pet weights
@@ -92,6 +94,12 @@ class _PetWeightsWidgetState extends ConsumerState<PetWeightsWidget> {
           ),
           DataCell(Text(weight.notes ?? '')),
         ],
+        onSelectChanged: (value) async {
+          await context.push(
+            '${RouteDefs.editPetWeight}/${weight.petId}',
+            extra: weight,
+          );
+        },
       );
     });
 

@@ -9,7 +9,7 @@ part of 'pet_weight_model.dart';
 _PetWeightModel _$PetWeightModelFromJson(Map<String, dynamic> json) =>
     _PetWeightModel(
       petWeightId: (json['petWeightId'] as num?)?.toInt(),
-      petId: (json['petId'] as num?)?.toInt(),
+      petId: (json['petId'] as num).toInt(),
       date: DateTime.parse(json['date'] as String),
       weight: (json['weight'] as num).toDouble(),
       weightUnit: $enumDecode(_$WeightUnitsEnumMap, json['weightUnit']),

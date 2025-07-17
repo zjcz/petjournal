@@ -69,6 +69,12 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
             _buildPetJournalTab(pet),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await context.push('${RouteDefs.editPetWeight}/${pet.petId}');
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

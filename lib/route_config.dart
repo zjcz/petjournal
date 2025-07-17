@@ -6,7 +6,9 @@ import 'package:petjournal/app/home/views/home_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/home/views/policy_viewer_screen.dart';
 import 'package:petjournal/app/home/views/welcome_screen.dart';
+import 'package:petjournal/app/pet/models/pet_weight_model.dart';
 import 'package:petjournal/app/pet/views/edit_pet_screen.dart';
+import 'package:petjournal/app/pet/views/edit_pet_weight_screen.dart';
 import 'package:petjournal/app/pet/views/view_pet_screen.dart';
 import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/app/settings/views/settings_screen.dart';
@@ -19,6 +21,7 @@ class RouteDefs {
   static const String welcome = '/welcome';
   static const String viewPet = '/home/view_pet';
   static const String editPet = '/home/edit_pet';
+  static const String editPetWeight = '/home/edit_petWeight';
   static const String aboutScreen = '/home/about_screen';
   static const String editSettings = '/home/edit_settings';
   // static const String loading = '/';
@@ -65,13 +68,13 @@ GoRouter setupRouter(Ref ref) {
             },
           ),
           GoRoute(
-            path: '${RouteDefs.getPageName(
-              RouteDefs.viewPet,
-              parentPage: RouteDefs.home,
-            )}/:petId',
+            path:
+                '${RouteDefs.getPageName(RouteDefs.viewPet, parentPage: RouteDefs.home)}/:petId',
             name: 'viewPet',
             builder: (BuildContext context, GoRouterState state) {
-              return ViewPetScreen(petId:  int.parse(state.pathParameters['petId']!));
+              return ViewPetScreen(
+                petId: int.parse(state.pathParameters['petId']!),
+              );
             },
           ),
           GoRoute(
@@ -86,6 +89,21 @@ GoRouter setupRouter(Ref ref) {
                 p = state.extra! as PetModel;
               }
               return EditPetScreen(pet: p);
+            },
+          ),
+          GoRoute(
+            path:
+                '${RouteDefs.getPageName(RouteDefs.editPetWeight, parentPage: RouteDefs.home)}/:petId',
+            name: 'editPetWeight',
+            builder: (BuildContext context, GoRouterState state) {
+              PetWeightModel? pw;
+              if (state.extra != null) {
+                pw = state.extra! as PetWeightModel;
+              }
+              return EditPetWeightScreen(
+                petWeight: pw,
+                petId: int.parse(state.pathParameters['petId']!),
+              );
             },
           ),
           GoRoute(

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PetWeightModel implements DiagnosticableTreeMixin {
 
- int? get petWeightId; int? get petId; DateTime get date; double get weight; WeightUnits get weightUnit; String? get notes;
+ int? get petWeightId; int get petId; DateTime get date; double get weight; WeightUnits get weightUnit; String? get notes;
 /// Create a copy of PetWeightModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -55,7 +55,7 @@ abstract mixin class $PetWeightModelCopyWith<$Res>  {
   factory $PetWeightModelCopyWith(PetWeightModel value, $Res Function(PetWeightModel) _then) = _$PetWeightModelCopyWithImpl;
 @useResult
 $Res call({
- int? petWeightId, int? petId, DateTime date, double weight, WeightUnits weightUnit, String? notes
+ int? petWeightId, int petId, DateTime date, double weight, WeightUnits weightUnit, String? notes
 });
 
 
@@ -72,11 +72,11 @@ class _$PetWeightModelCopyWithImpl<$Res>
 
 /// Create a copy of PetWeightModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? petWeightId = freezed,Object? petId = freezed,Object? date = null,Object? weight = null,Object? weightUnit = null,Object? notes = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? petWeightId = freezed,Object? petId = null,Object? date = null,Object? weight = null,Object? weightUnit = null,Object? notes = freezed,}) {
   return _then(_self.copyWith(
 petWeightId: freezed == petWeightId ? _self.petWeightId : petWeightId // ignore: cast_nullable_to_non_nullable
-as int?,petId: freezed == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
-as int?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as int?,petId: null == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
+as int,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,weight: null == weight ? _self.weight : weight // ignore: cast_nullable_to_non_nullable
 as double,weightUnit: null == weightUnit ? _self.weightUnit : weightUnit // ignore: cast_nullable_to_non_nullable
 as WeightUnits,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
@@ -91,11 +91,11 @@ as String?,
 @JsonSerializable()
 
 class _PetWeightModel with DiagnosticableTreeMixin implements PetWeightModel {
-  const _PetWeightModel({this.petWeightId, this.petId, required this.date, required this.weight, required this.weightUnit, this.notes});
+  const _PetWeightModel({this.petWeightId, required this.petId, required this.date, required this.weight, required this.weightUnit, this.notes});
   factory _PetWeightModel.fromJson(Map<String, dynamic> json) => _$PetWeightModelFromJson(json);
 
 @override final  int? petWeightId;
-@override final  int? petId;
+@override final  int petId;
 @override final  DateTime date;
 @override final  double weight;
 @override final  WeightUnits weightUnit;
@@ -140,7 +140,7 @@ abstract mixin class _$PetWeightModelCopyWith<$Res> implements $PetWeightModelCo
   factory _$PetWeightModelCopyWith(_PetWeightModel value, $Res Function(_PetWeightModel) _then) = __$PetWeightModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? petWeightId, int? petId, DateTime date, double weight, WeightUnits weightUnit, String? notes
+ int? petWeightId, int petId, DateTime date, double weight, WeightUnits weightUnit, String? notes
 });
 
 
@@ -157,11 +157,11 @@ class __$PetWeightModelCopyWithImpl<$Res>
 
 /// Create a copy of PetWeightModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? petWeightId = freezed,Object? petId = freezed,Object? date = null,Object? weight = null,Object? weightUnit = null,Object? notes = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? petWeightId = freezed,Object? petId = null,Object? date = null,Object? weight = null,Object? weightUnit = null,Object? notes = freezed,}) {
   return _then(_PetWeightModel(
 petWeightId: freezed == petWeightId ? _self.petWeightId : petWeightId // ignore: cast_nullable_to_non_nullable
-as int?,petId: freezed == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
-as int?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as int?,petId: null == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
+as int,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,weight: null == weight ? _self.weight : weight // ignore: cast_nullable_to_non_nullable
 as double,weightUnit: null == weightUnit ? _self.weightUnit : weightUnit // ignore: cast_nullable_to_non_nullable
 as WeightUnits,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable

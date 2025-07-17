@@ -6,8 +6,7 @@ import 'package:petjournal/data/database/database_service.dart';
 part 'pet_weights_controller.g.dart';
 
 @riverpod
-class PetWeightsController
-    extends _$PetWeightsController {
+class PetWeightsController extends _$PetWeightsController {
   late final DatabaseService _databaseService =
       // ignore: avoid_manual_providers_as_generated_provider_dependency
       ref.read(DatabaseService.provider);
@@ -17,5 +16,34 @@ class PetWeightsController
     return _databaseService
         .getAllPetWeightsForPet(petId)
         .map((p) => PetWeightMapper.mapToModelList(p));
+  }
+
+  Future<PetWeightModel?> save(PetWeightModel petWeight) async {
+    if (petWeight.petWeightId == null) {
+      final newPetWeight = await _databaseService.createPetWeight(
+        petWeight.petId,
+        petWeight.date,
+        petWeight.weight,
+        petWeight.weightUnit,
+        petWeight.notes,
+      );
+
+      return newPetWeight == null
+          ? null
+          : PetWeightMapper.mapToModel(newPetWeight);
+    } else {
+      await _databaseService.updatePetWeight(
+        petWeight.petWeightId!,
+        petWeight.date,
+        petWeight.weight,
+        petWeight.weightUnit,
+        petWeight.notes,
+      );
+      return petWeight;
+    }
+  }
+
+  Future<int> deletePetWeight(int id) {
+    return _databaseService.deletePetWeight(id);
   }
 }
