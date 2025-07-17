@@ -10,7 +10,7 @@ part 'pet_weight_model.g.dart';
 abstract class PetWeightModel with _$PetWeightModel {
   const factory PetWeightModel({
     int? petWeightId,
-    int? petId,
+    required int petId,
     required DateTime date,
     required double weight,
     required WeightUnits weightUnit,

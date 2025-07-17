@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_weight_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -39,64 +41,77 @@ void main() {
     });
 
     group('build', () {
-      test('build should emit PetWeightModel list when database returns data', () async {
-        // ARRANGE
-        const petId = 1;
-        final petWeights = [
-          PetWeight(
-            petWeightId: 1,
-            pet: petId,
-            date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: 1,
-            notes: 'Healthy',
-          ),
-        ];
-        when(mockDatabaseService.getAllPetWeightsForPet(petId))
-            .thenAnswer((_) => Stream.value(petWeights));
+      test(
+        'build should emit PetWeightModel list when database returns data',
+        () async {
+          // ARRANGE
+          const petId = 1;
+          final petWeights = [
+            PetWeight(
+              petWeightId: 1,
+              pet: petId,
+              date: DateTime(2024, 5, 28),
+              weight: 12.5,
+              weightUnit: 1,
+              notes: 'Healthy',
+            ),
+          ];
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.value(petWeights));
 
-        final container = createContainer(
-          overrides: [
-            DatabaseService.provider.overrideWithValue(mockDatabaseService),
-          ],
-        );
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
 
-        // ACT
-        final result = await container.read(petWeightsControllerProvider(petId).future);
+          // ACT
+          final result = await container.read(
+            petWeightsControllerProvider(petId).future,
+          );
 
-        // ASSERT
-        expect(result, isA<List<PetWeightModel>>());
-        expect(result.length, 1);
-        expect(result.first.petWeightId, 1);
-        verify(mockDatabaseService.getAllPetWeightsForPet(petId)).called(1);
-      });
+          // ASSERT
+          expect(result, isA<List<PetWeightModel>>());
+          expect(result.length, 1);
+          expect(result.first.petWeightId, 1);
+          verify(mockDatabaseService.getAllPetWeightsForPet(petId)).called(1);
+        },
+      );
 
-      test('build should emit empty list when database returns empty', () async {
-        // ARRANGE
-        const petId = 2;
-        when(mockDatabaseService.getAllPetWeightsForPet(petId))
-            .thenAnswer((_) => Stream.value([]));
+      test(
+        'build should emit empty list when database returns empty',
+        () async {
+          // ARRANGE
+          const petId = 2;
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.value([]));
 
-        final container = createContainer(
-          overrides: [
-            DatabaseService.provider.overrideWithValue(mockDatabaseService),
-          ],
-        );
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
 
-        // ACT
-        final result = await container.read(petWeightsControllerProvider(petId).future);
+          // ACT
+          final result = await container.read(
+            petWeightsControllerProvider(petId).future,
+          );
 
-        // ASSERT
-        expect(result, isA<List<PetWeightModel>>());
-        expect(result, isEmpty);
-        verify(mockDatabaseService.getAllPetWeightsForPet(petId)).called(1);
-      });
+          // ASSERT
+          expect(result, isA<List<PetWeightModel>>());
+          expect(result, isEmpty);
+          verify(mockDatabaseService.getAllPetWeightsForPet(petId)).called(1);
+        },
+      );
 
       test('build should emit error when database throws', () async {
         // ARRANGE
         const petId = 3;
-        when(mockDatabaseService.getAllPetWeightsForPet(petId))
-            .thenAnswer((_) => Stream.error(Exception('db error')));
+        when(
+          mockDatabaseService.getAllPetWeightsForPet(petId),
+        ).thenAnswer((_) => Stream.error(Exception('db error')));
 
         final container = createContainer(
           overrides: [
@@ -112,32 +127,101 @@ void main() {
         verify(mockDatabaseService.getAllPetWeightsForPet(petId)).called(1);
       });
 
-      test('build should emit updated values when database emits multiple events', () async {
-        // ARRANGE
-        const petId = 4;
-        final petWeights1 = [
-          PetWeight(
-            petWeightId: 1,
-            pet: petId,
-            date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: 1,
-            notes: 'Healthy',
+      test(
+        'build should emit updated values when database emits multiple events',
+        () async {
+          // ARRANGE
+          const petId = 4;
+          final petWeights1 = [
+            PetWeight(
+              petWeightId: 1,
+              pet: petId,
+              date: DateTime(2024, 5, 28),
+              weight: 12.5,
+              weightUnit: 1,
+              notes: 'Healthy',
+            ),
+          ];
+          final petWeights2 = [
+            PetWeight(
+              petWeightId: 2,
+              pet: petId,
+              date: DateTime(2024, 6, 1),
+              weight: 13.0,
+              weightUnit: 1,
+              notes: 'Gained weight',
+            ),
+          ];
+          final controller = StreamController<List<PetWeight>>();
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => controller.stream);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final stream = container.listen(
+            petWeightsControllerProvider(petId).future,
+            (_, __) {},
+          );
+
+          controller.add(petWeights1);
+          await Future.delayed(const Duration(milliseconds: 10));
+          expect(
+            await stream.read(),
+            PetWeightMapper.mapToModelList(petWeights1),
+          );
+
+          controller.add(petWeights2);
+          await Future.delayed(const Duration(milliseconds: 10));
+          expect(
+            await stream.read(),
+            PetWeightMapper.mapToModelList(petWeights2),
+          );
+
+          await controller.close();
+        },
+      );
+    });
+
+    group('save', () {
+      testWidgets('Should call createPetWeight When petWeightId is null', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetWeight = PetWeight(
+          petWeightId: 1,
+          pet: petId,
+          date: DateTime(2024, 5, 28),
+          weight: 12.5,
+          weightUnit: 1,
+          notes: 'Test Weight',
+        );
+
+        final initialPetWeightModel = PetWeightModel(
+          petId: initialPetWeight.pet,
+          date: initialPetWeight.date,
+          weight: initialPetWeight.weight,
+          weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+          notes: initialPetWeight.notes,
+        );
+
+        when(
+          mockDatabaseService.getAllPetWeightsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.createPetWeight(
+            initialPetWeightModel.petId,
+            initialPetWeightModel.date,
+            initialPetWeightModel.weight,
+            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.notes,
           ),
-        ];
-        final petWeights2 = [
-          PetWeight(
-            petWeightId: 2,
-            pet: petId,
-            date: DateTime(2024, 6, 1),
-            weight: 13.0,
-            weightUnit: 1,
-            notes: 'Gained weight',
-          ),
-        ];
-        final controller = StreamController<List<PetWeight>>();
-        when(mockDatabaseService.getAllPetWeightsForPet(petId))
-            .thenAnswer((_) => controller.stream);
+        ).thenAnswer((_) => Future.value(initialPetWeight));
 
         final container = createContainer(
           overrides: [
@@ -146,20 +230,128 @@ void main() {
         );
 
         // ACT
-        final stream = container.listen(
-          petWeightsControllerProvider(petId).future,
-          (_, __) {},
+        final provider = container.read(
+          petWeightsControllerProvider(petId).notifier,
+        );
+        PetWeightModel? savedPetWeight = await provider.save(
+          initialPetWeightModel,
         );
 
-        controller.add(petWeights1);
-        await Future.delayed(const Duration(milliseconds: 10));
-        expect(await stream.read(), PetWeightMapper.mapToModelList(petWeights1));
+        // ASSERT
+        expect(savedPetWeight, isNotNull);
+        expect(savedPetWeight!.petWeightId, initialPetWeight.petWeightId);
 
-        controller.add(petWeights2);
-        await Future.delayed(const Duration(milliseconds: 10));
-        expect(await stream.read(), PetWeightMapper.mapToModelList(petWeights2));
+        verify(
+          mockDatabaseService.createPetWeight(
+            initialPetWeightModel.petId,
+            initialPetWeightModel.date,
+            initialPetWeightModel.weight,
+            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.notes,
+          ),
+        ).called(1);
 
-        await controller.close();
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+
+      testWidgets('Should call updatePetWeight When petWeightId is not null', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetWeight = PetWeight(
+          petWeightId: 1,
+          pet: petId,
+          date: DateTime(2024, 5, 28),
+          weight: 12.5,
+          weightUnit: 1,
+          notes: 'Test Weight',
+        );
+
+        final initialPetWeightModel = PetWeightModel(
+          petWeightId: initialPetWeight.petWeightId,
+          petId: initialPetWeight.pet,
+          date: initialPetWeight.date,
+          weight: initialPetWeight.weight,
+          weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+          notes: initialPetWeight.notes,
+        );
+
+        when(
+          mockDatabaseService.getAllPetWeightsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.updatePetWeight(
+            initialPetWeightModel.petWeightId,
+            initialPetWeightModel.date,
+            initialPetWeightModel.weight,
+            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.notes,
+          ),
+        ).thenAnswer((_) => Future.value(1));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(
+          petWeightsControllerProvider(petId).notifier,
+        );
+        PetWeightModel? savedPetWeight = await provider.save(
+          initialPetWeightModel,
+        );
+
+        // ASSERT
+        expect(savedPetWeight, isNotNull);
+        expect(savedPetWeight!.petWeightId, initialPetWeight.petWeightId);
+
+        verify(
+          mockDatabaseService.updatePetWeight(
+            initialPetWeightModel.petWeightId,
+            initialPetWeightModel.date,
+            initialPetWeightModel.weight,
+            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.notes,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('delete', () {
+      testWidgets('Should call deletePetWeight When petWeightId is not null', (
+        tester,
+      ) async {
+        int petId = 1;
+        int petWeightId = 5;
+        final databaseService = MockDatabaseService();
+        when(
+          databaseService.deletePetWeight(petWeightId),
+        ).thenAnswer((_) async => petWeightId);
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(databaseService),
+          ],
+        );
+        final provider = container.read(
+          petWeightsControllerProvider(petId).notifier,
+        );
+        int result = await provider.deletePetWeight(petWeightId);
+
+        expect(result, petWeightId);
+        verify(databaseService.deletePetWeight(petWeightId)).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
       });
     });
   });
