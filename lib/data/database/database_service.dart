@@ -118,17 +118,15 @@ class DatabaseService extends _$DatabaseService {
         notes: Value(notes),
         history: Value(history),
         isNeutered: Value(isNeutered ?? false),
-        neuterDate:
-            neuterDate == null
-                ? Value.absent()
-                : Value(DateHelper.removeTime(neuterDate)),
+        neuterDate: neuterDate == null
+            ? Value.absent()
+            : Value(DateHelper.removeTime(neuterDate)),
         status: Value(status.dataValue),
         statusDate: Value(DateTime.now()),
         isMicrochipped: Value(isMicrochipped ?? false),
-        microchipDate:
-            microchipDate == null
-                ? Value.absent()
-                : Value(DateHelper.removeTime(microchipDate)),
+        microchipDate: microchipDate == null
+            ? Value.absent()
+            : Value(DateHelper.removeTime(microchipDate)),
         microchipNotes: Value(microchipNotes),
         microchipNumber: Value(microchipNumber),
         microchipCompany: Value(microchipCompany),
@@ -172,17 +170,15 @@ class DatabaseService extends _$DatabaseService {
         notes: Value(notes),
         history: Value(history),
         isNeutered: Value(isNeutered ?? false),
-        neuterDate:
-            neuterDate == null
-                ? Value.absent()
-                : Value(DateHelper.removeTime(neuterDate)),
+        neuterDate: neuterDate == null
+            ? Value.absent()
+            : Value(DateHelper.removeTime(neuterDate)),
         status: Value(status.dataValue),
         statusDate: Value(statusDate),
         isMicrochipped: Value(isMicrochipped ?? false),
-        microchipDate:
-            microchipDate == null
-                ? Value.absent()
-                : Value(DateHelper.removeTime(microchipDate)),
+        microchipDate: microchipDate == null
+            ? Value.absent()
+            : Value(DateHelper.removeTime(microchipDate)),
         microchipNotes: Value(microchipNotes),
         microchipNumber: Value(microchipNumber),
         microchipCompany: Value(microchipCompany),
@@ -205,14 +201,16 @@ class DatabaseService extends _$DatabaseService {
 
   // Get a single pet medication by its id
   Future<PetMed?> getPetMed(int id) {
-    return (select(petMeds)
-      ..where((m) => m.petMedId.equals(id))).getSingleOrNull();
+    return (select(
+      petMeds,
+    )..where((m) => m.petMedId.equals(id))).getSingleOrNull();
   }
 
   // Watch a single pet medication by its id
   Stream<PetMed?> watchPetMed(int id) {
-    return (select(petMeds)
-      ..where((m) => m.petMedId.equals(id))).watchSingleOrNull();
+    return (select(
+      petMeds,
+    )..where((m) => m.petMedId.equals(id))).watchSingleOrNull();
   }
 
   // Create a new pet medication record
@@ -222,7 +220,7 @@ class DatabaseService extends _$DatabaseService {
     String dose,
     DateTime startDate,
     DateTime? endDate,
-    String notes,
+    String? notes,
   ) {
     return into(petMeds).insertReturningOrNull(
       PetMedsCompanion.insert(
@@ -243,7 +241,7 @@ class DatabaseService extends _$DatabaseService {
     String dose,
     DateTime startDate,
     DateTime? endDate,
-    String notes,
+    String? notes,
   ) {
     return (update(petMeds)..where((m) => m.petMedId.equals(id))).write(
       PetMedsCompanion(
@@ -271,14 +269,16 @@ class DatabaseService extends _$DatabaseService {
 
   // Get a single pet weight by its id
   Future<PetWeight?> getPetWeight(int id) {
-    return (select(petWeights)
-      ..where((w) => w.petWeightId.equals(id))).getSingleOrNull();
+    return (select(
+      petWeights,
+    )..where((w) => w.petWeightId.equals(id))).getSingleOrNull();
   }
 
   // Watch a single pet weight by its id
   Stream<PetWeight?> watchPetWeight(int id) {
-    return (select(petWeights)
-      ..where((w) => w.petWeightId.equals(id))).watchSingleOrNull();
+    return (select(
+      petWeights,
+    )..where((w) => w.petWeightId.equals(id))).watchSingleOrNull();
   }
 
   // Create a new pet weight record
@@ -334,8 +334,9 @@ class DatabaseService extends _$DatabaseService {
   // Get a single pet vaccination by its id
   Future<PetVaccination?> getPetVaccination(int id) async {
     try {
-      return await (select(petVaccinations)
-        ..where((v) => v.petVaccinationId.equals(id))).getSingleOrNull();
+      return await (select(
+        petVaccinations,
+      )..where((v) => v.petVaccinationId.equals(id))).getSingleOrNull();
     } catch (e) {
       throw Exception('Error retrieving pet vaccination: $e');
     }
@@ -343,8 +344,9 @@ class DatabaseService extends _$DatabaseService {
 
   // Watch a single pet vaccination by its id
   Stream<PetVaccination?> watchPetVaccination(int id) {
-    return (select(petVaccinations)
-      ..where((w) => w.petVaccinationId.equals(id))).watchSingleOrNull();
+    return (select(
+      petVaccinations,
+    )..where((w) => w.petVaccinationId.equals(id))).watchSingleOrNull();
   }
 
   // Create a new pet vaccination record
@@ -391,8 +393,9 @@ class DatabaseService extends _$DatabaseService {
     required String administeredBy,
   }) async {
     try {
-      return await (update(petVaccinations)
-        ..where((v) => v.petVaccinationId.equals(id))).write(
+      return await (update(
+        petVaccinations,
+      )..where((v) => v.petVaccinationId.equals(id))).write(
         PetVaccinationsCompanion(
           name: Value(name),
           administeredDate: Value(administeredDate),
@@ -412,8 +415,9 @@ class DatabaseService extends _$DatabaseService {
   // Delete a pet vaccination record by its id
   Future<int> deletePetVaccination(int id) async {
     try {
-      return await (delete(petVaccinations)
-        ..where((v) => v.petVaccinationId.equals(id))).go();
+      return await (delete(
+        petVaccinations,
+      )..where((v) => v.petVaccinationId.equals(id))).go();
     } catch (e) {
       throw Exception('Error deleting pet vaccination: $e');
     }
@@ -463,8 +467,9 @@ class DatabaseService extends _$DatabaseService {
   /// Retrieve a single journal entry by its ID
   Future<JournalEntry?> getJournalEntry(int id) async {
     try {
-      return await (select(journalEntries)
-        ..where((entry) => entry.journalEntryId.equals(id))).getSingleOrNull();
+      return await (select(
+        journalEntries,
+      )..where((entry) => entry.journalEntryId.equals(id))).getSingleOrNull();
     } catch (e) {
       throw Exception('Error retrieving journal entry: $e');
     }
@@ -473,8 +478,9 @@ class DatabaseService extends _$DatabaseService {
   /// Watch a single journal entry by its ID
   /// This is useful for real-time updates in the UI
   Stream<JournalEntry?> watchJournalEntry(int id) {
-    return (select(journalEntries)
-      ..where((entry) => entry.journalEntryId.equals(id))).watchSingleOrNull();
+    return (select(
+      journalEntries,
+    )..where((entry) => entry.journalEntryId.equals(id))).watchSingleOrNull();
   }
 
   /// Retrieve all journal entries for a specific pet ID via the PetJournalEntry table
@@ -500,13 +506,16 @@ class DatabaseService extends _$DatabaseService {
     DateTime? entryDate,
   }) async {
     try {
-      return await (update(journalEntries)
-        ..where((entry) => entry.journalEntryId.equals(id))).write(
+      return await (update(
+        journalEntries,
+      )..where((entry) => entry.journalEntryId.equals(id))).write(
         JournalEntriesCompanion(
-          entryText:
-              entryText != null ? Value(entryText) : const Value.absent(),
-          entryDate:
-              entryDate != null ? Value(entryDate) : const Value.absent(),
+          entryText: entryText != null
+              ? Value(entryText)
+              : const Value.absent(),
+          entryDate: entryDate != null
+              ? Value(entryDate)
+              : const Value.absent(),
         ),
       );
     } catch (e) {
@@ -517,8 +526,9 @@ class DatabaseService extends _$DatabaseService {
   /// Delete a journal entry record by its ID
   Future<int> deleteJournalEntry(int id) async {
     try {
-      return await (delete(journalEntries)
-        ..where((entry) => entry.journalEntryId.equals(id))).go();
+      return await (delete(
+        journalEntries,
+      )..where((entry) => entry.journalEntryId.equals(id))).go();
     } catch (e) {
       throw Exception('Error deleting journal entry: $e');
     }
@@ -546,8 +556,9 @@ class DatabaseService extends _$DatabaseService {
     int journalEntryId,
   ) {
     try {
-      return (select(journalEntryTags)
-        ..where((tag) => tag.journalEntryId.equals(journalEntryId))).watch();
+      return (select(
+        journalEntryTags,
+      )..where((tag) => tag.journalEntryId.equals(journalEntryId))).watch();
     } catch (e) {
       throw Exception('Error retrieving journal entry tags: $e');
     }
@@ -556,8 +567,9 @@ class DatabaseService extends _$DatabaseService {
   /// Delete a journal entry tag record by its ID
   Future<int> deleteJournalEntryTag(int journalEntryTagId) async {
     try {
-      return await (delete(journalEntryTags)
-        ..where((tag) => tag.journalEntryTagId.equals(journalEntryTagId))).go();
+      return await (delete(
+        journalEntryTags,
+      )..where((tag) => tag.journalEntryTagId.equals(journalEntryTagId))).go();
     } catch (e) {
       throw Exception('Error deleting journal entry tag: $e');
     }
@@ -565,15 +577,17 @@ class DatabaseService extends _$DatabaseService {
 
   // List all the species types
   Stream<List<SpeciesType>> getAllSpeciesTypes() {
-    return (select(speciesTypes)
-      ..orderBy([(v) => OrderingTerm.asc(v.name)])).watch();
+    return (select(
+      speciesTypes,
+    )..orderBy([(v) => OrderingTerm.asc(v.name)])).watch();
   }
 
   // Get a single species type by its id
   Future<SpeciesType?> getSpeciesType(int id) async {
     try {
-      return await (select(speciesTypes)
-        ..where((s) => s.speciesId.equals(id))).getSingleOrNull();
+      return await (select(
+        speciesTypes,
+      )..where((s) => s.speciesId.equals(id))).getSingleOrNull();
     } catch (e) {
       throw Exception('Error retrieving species type: $e');
     }
@@ -581,8 +595,9 @@ class DatabaseService extends _$DatabaseService {
 
   // Watch a single species type by its id
   Stream<SpeciesType?> watchSpeciesType(int id) {
-    return (select(speciesTypes)
-      ..where((s) => s.speciesId.equals(id))).watchSingleOrNull();
+    return (select(
+      speciesTypes,
+    )..where((s) => s.speciesId.equals(id))).watchSingleOrNull();
   }
 
   // Create a new species type record
@@ -611,8 +626,9 @@ class DatabaseService extends _$DatabaseService {
     required bool userAdded,
   }) async {
     try {
-      return await (update(speciesTypes)
-        ..where((s) => s.speciesId.equals(id))).write(
+      return await (update(
+        speciesTypes,
+      )..where((s) => s.speciesId.equals(id))).write(
         SpeciesTypesCompanion(name: Value(name), userAdded: Value(userAdded)),
       );
     } catch (e) {
@@ -623,8 +639,9 @@ class DatabaseService extends _$DatabaseService {
   // Delete a species type record by its id
   Future<int> deleteSpeciesType(int id) async {
     try {
-      return await (delete(speciesTypes)
-        ..where((s) => s.speciesId.equals(id))).go();
+      return await (delete(
+        speciesTypes,
+      )..where((s) => s.speciesId.equals(id))).go();
     } catch (e) {
       throw Exception('Error deleting species type: $e');
     }
@@ -633,9 +650,9 @@ class DatabaseService extends _$DatabaseService {
   // Get the settings
   Future<Setting?> getSettings() async {
     try {
-      return await (select(settings)..where(
-        (s) => s.settingsId.equals(defaultSettingsId),
-      )).getSingleOrNull();
+      return await (select(settings)
+            ..where((s) => s.settingsId.equals(defaultSettingsId)))
+          .getSingleOrNull();
     } catch (e) {
       throw Exception('Error retrieving settings: $e');
     }
@@ -643,9 +660,9 @@ class DatabaseService extends _$DatabaseService {
 
   // Watch the settings
   Stream<Setting?> watchSettings() {
-    return (select(settings)..where(
-      (s) => s.settingsId.equals(defaultSettingsId),
-    )).watchSingleOrNull();
+    return (select(settings)
+          ..where((s) => s.settingsId.equals(defaultSettingsId)))
+        .watchSingleOrNull();
   }
 
   // Creae the default settings record.  If the record already exists it resets it
@@ -677,8 +694,9 @@ class DatabaseService extends _$DatabaseService {
     bool onBoardingComplete,
   ) async {
     try {
-      return await (update(settings)
-        ..where((s) => s.settingsId.equals(defaultSettingsId))).write(
+      return await (update(
+        settings,
+      )..where((s) => s.settingsId.equals(defaultSettingsId))).write(
         SettingsCompanion(
           acceptedTermsAndConditions: Value(acceptedTermsAndConditions),
           onBoardingComplete: Value(onBoardingComplete),
@@ -696,8 +714,9 @@ class DatabaseService extends _$DatabaseService {
     bool? optIntoAnalyticsWarning,
   ) async {
     try {
-      return await (update(settings)
-        ..where((s) => s.settingsId.equals(defaultSettingsId))).write(
+      return await (update(
+        settings,
+      )..where((s) => s.settingsId.equals(defaultSettingsId))).write(
         SettingsCompanion(
           defaultWeightUnit: Value(defaultWeightUnit?.dataValue),
           optIntoAnalyticsWarning: Value.absentIfNull(optIntoAnalyticsWarning),
