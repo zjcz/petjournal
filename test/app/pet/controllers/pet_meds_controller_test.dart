@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -181,6 +182,177 @@ void main() {
           await controller.close();
         },
       );
+    });
+
+    group('save', () {
+      testWidgets('Should call createPetMed When petMedId is null', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetMed = PetMed(
+          petMedId: 1,
+          pet: petId,
+          name: 'Antibiotic',
+          dose: '5mg',
+          startDate: DateTime(2024, 5, 28),
+          endDate: DateTime(2024, 6, 1),
+          notes: 'Take with food',
+        );
+
+        final initialPetMedModel = PetMedModel(
+          petId: initialPetMed.pet,
+          name: initialPetMed.name,
+          dose: initialPetMed.dose,
+          startDate: initialPetMed.startDate,
+          endDate: initialPetMed.endDate,
+          notes: initialPetMed.notes,
+        );
+
+        when(
+          mockDatabaseService.getAllPetMedsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.createPetMed(
+            initialPetMedModel.petId,
+            initialPetMedModel.name,
+            initialPetMedModel.dose,
+            initialPetMedModel.startDate,
+            initialPetMedModel.endDate,
+            initialPetMedModel.notes,
+          ),
+        ).thenAnswer((_) => Future.value(initialPetMed));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(
+          petMedsControllerProvider(petId).notifier,
+        );
+        PetMedModel? savedPetMed = await provider.save(initialPetMedModel);
+
+        // ASSERT
+        expect(savedPetMed, isNotNull);
+        expect(savedPetMed!.petMedId, initialPetMed.petMedId);
+
+        verify(
+          mockDatabaseService.createPetMed(
+            initialPetMedModel.petId,
+            initialPetMedModel.name,
+            initialPetMedModel.dose,
+            initialPetMedModel.startDate,
+            initialPetMedModel.endDate,
+            initialPetMedModel.notes,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+
+      testWidgets('Should call updatePetWeight When petWeightId is not null', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetMed = PetMed(
+          petMedId: 1,
+          pet: petId,
+          name: 'Antibiotic',
+          dose: '5mg',
+          startDate: DateTime(2024, 5, 28),
+          endDate: DateTime(2024, 6, 1),
+          notes: 'Take with food',
+        );
+
+        final initialPetMedModel = PetMedModel(
+          petMedId: initialPetMed.petMedId,
+          petId: initialPetMed.pet,
+          name: initialPetMed.name,
+          dose: initialPetMed.dose,
+          startDate: initialPetMed.startDate,
+          endDate: initialPetMed.endDate,
+          notes: initialPetMed.notes,
+        );
+
+        when(
+          mockDatabaseService.getAllPetMedsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.updatePetMed(
+            initialPetMedModel.petMedId,
+            initialPetMedModel.name,
+            initialPetMedModel.dose,
+            initialPetMedModel.startDate,
+            initialPetMedModel.endDate,
+            initialPetMedModel.notes,
+          ),
+        ).thenAnswer((_) => Future.value(1));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(
+          petMedsControllerProvider(petId).notifier,
+        );
+        PetMedModel? savedPetMed = await provider.save(initialPetMedModel);
+
+        // ASSERT
+        expect(savedPetMed, isNotNull);
+        expect(savedPetMed!.petMedId, initialPetMed.petMedId);
+
+        verify(
+          mockDatabaseService.updatePetMed(
+            initialPetMedModel.petMedId,
+            initialPetMedModel.name,
+            initialPetMedModel.dose,
+            initialPetMedModel.startDate,
+            initialPetMedModel.endDate,
+            initialPetMedModel.notes,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('delete', () {
+      testWidgets('Should call deletePetMed When petMedId is not null', (
+        tester,
+      ) async {
+        int petId = 1;
+        int petMedId = 5;
+        final databaseService = MockDatabaseService();
+        when(
+          databaseService.deletePetMed(petMedId),
+        ).thenAnswer((_) async => petMedId);
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(databaseService),
+          ],
+        );
+        final provider = container.read(
+          petMedsControllerProvider(petId).notifier,
+        );
+        int result = await provider.deletePetMed(petMedId);
+
+        expect(result, petMedId);
+        verify(databaseService.deletePetMed(petMedId)).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
     });
   });
 }

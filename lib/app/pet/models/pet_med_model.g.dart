@@ -8,7 +8,7 @@ part of 'pet_med_model.dart';
 
 _PetMedModel _$PetMedModelFromJson(Map<String, dynamic> json) => _PetMedModel(
   petMedId: (json['petMedId'] as num?)?.toInt(),
-  petId: (json['petId'] as num?)?.toInt(),
+  petId: (json['petId'] as num).toInt(),
   name: json['name'] as String,
   dose: json['dose'] as String,
   startDate: DateTime.parse(json['startDate'] as String),

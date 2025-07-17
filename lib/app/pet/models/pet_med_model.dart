@@ -8,7 +8,7 @@ part 'pet_med_model.g.dart';
 abstract class PetMedModel with _$PetMedModel {
   const factory PetMedModel({
     int? petMedId,
-    int? petId,
+    required int petId,
     required String name,
     required String dose,
     required DateTime startDate,

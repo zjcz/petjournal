@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PetMedModel implements DiagnosticableTreeMixin {
 
- int? get petMedId; int? get petId; String get name; String get dose; DateTime get startDate; DateTime? get endDate; String? get notes;
+ int? get petMedId; int get petId; String get name; String get dose; DateTime get startDate; DateTime? get endDate; String? get notes;
 /// Create a copy of PetMedModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -55,7 +55,7 @@ abstract mixin class $PetMedModelCopyWith<$Res>  {
   factory $PetMedModelCopyWith(PetMedModel value, $Res Function(PetMedModel) _then) = _$PetMedModelCopyWithImpl;
 @useResult
 $Res call({
- int? petMedId, int? petId, String name, String dose, DateTime startDate, DateTime? endDate, String? notes
+ int? petMedId, int petId, String name, String dose, DateTime startDate, DateTime? endDate, String? notes
 });
 
 
@@ -72,11 +72,11 @@ class _$PetMedModelCopyWithImpl<$Res>
 
 /// Create a copy of PetMedModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? petMedId = freezed,Object? petId = freezed,Object? name = null,Object? dose = null,Object? startDate = null,Object? endDate = freezed,Object? notes = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? petMedId = freezed,Object? petId = null,Object? name = null,Object? dose = null,Object? startDate = null,Object? endDate = freezed,Object? notes = freezed,}) {
   return _then(_self.copyWith(
 petMedId: freezed == petMedId ? _self.petMedId : petMedId // ignore: cast_nullable_to_non_nullable
-as int?,petId: freezed == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
-as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as int?,petId: null == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,dose: null == dose ? _self.dose : dose // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
 as DateTime,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
@@ -92,11 +92,11 @@ as String?,
 @JsonSerializable()
 
 class _PetMedModel with DiagnosticableTreeMixin implements PetMedModel {
-  const _PetMedModel({this.petMedId, this.petId, required this.name, required this.dose, required this.startDate, this.endDate, this.notes});
+  const _PetMedModel({this.petMedId, required this.petId, required this.name, required this.dose, required this.startDate, this.endDate, this.notes});
   factory _PetMedModel.fromJson(Map<String, dynamic> json) => _$PetMedModelFromJson(json);
 
 @override final  int? petMedId;
-@override final  int? petId;
+@override final  int petId;
 @override final  String name;
 @override final  String dose;
 @override final  DateTime startDate;
@@ -142,7 +142,7 @@ abstract mixin class _$PetMedModelCopyWith<$Res> implements $PetMedModelCopyWith
   factory _$PetMedModelCopyWith(_PetMedModel value, $Res Function(_PetMedModel) _then) = __$PetMedModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? petMedId, int? petId, String name, String dose, DateTime startDate, DateTime? endDate, String? notes
+ int? petMedId, int petId, String name, String dose, DateTime startDate, DateTime? endDate, String? notes
 });
 
 
@@ -159,11 +159,11 @@ class __$PetMedModelCopyWithImpl<$Res>
 
 /// Create a copy of PetMedModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? petMedId = freezed,Object? petId = freezed,Object? name = null,Object? dose = null,Object? startDate = null,Object? endDate = freezed,Object? notes = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? petMedId = freezed,Object? petId = null,Object? name = null,Object? dose = null,Object? startDate = null,Object? endDate = freezed,Object? notes = freezed,}) {
   return _then(_PetMedModel(
 petMedId: freezed == petMedId ? _self.petMedId : petMedId // ignore: cast_nullable_to_non_nullable
-as int?,petId: freezed == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
-as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as int?,petId: null == petId ? _self.petId : petId // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,dose: null == dose ? _self.dose : dose // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
 as DateTime,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
