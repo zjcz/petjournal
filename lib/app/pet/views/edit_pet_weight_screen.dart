@@ -294,7 +294,7 @@ class _EditPetWeightScreenState extends ConsumerState<EditPetWeightScreen> {
           return AlertDialog(
             title: const Text('Delete This Weight Entry?'),
             content: const Text(
-              'Are you sure you want to delete this pet from the app?',
+              'Are you sure you want to delete this record from the app?',
             ),
             actions: <Widget>[
               TextButton(
