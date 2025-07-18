@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/constants/custom_styles.dart';
 import 'package:petjournal/helpers/date_helper.dart';
+import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
 // Widget to display pet meds
@@ -74,10 +76,21 @@ class _PetMedsWidgetState extends ConsumerState<PetMedsWidget> {
           DataCell(Text(medication.name)),
           DataCell(Text(medication.dose)),
           DataCell(Text(DateHelper.formatDate(medication.startDate))),
-          if (medication.endDate != null)
-            DataCell(Text(DateHelper.formatDate(medication.endDate!))),
+          DataCell(
+            Text(
+              medication.endDate == null
+                  ? ''
+                  : DateHelper.formatDate(medication.endDate!),
+            ),
+          ),
           DataCell(Text(medication.notes ?? '')),
         ],
+        onSelectChanged: (value) async {
+          await context.push(
+            '${RouteDefs.editPetMed}/${medication.petId}',
+            extra: medication,
+          );
+        },
       );
     });
 

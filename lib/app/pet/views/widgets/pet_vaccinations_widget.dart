@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_vaccinations_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/app/pet/models/pet_vaccination_model.dart';
 import 'package:petjournal/constants/custom_styles.dart';
 import 'package:petjournal/helpers/date_helper.dart';
+import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
 // Widget to display pet vaccinations
@@ -85,6 +87,12 @@ class _PetVaccinationsWidgetState extends ConsumerState<PetVaccinationsWidget> {
           ),
           DataCell(Text(vaccination.notes ?? '')),
         ],
+        onSelectChanged: (value) async {
+          await context.push(
+            '${RouteDefs.editPetVaccination}/${vaccination.petId}',
+            extra: vaccination,
+          );
+        },
       );
     });
 
