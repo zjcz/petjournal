@@ -10,7 +10,7 @@ class PetVaccinations extends Table {
       integer().references(Pets, #petId, onDelete: KeyAction.cascade)();
   TextColumn get name => text().withLength(max: 100)();  
   DateTimeColumn get administeredDate => dateTime()();
-  DateTimeColumn get expiryDate => dateTime()();
+  DateTimeColumn get expiryDate => dateTime().nullable()();
   DateTimeColumn get reminderDate => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get vaccineBatchNumber => text().withLength(max: 100)();  

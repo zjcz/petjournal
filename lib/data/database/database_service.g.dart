@@ -1894,9 +1894,9 @@ class $PetVaccinationsTable extends PetVaccinations
   late final GeneratedColumn<DateTime> expiryDate = GeneratedColumn<DateTime>(
     'expiry_date',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _reminderDateMeta = const VerificationMeta(
     'reminderDate',
@@ -2020,8 +2020,6 @@ class $PetVaccinationsTable extends PetVaccinations
         _expiryDateMeta,
         expiryDate.isAcceptableOrUnknown(data['expiry_date']!, _expiryDateMeta),
       );
-    } else if (isInserting) {
-      context.missing(_expiryDateMeta);
     }
     if (data.containsKey('reminder_date')) {
       context.handle(
@@ -2099,7 +2097,7 @@ class $PetVaccinationsTable extends PetVaccinations
       expiryDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}expiry_date'],
-      )!,
+      ),
       reminderDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}reminder_date'],
@@ -2134,7 +2132,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
   final int pet;
   final String name;
   final DateTime administeredDate;
-  final DateTime expiryDate;
+  final DateTime? expiryDate;
   final DateTime? reminderDate;
   final String? notes;
   final String vaccineBatchNumber;
@@ -2145,7 +2143,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
     required this.pet,
     required this.name,
     required this.administeredDate,
-    required this.expiryDate,
+    this.expiryDate,
     this.reminderDate,
     this.notes,
     required this.vaccineBatchNumber,
@@ -2159,7 +2157,9 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
     map['pet'] = Variable<int>(pet);
     map['name'] = Variable<String>(name);
     map['administered_date'] = Variable<DateTime>(administeredDate);
-    map['expiry_date'] = Variable<DateTime>(expiryDate);
+    if (!nullToAbsent || expiryDate != null) {
+      map['expiry_date'] = Variable<DateTime>(expiryDate);
+    }
     if (!nullToAbsent || reminderDate != null) {
       map['reminder_date'] = Variable<DateTime>(reminderDate);
     }
@@ -2178,7 +2178,9 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
       pet: Value(pet),
       name: Value(name),
       administeredDate: Value(administeredDate),
-      expiryDate: Value(expiryDate),
+      expiryDate: expiryDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expiryDate),
       reminderDate: reminderDate == null && nullToAbsent
           ? const Value.absent()
           : Value(reminderDate),
@@ -2201,7 +2203,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
       pet: serializer.fromJson<int>(json['pet']),
       name: serializer.fromJson<String>(json['name']),
       administeredDate: serializer.fromJson<DateTime>(json['administeredDate']),
-      expiryDate: serializer.fromJson<DateTime>(json['expiryDate']),
+      expiryDate: serializer.fromJson<DateTime?>(json['expiryDate']),
       reminderDate: serializer.fromJson<DateTime?>(json['reminderDate']),
       notes: serializer.fromJson<String?>(json['notes']),
       vaccineBatchNumber: serializer.fromJson<String>(
@@ -2221,7 +2223,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
       'pet': serializer.toJson<int>(pet),
       'name': serializer.toJson<String>(name),
       'administeredDate': serializer.toJson<DateTime>(administeredDate),
-      'expiryDate': serializer.toJson<DateTime>(expiryDate),
+      'expiryDate': serializer.toJson<DateTime?>(expiryDate),
       'reminderDate': serializer.toJson<DateTime?>(reminderDate),
       'notes': serializer.toJson<String?>(notes),
       'vaccineBatchNumber': serializer.toJson<String>(vaccineBatchNumber),
@@ -2235,7 +2237,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
     int? pet,
     String? name,
     DateTime? administeredDate,
-    DateTime? expiryDate,
+    Value<DateTime?> expiryDate = const Value.absent(),
     Value<DateTime?> reminderDate = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     String? vaccineBatchNumber,
@@ -2246,7 +2248,7 @@ class PetVaccination extends DataClass implements Insertable<PetVaccination> {
     pet: pet ?? this.pet,
     name: name ?? this.name,
     administeredDate: administeredDate ?? this.administeredDate,
-    expiryDate: expiryDate ?? this.expiryDate,
+    expiryDate: expiryDate.present ? expiryDate.value : this.expiryDate,
     reminderDate: reminderDate.present ? reminderDate.value : this.reminderDate,
     notes: notes.present ? notes.value : this.notes,
     vaccineBatchNumber: vaccineBatchNumber ?? this.vaccineBatchNumber,
@@ -2333,7 +2335,7 @@ class PetVaccinationsCompanion extends UpdateCompanion<PetVaccination> {
   final Value<int> pet;
   final Value<String> name;
   final Value<DateTime> administeredDate;
-  final Value<DateTime> expiryDate;
+  final Value<DateTime?> expiryDate;
   final Value<DateTime?> reminderDate;
   final Value<String?> notes;
   final Value<String> vaccineBatchNumber;
@@ -2356,7 +2358,7 @@ class PetVaccinationsCompanion extends UpdateCompanion<PetVaccination> {
     required int pet,
     required String name,
     required DateTime administeredDate,
-    required DateTime expiryDate,
+    this.expiryDate = const Value.absent(),
     this.reminderDate = const Value.absent(),
     this.notes = const Value.absent(),
     required String vaccineBatchNumber,
@@ -2365,7 +2367,6 @@ class PetVaccinationsCompanion extends UpdateCompanion<PetVaccination> {
   }) : pet = Value(pet),
        name = Value(name),
        administeredDate = Value(administeredDate),
-       expiryDate = Value(expiryDate),
        vaccineBatchNumber = Value(vaccineBatchNumber),
        vaccineManufacturer = Value(vaccineManufacturer),
        administeredBy = Value(administeredBy);
@@ -2402,7 +2403,7 @@ class PetVaccinationsCompanion extends UpdateCompanion<PetVaccination> {
     Value<int>? pet,
     Value<String>? name,
     Value<DateTime>? administeredDate,
-    Value<DateTime>? expiryDate,
+    Value<DateTime?>? expiryDate,
     Value<DateTime?>? reminderDate,
     Value<String?>? notes,
     Value<String>? vaccineBatchNumber,
@@ -5804,7 +5805,7 @@ typedef $$PetVaccinationsTableCreateCompanionBuilder =
       required int pet,
       required String name,
       required DateTime administeredDate,
-      required DateTime expiryDate,
+      Value<DateTime?> expiryDate,
       Value<DateTime?> reminderDate,
       Value<String?> notes,
       required String vaccineBatchNumber,
@@ -5817,7 +5818,7 @@ typedef $$PetVaccinationsTableUpdateCompanionBuilder =
       Value<int> pet,
       Value<String> name,
       Value<DateTime> administeredDate,
-      Value<DateTime> expiryDate,
+      Value<DateTime?> expiryDate,
       Value<DateTime?> reminderDate,
       Value<String?> notes,
       Value<String> vaccineBatchNumber,
@@ -6121,7 +6122,7 @@ class $$PetVaccinationsTableTableManager
                 Value<int> pet = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<DateTime> administeredDate = const Value.absent(),
-                Value<DateTime> expiryDate = const Value.absent(),
+                Value<DateTime?> expiryDate = const Value.absent(),
                 Value<DateTime?> reminderDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<String> vaccineBatchNumber = const Value.absent(),
@@ -6145,7 +6146,7 @@ class $$PetVaccinationsTableTableManager
                 required int pet,
                 required String name,
                 required DateTime administeredDate,
-                required DateTime expiryDate,
+                Value<DateTime?> expiryDate = const Value.absent(),
                 Value<DateTime?> reminderDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 required String vaccineBatchNumber,
