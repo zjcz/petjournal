@@ -8,6 +8,7 @@ import 'package:petjournal/app/pet/views/widgets/pet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/constants/custom_styles.dart';
+import 'package:petjournal/widgets/expandable_fab.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
 import '../../../route_config.dart';
@@ -55,7 +56,7 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.info), text: 'General'),
-              Tab(icon: Icon(Icons.vaccines), text: 'Medical'),
+              Tab(icon: Icon(Icons.medical_services), text: 'Health'),
               Tab(icon: Icon(Icons.balance), text: 'Weight'),
               Tab(icon: Icon(Icons.content_paste), text: 'Journal'),
             ],
@@ -69,11 +70,30 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
             _buildPetJournalTab(pet),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await context.push('${RouteDefs.editPetWeight}/${pet.petId}');
-          },
-          child: const Icon(Icons.add),
+        floatingActionButton: ExpandableFab(
+          distance: 112,
+          children: [
+            ActionButton(
+              onPressed: () async {
+                await context.push('${RouteDefs.editPetWeight}/${pet.petId}');
+              },
+              icon: const Icon(Icons.balance),
+            ),
+            ActionButton(
+              onPressed: () async {
+                await context.push(
+                  '${RouteDefs.editPetVaccination}/${pet.petId}',
+                );
+              },
+              icon: const Icon(Icons.vaccines),
+            ),
+            ActionButton(
+              onPressed: () async {
+                await context.push('${RouteDefs.editPetMed}/${pet.petId}');
+              },
+              icon: const Icon(Icons.medication),
+            ),
+          ],
         ),
       ),
     );

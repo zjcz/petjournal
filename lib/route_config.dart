@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/app/home/views/about_screen.dart';
 import 'package:petjournal/app/home/views/home_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/home/views/policy_viewer_screen.dart';
 import 'package:petjournal/app/home/views/welcome_screen.dart';
+import 'package:petjournal/app/pet/models/pet_vaccination_model.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/app/pet/views/edit_pet_med_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_screen.dart';
+import 'package:petjournal/app/pet/views/edit_pet_vaccination_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_weight_screen.dart';
 import 'package:petjournal/app/pet/views/view_pet_screen.dart';
 import 'package:petjournal/app/settings/controllers/settings_controller.dart';
@@ -22,6 +26,8 @@ class RouteDefs {
   static const String viewPet = '/home/view_pet';
   static const String editPet = '/home/edit_pet';
   static const String editPetWeight = '/home/edit_petWeight';
+  static const String editPetMed = '/home/edit_petMed';
+  static const String editPetVaccination = '/home/edit_petVaccination';
   static const String aboutScreen = '/home/about_screen';
   static const String editSettings = '/home/edit_settings';
   // static const String loading = '/';
@@ -102,6 +108,36 @@ GoRouter setupRouter(Ref ref) {
               }
               return EditPetWeightScreen(
                 petWeight: pw,
+                petId: int.parse(state.pathParameters['petId']!),
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '${RouteDefs.getPageName(RouteDefs.editPetMed, parentPage: RouteDefs.home)}/:petId',
+            name: 'editPetMed',
+            builder: (BuildContext context, GoRouterState state) {
+              PetMedModel? pm;
+              if (state.extra != null) {
+                pm = state.extra! as PetMedModel;
+              }
+              return EditPetMedScreen(
+                petMed: pm,
+                petId: int.parse(state.pathParameters['petId']!),
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '${RouteDefs.getPageName(RouteDefs.editPetVaccination, parentPage: RouteDefs.home)}/:petId',
+            name: 'editPetVaccination',
+            builder: (BuildContext context, GoRouterState state) {
+              PetVaccinationModel? pv;
+              if (state.extra != null) {
+                pv = state.extra! as PetVaccinationModel;
+              }
+              return EditPetVaccinationScreen(
+                petVaccination: pv,
                 petId: int.parse(state.pathParameters['petId']!),
               );
             },
