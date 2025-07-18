@@ -57,15 +57,15 @@ void main() {
       expect(pet, match.isNotNull);
 
       final vaccination = await database.createPetVaccination(
-        petId: pet!.petId,
-        name: testName,
-        administeredDate: testAdministeredDate,
-        expiryDate: testExpiryDate,
-        reminderDate: testReminderDate,
-        notes: testNotes,
-        vaccineBatchNumber: testBatchNumber,
-        vaccineManufacturer: testManufacturer,
-        administeredBy: testAdministeredBy,
+        pet!.petId,
+        testName,
+        testAdministeredDate,
+        testExpiryDate,
+        testReminderDate,
+        testNotes,
+        testBatchNumber,
+        testManufacturer,
+        testAdministeredBy,
       );
 
       expect(vaccination, match.isNotNull);
@@ -85,19 +85,66 @@ void main() {
       expect(pet, match.isNotNull);
 
       final vaccination = await database.createPetVaccination(
-        petId: pet!.petId,
-        name: 'Rabies',
-        administeredDate: DateTime(2025, 1, 1),
-        expiryDate: DateTime(2026, 1, 1),
-        reminderDate: DateTime(2025, 12, 1),
-        vaccineBatchNumber: 'BATCH123',
-        vaccineManufacturer: 'VacCorp',
-        administeredBy: 'Dr. Smith',
+        pet!.petId,
+        'Rabies',
+        DateTime(2025, 1, 1),
+        DateTime(2026, 1, 1),
+        DateTime(2025, 12, 1),
+        null,
+        'BATCH123',
+        'VacCorp',
+        'Dr. Smith',
       );
 
       expect(vaccination, match.isNotNull);
       expect(vaccination?.notes, match.isNull);
     });
+
+        test(
+      'create a pet vaccination record without optional expiry date',
+      () async {
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final vaccination = await database.createPetVaccination(
+          pet!.petId,
+          'Rabies',
+          DateTime(2025, 1, 1),
+          null,
+          null,
+          'these are new notes',
+          'BATCH123',
+          'VacCorp',
+          'Dr. Smith',
+        );
+
+        expect(vaccination, match.isNotNull);
+        expect(vaccination?.expiryDate, match.isNull);
+      },
+    );
+
+    test(
+      'create a pet vaccination record without optional reminder date',
+      () async {
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final vaccination = await database.createPetVaccination(
+          pet!.petId,
+          'Rabies',
+          DateTime(2025, 1, 1),
+          DateTime(2026, 1, 1),
+          null,
+          'these are new notes',
+          'BATCH123',
+          'VacCorp',
+          'Dr. Smith',
+        );
+
+        expect(vaccination, match.isNotNull);
+        expect(vaccination?.reminderDate, match.isNull);
+      },
+    );
 
     test('get pet vaccination returns null for non-existent record', () async {
       final vaccination = await database.getPetVaccination(999);
@@ -109,15 +156,15 @@ void main() {
       final pet = await database.getPet(1);
       final testAdministeredDate = DateTime(2025, 1, 1);
       final createdVaccination = await database.createPetVaccination(
-        petId: pet!.petId,
-        name: 'Rabies',
-        administeredDate: testAdministeredDate,
-        expiryDate: DateTime(2026, 1, 1),
-        reminderDate: DateTime(2025, 12, 1),
-        notes: 'Test Notes',
-        vaccineBatchNumber: 'BATCH123',
-        vaccineManufacturer: 'VacCorp',
-        administeredBy: 'Dr. Smith',
+        pet!.petId,
+        'Rabies',
+        testAdministeredDate,
+        DateTime(2026, 1, 1),
+        DateTime(2025, 12, 1),
+        'Test Notes',
+        'BATCH123',
+        'VacCorp',
+        'Dr. Smith',
       );
 
       expect(createdVaccination, match.isNotNull);
@@ -145,8 +192,9 @@ void main() {
         final pet = await database.getPet(1);
         expect(pet, match.isNotNull);
 
-        final vaccinations =
-            await database.getAllPetVaccinationsForPet(pet!.petId).first;
+        final vaccinations = await database
+            .getAllPetVaccinationsForPet(pet!.petId)
+            .first;
         expect(vaccinations, isEmpty);
       },
     );
@@ -159,31 +207,32 @@ void main() {
 
         // Create multiple pet vaccinations
         await database.createPetVaccination(
-          petId: pet!.petId,
-          name: 'Rabies',
-          administeredDate: DateTime(2025, 1, 1),
-          expiryDate: DateTime(2026, 1, 1),
-          reminderDate: DateTime(2025, 12, 1),
-          notes: 'Notes 1',
-          vaccineBatchNumber: 'BATCH1',
-          vaccineManufacturer: 'VacCorp',
-          administeredBy: 'Dr. Smith',
+          pet!.petId,
+          'Rabies',
+          DateTime(2025, 1, 1),
+          DateTime(2026, 1, 1),
+          DateTime(2025, 12, 1),
+          'Notes 1',
+          'BATCH1',
+          'VacCorp',
+          'Dr. Smith',
         );
 
         await database.createPetVaccination(
-          petId: pet.petId,
-          name: 'Bordetella',
-          administeredDate: DateTime(2025, 2, 1),
-          expiryDate: DateTime(2026, 2, 1),
-          reminderDate: DateTime(2026, 1, 1),
-          notes: 'Notes 2',
-          vaccineBatchNumber: 'BATCH2',
-          vaccineManufacturer: 'VacCorp',
-          administeredBy: 'Dr. Jones',
+          pet.petId,
+          'Bordetella',
+          DateTime(2025, 2, 1),
+          DateTime(2026, 2, 1),
+          DateTime(2026, 1, 1),
+          'Notes 2',
+          'BATCH2',
+          'VacCorp',
+          'Dr. Jones',
         );
 
-        final vaccinations =
-            await database.getAllPetVaccinationsForPet(pet.petId).first;
+        final vaccinations = await database
+            .getAllPetVaccinationsForPet(pet.petId)
+            .first;
         expect(vaccinations.length, equals(2));
         // Verify they're ordered by name
         expect(vaccinations[0].name, equals('Bordetella'));
@@ -195,15 +244,15 @@ void main() {
       // First create a pet vaccination
       final pet = await database.getPet(1);
       final vaccination = await database.createPetVaccination(
-        petId: pet!.petId,
-        name: 'Rabies',
-        administeredDate: DateTime(2025, 1, 1),
-        expiryDate: DateTime(2026, 1, 1),
-        reminderDate: DateTime(2025, 12, 1),
-        notes: 'Test Notes',
-        vaccineBatchNumber: 'BATCH1',
-        vaccineManufacturer: 'VacCorp',
-        administeredBy: 'Dr. Smith',
+        pet!.petId,
+        'Rabies',
+        DateTime(2025, 1, 1),
+        DateTime(2026, 1, 1),
+        DateTime(2025, 12, 1),
+        'Test Notes',
+        'BATCH1',
+        'VacCorp',
+        'Dr. Smith',
       );
 
       expect(vaccination, match.isNotNull);
@@ -215,15 +264,15 @@ void main() {
 
       // Perform update
       final updateCount = await database.updatePetVaccination(
-        id: vaccination!.petVaccinationId,
-        name: 'Updated Rabies',
-        administeredDate: newAdministeredDate,
-        expiryDate: newExpiryDate,
-        reminderDate: newReminderDate,
-        notes: 'Updated Notes',
-        vaccineBatchNumber: 'BATCH2',
-        vaccineManufacturer: 'NewVacCorp',
-        administeredBy: 'Dr. Jones',
+        vaccination!.petVaccinationId,
+        'Updated Rabies',
+        newAdministeredDate,
+        newExpiryDate,
+        newReminderDate,
+        'Updated Notes',
+        'BATCH2',
+        'NewVacCorp',
+        'Dr. Jones',
       );
 
       expect(updateCount, equals(1));
@@ -242,17 +291,75 @@ void main() {
       expect(updatedVaccination?.administeredBy, equals('Dr. Jones'));
     });
 
+    test(
+      'update pet vaccination without optional fields updates correctly',
+      () async {
+        // First create a pet vaccination
+        final pet = await database.getPet(1);
+        final vaccination = await database.createPetVaccination(
+          pet!.petId,
+          'Rabies',
+          DateTime(2025, 1, 1),
+          DateTime(2026, 1, 1),
+          DateTime(2025, 12, 1),
+          'Test Notes',
+          'BATCH1',
+          'VacCorp',
+          'Dr. Smith',
+        );
+
+        expect(vaccination, match.isNotNull);
+
+        // Update values
+        final newAdministeredDate = DateTime(2025, 2, 1);
+        final newExpiryDate = DateTime(2026, 2, 1);
+        final DateTime? newReminderDate = null;
+        final String? newNotes = null;
+
+        // Perform update
+        final updateCount = await database.updatePetVaccination(
+          vaccination!.petVaccinationId,
+          'Updated Rabies',
+          newAdministeredDate,
+          newExpiryDate,
+          newReminderDate,
+          newNotes,
+          'BATCH2',
+          'NewVacCorp',
+          'Dr. Jones',
+        );
+
+        expect(updateCount, equals(1));
+
+        // Read back the updated vaccination
+        final updatedVaccination = await database.getPetVaccination(
+          vaccination.petVaccinationId,
+        );
+        expect(updatedVaccination?.name, equals('Updated Rabies'));
+        expect(
+          updatedVaccination?.administeredDate,
+          equals(newAdministeredDate),
+        );
+        expect(updatedVaccination?.expiryDate, equals(newExpiryDate));
+        expect(updatedVaccination?.reminderDate, match.isNull);
+        expect(updatedVaccination?.notes, match.isNull);
+        expect(updatedVaccination?.vaccineBatchNumber, equals('BATCH2'));
+        expect(updatedVaccination?.vaccineManufacturer, equals('NewVacCorp'));
+        expect(updatedVaccination?.administeredBy, equals('Dr. Jones'));
+      },
+    );
+
     test('update returns 0 for non-existent pet vaccination', () async {
       final updatedCount = await database.updatePetVaccination(
-        id: 999,
-        name: 'Rabies',
-        administeredDate: DateTime(2025, 1, 1),
-        expiryDate: DateTime(2026, 1, 1),
-        reminderDate: DateTime(2025, 12, 1),
-        notes: 'Test Notes',
-        vaccineBatchNumber: 'BATCH1',
-        vaccineManufacturer: 'VacCorp',
-        administeredBy: 'Dr. Smith',
+        999,
+        'Rabies',
+        DateTime(2025, 1, 1),
+        DateTime(2026, 1, 1),
+        DateTime(2025, 12, 1),
+        'Test Notes',
+        'BATCH1',
+        'VacCorp',
+        'Dr. Smith',
       );
 
       expect(updatedCount, equals(0));
@@ -262,15 +369,15 @@ void main() {
       // First create a pet vaccination
       final pet = await database.getPet(1);
       final vaccination = await database.createPetVaccination(
-        petId: pet!.petId,
-        name: 'Rabies',
-        administeredDate: DateTime(2025, 1, 1),
-        expiryDate: DateTime(2026, 1, 1),
-        reminderDate: DateTime(2025, 12, 1),
-        notes: 'Test Notes',
-        vaccineBatchNumber: 'BATCH1',
-        vaccineManufacturer: 'VacCorp',
-        administeredBy: 'Dr. Smith',
+        pet!.petId,
+        'Rabies',
+        DateTime(2025, 1, 1),
+        DateTime(2026, 1, 1),
+        DateTime(2025, 12, 1),
+        'Test Notes',
+        'BATCH1',
+        'VacCorp',
+        'Dr. Smith',
       );
 
       expect(vaccination, match.isNotNull);
@@ -298,15 +405,15 @@ void main() {
         // First create a pet vaccination
         final pet = await database.getPet(1);
         final vaccination = await database.createPetVaccination(
-          petId: pet!.petId,
-          name: 'Rabies',
-          administeredDate: DateTime(2025, 1, 1),
-          expiryDate: DateTime(2026, 1, 1),
-          reminderDate: DateTime(2025, 12, 1),
-          notes: 'Test Notes',
-          vaccineBatchNumber: 'BATCH1',
-          vaccineManufacturer: 'VacCorp',
-          administeredBy: 'Dr. Smith',
+          pet!.petId,
+          'Rabies',
+          DateTime(2025, 1, 1),
+          DateTime(2026, 1, 1),
+          DateTime(2025, 12, 1),
+          'Test Notes',
+          'BATCH1',
+          'VacCorp',
+          'Dr. Smith',
         );
 
         expect(vaccination, match.isNotNull);
@@ -325,15 +432,15 @@ void main() {
 
         // Update the vaccination
         await database.updatePetVaccination(
-          id: vaccinationId,
-          name: 'Updated Rabies',
-          administeredDate: DateTime(2025, 2, 1),
-          expiryDate: DateTime(2026, 2, 1),
-          reminderDate: DateTime(2026, 1, 1),
-          notes: 'Updated Notes',
-          vaccineBatchNumber: 'BATCH2',
-          vaccineManufacturer: 'NewVacCorp',
-          administeredBy: 'Dr. Jones',
+          vaccinationId,
+          'Updated Rabies',
+          DateTime(2025, 2, 1),
+          DateTime(2026, 2, 1),
+          DateTime(2026, 1, 1),
+          'Updated Notes',
+          'BATCH2',
+          'NewVacCorp',
+          'Dr. Jones',
         );
 
         // Wait for the update emission
@@ -352,15 +459,15 @@ void main() {
 
       expect(
         () => database.createPetVaccination(
-          petId: 999, // Non-existent pet ID
-          name: 'Rabies',
-          administeredDate: DateTime(2025, 1, 1),
-          expiryDate: DateTime(2026, 1, 1),
-          reminderDate: DateTime(2025, 12, 1),
-          notes: 'Test Notes',
-          vaccineBatchNumber: 'BATCH1',
-          vaccineManufacturer: 'VacCorp',
-          administeredBy: 'Dr. Smith',
+          999, // Non-existent pet ID
+          'Rabies',
+          DateTime(2025, 1, 1),
+          DateTime(2026, 1, 1),
+          DateTime(2025, 12, 1),
+          'Test Notes',
+          'BATCH1',
+          'VacCorp',
+          'Dr. Smith',
         ),
         throwsA(isA<Exception>()),
       );

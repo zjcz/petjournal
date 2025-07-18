@@ -350,24 +350,24 @@ class DatabaseService extends _$DatabaseService {
   }
 
   // Create a new pet vaccination record
-  Future<PetVaccination?> createPetVaccination({
-    required int petId,
-    required String name,
-    required DateTime administeredDate,
-    required DateTime expiryDate,
+  Future<PetVaccination?> createPetVaccination(
+    int petId,
+    String name,
+    DateTime administeredDate,
+    DateTime? expiryDate,
     DateTime? reminderDate,
     String? notes,
-    required String vaccineBatchNumber,
-    required String vaccineManufacturer,
-    required String administeredBy,
-  }) async {
+    String vaccineBatchNumber,
+    String vaccineManufacturer,
+    String administeredBy,
+  ) async {
     try {
       return await into(petVaccinations).insertReturningOrNull(
         PetVaccinationsCompanion.insert(
           pet: petId,
           name: name,
           administeredDate: administeredDate,
-          expiryDate: expiryDate,
+          expiryDate: Value(expiryDate),
           reminderDate: Value(reminderDate),
           notes: Value(notes),
           vaccineBatchNumber: vaccineBatchNumber,
@@ -381,17 +381,17 @@ class DatabaseService extends _$DatabaseService {
   }
 
   // Update an existing pet vaccination record
-  Future<int> updatePetVaccination({
-    required int id,
-    required String name,
-    required DateTime administeredDate,
-    required DateTime expiryDate,
-    required DateTime reminderDate,
+  Future<int> updatePetVaccination(
+    int id,
+    String name,
+    DateTime administeredDate,
+    DateTime? expiryDate,
+    DateTime? reminderDate,
     String? notes,
-    required String vaccineBatchNumber,
-    required String vaccineManufacturer,
-    required String administeredBy,
-  }) async {
+    String vaccineBatchNumber,
+    String vaccineManufacturer,
+    String administeredBy,
+  ) async {
     try {
       return await (update(
         petVaccinations,

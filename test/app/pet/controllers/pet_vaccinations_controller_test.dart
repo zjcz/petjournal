@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -70,7 +71,7 @@ void main() {
 
           // ACT
           final result = await container.read(
-            petVaccinationControllerProvider(petId).future,
+            petVaccinationsControllerProvider(petId).future,
           );
 
           // ASSERT
@@ -100,7 +101,7 @@ void main() {
 
           // ACT
           final result = await container.read(
-            petVaccinationControllerProvider(petId).future,
+            petVaccinationsControllerProvider(petId).future,
           );
 
           // ASSERT
@@ -127,7 +128,7 @@ void main() {
 
         // ACT & ASSERT
         expect(
-          () => container.read(petVaccinationControllerProvider(petId).future),
+          () => container.read(petVaccinationsControllerProvider(petId).future),
           throwsA(match.isA<Exception>()),
         );
         verify(
@@ -181,7 +182,7 @@ void main() {
 
           // ACT
           final stream = container.listen(
-            petVaccinationControllerProvider(petId).future,
+            petVaccinationsControllerProvider(petId).future,
             (_, __) {},
           );
 
@@ -200,6 +201,215 @@ void main() {
           );
 
           await controller.close();
+        },
+      );
+    });
+
+    group('save', () {
+      testWidgets(
+        'Should call createPetVaccination When petVaccinationId is null',
+        (tester) async {
+          int petId = 7;
+          final initialPetVaccination = PetVaccination(
+            petVaccinationId: 1,
+            pet: petId,
+            name: 'Rabies',
+            administeredDate: DateTime(2024, 5, 28),
+            expiryDate: DateTime(2024, 6, 1),
+            reminderDate: DateTime(2024, 5, 1),
+            notes: 'All went well',
+            vaccineBatchNumber: 'batch 123',
+            vaccineManufacturer: 'Vaccine Manufacturer',
+            administeredBy: 'Dr. Smith',
+          );
+
+          final initialPetVaccinationModel = PetVaccinationModel(
+            petId: initialPetVaccination.pet,
+            name: initialPetVaccination.name,
+            administeredDate: initialPetVaccination.administeredDate,
+            expiryDate: initialPetVaccination.expiryDate,
+            reminderDate: initialPetVaccination.reminderDate,
+            notes: initialPetVaccination.notes,
+            vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+            vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+            administeredBy: initialPetVaccination.administeredBy,
+          );
+
+          when(
+            mockDatabaseService.getAllPetVaccinationsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetVaccination(
+              initialPetVaccinationModel.petId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetVaccination));
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          PetVaccinationModel? savedPetVaccination = await provider.save(
+            initialPetVaccinationModel,
+          );
+
+          // ASSERT
+          expect(savedPetVaccination, isNotNull);
+          expect(
+            savedPetVaccination!.petVaccinationId,
+            initialPetVaccination.petVaccinationId,
+          );
+
+          verify(
+            mockDatabaseService.createPetVaccination(
+              initialPetVaccinationModel.petId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets('Should call updatePetWeight When petWeightId is not null', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetVaccination = PetVaccination(
+          petVaccinationId: 1,
+          pet: petId,
+          name: 'Rabies',
+          administeredDate: DateTime(2024, 5, 28),
+          expiryDate: DateTime(2024, 6, 1),
+          reminderDate: DateTime(2024, 5, 1),
+          notes: 'All went well',
+          vaccineBatchNumber: 'batch 123',
+          vaccineManufacturer: 'Vaccine Manufacturer',
+          administeredBy: 'Dr. Smith',
+        );
+
+        final initialPetVaccinationModel = PetVaccinationModel(
+          petVaccinationId: initialPetVaccination.petVaccinationId,
+          petId: initialPetVaccination.pet,
+          name: initialPetVaccination.name,
+          administeredDate: initialPetVaccination.administeredDate,
+          expiryDate: initialPetVaccination.expiryDate,
+          reminderDate: initialPetVaccination.reminderDate,
+          notes: initialPetVaccination.notes,
+          vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+          vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+          administeredBy: initialPetVaccination.administeredBy,
+        );
+
+        when(
+          mockDatabaseService.getAllPetVaccinationsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.updatePetVaccination(
+            initialPetVaccinationModel.petVaccinationId,
+            initialPetVaccinationModel.name,
+            initialPetVaccinationModel.administeredDate,
+            initialPetVaccinationModel.expiryDate,
+            initialPetVaccinationModel.reminderDate,
+            initialPetVaccinationModel.notes,
+            initialPetVaccinationModel.vaccineBatchNumber,
+            initialPetVaccinationModel.vaccineManufacturer,
+            initialPetVaccinationModel.administeredBy,
+          ),
+        ).thenAnswer((_) => Future.value(1));
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(
+          petVaccinationsControllerProvider(petId).notifier,
+        );
+        PetVaccinationModel? savedPetVaccination = await provider.save(
+          initialPetVaccinationModel,
+        );
+
+        // ASSERT
+        expect(savedPetVaccination, isNotNull);
+        expect(
+          savedPetVaccination!.petVaccinationId,
+          initialPetVaccination.petVaccinationId,
+        );
+
+        verify(
+          mockDatabaseService.updatePetVaccination(
+            initialPetVaccinationModel.petVaccinationId,
+            initialPetVaccinationModel.name,
+            initialPetVaccinationModel.administeredDate,
+            initialPetVaccinationModel.expiryDate,
+            initialPetVaccinationModel.reminderDate,
+            initialPetVaccinationModel.notes,
+            initialPetVaccinationModel.vaccineBatchNumber,
+            initialPetVaccinationModel.vaccineManufacturer,
+            initialPetVaccinationModel.administeredBy,
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('delete', () {
+      testWidgets(
+        'Should call deletePetVaccination When petVaccinationId is not null',
+        (tester) async {
+          int petId = 1;
+          int petVaccinationId = 5;
+          final databaseService = MockDatabaseService();
+          when(
+            databaseService.deletePetVaccination(petVaccinationId),
+          ).thenAnswer((_) async => petVaccinationId);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(databaseService),
+            ],
+          );
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          int result = await provider.deletePetVaccination(petVaccinationId);
+
+          expect(result, petVaccinationId);
+          verify(
+            databaseService.deletePetVaccination(petVaccinationId),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
         },
       );
     });

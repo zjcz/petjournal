@@ -21,7 +21,7 @@ class _PetVaccinationsWidgetState extends ConsumerState<PetVaccinationsWidget> {
   @override
   Widget build(BuildContext context) {
     final petVaccinations = ref.watch(
-      petVaccinationControllerProvider(widget.petId),
+      petVaccinationsControllerProvider(widget.petId),
     );
 
     return petVaccinations.when(
@@ -76,7 +76,13 @@ class _PetVaccinationsWidgetState extends ConsumerState<PetVaccinationsWidget> {
         cells: <DataCell>[
           DataCell(Text(vaccination.name)),
           DataCell(Text(DateHelper.formatDate(vaccination.administeredDate))),
-          DataCell(Text(DateHelper.formatDate(vaccination.expiryDate))),
+          DataCell(
+            Text(
+              vaccination.expiryDate == null
+                  ? ''
+                  : DateHelper.formatDate(vaccination.expiryDate!),
+            ),
+          ),
           DataCell(Text(vaccination.notes ?? '')),
         ],
       );

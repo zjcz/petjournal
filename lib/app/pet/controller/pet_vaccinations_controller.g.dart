@@ -6,8 +6,8 @@ part of 'pet_vaccinations_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$petVaccinationControllerHash() =>
-    r'1940c8014ad0e5291aed7f3db5ec7da5c176be43';
+String _$petVaccinationsControllerHash() =>
+    r'a56e563fbb6fab63e0a91d220529bf710b31ded4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,31 +30,31 @@ class _SystemHash {
   }
 }
 
-abstract class _$PetVaccinationController
+abstract class _$PetVaccinationsController
     extends BuildlessAutoDisposeStreamNotifier<List<PetVaccinationModel>> {
   late final int petId;
 
   Stream<List<PetVaccinationModel>> build(int petId);
 }
 
-/// See also [PetVaccinationController].
-@ProviderFor(PetVaccinationController)
-const petVaccinationControllerProvider = PetVaccinationControllerFamily();
+/// See also [PetVaccinationsController].
+@ProviderFor(PetVaccinationsController)
+const petVaccinationsControllerProvider = PetVaccinationsControllerFamily();
 
-/// See also [PetVaccinationController].
-class PetVaccinationControllerFamily
+/// See also [PetVaccinationsController].
+class PetVaccinationsControllerFamily
     extends Family<AsyncValue<List<PetVaccinationModel>>> {
-  /// See also [PetVaccinationController].
-  const PetVaccinationControllerFamily();
+  /// See also [PetVaccinationsController].
+  const PetVaccinationsControllerFamily();
 
-  /// See also [PetVaccinationController].
-  PetVaccinationControllerProvider call(int petId) {
-    return PetVaccinationControllerProvider(petId);
+  /// See also [PetVaccinationsController].
+  PetVaccinationsControllerProvider call(int petId) {
+    return PetVaccinationsControllerProvider(petId);
   }
 
   @override
-  PetVaccinationControllerProvider getProviderOverride(
-    covariant PetVaccinationControllerProvider provider,
+  PetVaccinationsControllerProvider getProviderOverride(
+    covariant PetVaccinationsControllerProvider provider,
   ) {
     return call(provider.petId);
   }
@@ -71,32 +71,32 @@ class PetVaccinationControllerFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'petVaccinationControllerProvider';
+  String? get name => r'petVaccinationsControllerProvider';
 }
 
-/// See also [PetVaccinationController].
-class PetVaccinationControllerProvider
+/// See also [PetVaccinationsController].
+class PetVaccinationsControllerProvider
     extends
         AutoDisposeStreamNotifierProviderImpl<
-          PetVaccinationController,
+          PetVaccinationsController,
           List<PetVaccinationModel>
         > {
-  /// See also [PetVaccinationController].
-  PetVaccinationControllerProvider(int petId)
+  /// See also [PetVaccinationsController].
+  PetVaccinationsControllerProvider(int petId)
     : this._internal(
-        () => PetVaccinationController()..petId = petId,
-        from: petVaccinationControllerProvider,
-        name: r'petVaccinationControllerProvider',
+        () => PetVaccinationsController()..petId = petId,
+        from: petVaccinationsControllerProvider,
+        name: r'petVaccinationsControllerProvider',
         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
             ? null
-            : _$petVaccinationControllerHash,
-        dependencies: PetVaccinationControllerFamily._dependencies,
+            : _$petVaccinationsControllerHash,
+        dependencies: PetVaccinationsControllerFamily._dependencies,
         allTransitiveDependencies:
-            PetVaccinationControllerFamily._allTransitiveDependencies,
+            PetVaccinationsControllerFamily._allTransitiveDependencies,
         petId: petId,
       );
 
-  PetVaccinationControllerProvider._internal(
+  PetVaccinationsControllerProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -110,16 +110,16 @@ class PetVaccinationControllerProvider
 
   @override
   Stream<List<PetVaccinationModel>> runNotifierBuild(
-    covariant PetVaccinationController notifier,
+    covariant PetVaccinationsController notifier,
   ) {
     return notifier.build(petId);
   }
 
   @override
-  Override overrideWith(PetVaccinationController Function() create) {
+  Override overrideWith(PetVaccinationsController Function() create) {
     return ProviderOverride(
       origin: this,
-      override: PetVaccinationControllerProvider._internal(
+      override: PetVaccinationsControllerProvider._internal(
         () => create()..petId = petId,
         from: from,
         name: null,
@@ -133,16 +133,16 @@ class PetVaccinationControllerProvider
 
   @override
   AutoDisposeStreamNotifierProviderElement<
-    PetVaccinationController,
+    PetVaccinationsController,
     List<PetVaccinationModel>
   >
   createElement() {
-    return _PetVaccinationControllerProviderElement(this);
+    return _PetVaccinationsControllerProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is PetVaccinationControllerProvider && other.petId == petId;
+    return other is PetVaccinationsControllerProvider && other.petId == petId;
   }
 
   @override
@@ -156,23 +156,23 @@ class PetVaccinationControllerProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin PetVaccinationControllerRef
+mixin PetVaccinationsControllerRef
     on AutoDisposeStreamNotifierProviderRef<List<PetVaccinationModel>> {
   /// The parameter `petId` of this provider.
   int get petId;
 }
 
-class _PetVaccinationControllerProviderElement
+class _PetVaccinationsControllerProviderElement
     extends
         AutoDisposeStreamNotifierProviderElement<
-          PetVaccinationController,
+          PetVaccinationsController,
           List<PetVaccinationModel>
         >
-    with PetVaccinationControllerRef {
-  _PetVaccinationControllerProviderElement(super.provider);
+    with PetVaccinationsControllerRef {
+  _PetVaccinationsControllerProviderElement(super.provider);
 
   @override
-  int get petId => (origin as PetVaccinationControllerProvider).petId;
+  int get petId => (origin as PetVaccinationsControllerProvider).petId;
 }
 
 // ignore_for_file: type=lint

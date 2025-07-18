@@ -779,57 +779,57 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
           as _i5.Stream<_i3.PetVaccination?>);
 
   @override
-  _i5.Future<_i3.PetVaccination?> createPetVaccination({
-    required int? petId,
-    required String? name,
-    required DateTime? administeredDate,
-    required DateTime? expiryDate,
+  _i5.Future<_i3.PetVaccination?> createPetVaccination(
+    int? petId,
+    String? name,
+    DateTime? administeredDate,
+    DateTime? expiryDate,
     DateTime? reminderDate,
     String? notes,
-    required String? vaccineBatchNumber,
-    required String? vaccineManufacturer,
-    required String? administeredBy,
-  }) =>
+    String? vaccineBatchNumber,
+    String? vaccineManufacturer,
+    String? administeredBy,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#createPetVaccination, [], {
-              #petId: petId,
-              #name: name,
-              #administeredDate: administeredDate,
-              #expiryDate: expiryDate,
-              #reminderDate: reminderDate,
-              #notes: notes,
-              #vaccineBatchNumber: vaccineBatchNumber,
-              #vaccineManufacturer: vaccineManufacturer,
-              #administeredBy: administeredBy,
-            }),
+            Invocation.method(#createPetVaccination, [
+              petId,
+              name,
+              administeredDate,
+              expiryDate,
+              reminderDate,
+              notes,
+              vaccineBatchNumber,
+              vaccineManufacturer,
+              administeredBy,
+            ]),
             returnValue: _i5.Future<_i3.PetVaccination?>.value(),
           )
           as _i5.Future<_i3.PetVaccination?>);
 
   @override
-  _i5.Future<int> updatePetVaccination({
-    required int? id,
-    required String? name,
-    required DateTime? administeredDate,
-    required DateTime? expiryDate,
-    required DateTime? reminderDate,
+  _i5.Future<int> updatePetVaccination(
+    int? id,
+    String? name,
+    DateTime? administeredDate,
+    DateTime? expiryDate,
+    DateTime? reminderDate,
     String? notes,
-    required String? vaccineBatchNumber,
-    required String? vaccineManufacturer,
-    required String? administeredBy,
-  }) =>
+    String? vaccineBatchNumber,
+    String? vaccineManufacturer,
+    String? administeredBy,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#updatePetVaccination, [], {
-              #id: id,
-              #name: name,
-              #administeredDate: administeredDate,
-              #expiryDate: expiryDate,
-              #reminderDate: reminderDate,
-              #notes: notes,
-              #vaccineBatchNumber: vaccineBatchNumber,
-              #vaccineManufacturer: vaccineManufacturer,
-              #administeredBy: administeredBy,
-            }),
+            Invocation.method(#updatePetVaccination, [
+              id,
+              name,
+              administeredDate,
+              expiryDate,
+              reminderDate,
+              notes,
+              vaccineBatchNumber,
+              vaccineManufacturer,
+              administeredBy,
+            ]),
             returnValue: _i5.Future<int>.value(0),
           )
           as _i5.Future<int>);

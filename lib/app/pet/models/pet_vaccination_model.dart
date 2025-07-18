@@ -8,15 +8,15 @@ part 'pet_vaccination_model.g.dart';
 abstract class PetVaccinationModel with _$PetVaccinationModel {
   const factory PetVaccinationModel({
     int? petVaccinationId,
-    int? petId,
+    required int petId,
     required String name,
     required DateTime administeredDate,
-    required DateTime expiryDate,
+    DateTime? expiryDate,
     DateTime? reminderDate,
     String? notes,
-    String? vaccineBatchNumber,
-    String? vaccineManufacturer,
-    String? administeredBy,
+    required String vaccineBatchNumber,
+    required String vaccineManufacturer,
+    required String administeredBy,
   }) = _PetVaccinationModel;
 
   factory PetVaccinationModel.fromJson(Map<String, Object?> json) =>

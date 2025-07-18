@@ -9,17 +9,19 @@ part of 'pet_vaccination_model.dart';
 _PetVaccinationModel _$PetVaccinationModelFromJson(Map<String, dynamic> json) =>
     _PetVaccinationModel(
       petVaccinationId: (json['petVaccinationId'] as num?)?.toInt(),
-      petId: (json['petId'] as num?)?.toInt(),
+      petId: (json['petId'] as num).toInt(),
       name: json['name'] as String,
       administeredDate: DateTime.parse(json['administeredDate'] as String),
-      expiryDate: DateTime.parse(json['expiryDate'] as String),
+      expiryDate: json['expiryDate'] == null
+          ? null
+          : DateTime.parse(json['expiryDate'] as String),
       reminderDate: json['reminderDate'] == null
           ? null
           : DateTime.parse(json['reminderDate'] as String),
       notes: json['notes'] as String?,
-      vaccineBatchNumber: json['vaccineBatchNumber'] as String?,
-      vaccineManufacturer: json['vaccineManufacturer'] as String?,
-      administeredBy: json['administeredBy'] as String?,
+      vaccineBatchNumber: json['vaccineBatchNumber'] as String,
+      vaccineManufacturer: json['vaccineManufacturer'] as String,
+      administeredBy: json['administeredBy'] as String,
     );
 
 Map<String, dynamic> _$PetVaccinationModelToJson(
@@ -29,7 +31,7 @@ Map<String, dynamic> _$PetVaccinationModelToJson(
   'petId': instance.petId,
   'name': instance.name,
   'administeredDate': instance.administeredDate.toIso8601String(),
-  'expiryDate': instance.expiryDate.toIso8601String(),
+  'expiryDate': instance.expiryDate?.toIso8601String(),
   'reminderDate': instance.reminderDate?.toIso8601String(),
   'notes': instance.notes,
   'vaccineBatchNumber': instance.vaccineBatchNumber,
