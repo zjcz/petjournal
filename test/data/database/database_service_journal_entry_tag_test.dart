@@ -43,7 +43,7 @@ void main() {
     // Create a journal entry that will be used by all tests
     journalEntry =
         (await database.createJournalEntryForPet(
-          petId: 1,
+          petIdList: [1],
           entryText: 'Test Entry',
           entryDate: DateTime(2025, 1, 1),
         ))!;

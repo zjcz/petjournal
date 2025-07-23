@@ -18,6 +18,8 @@ class AllPetsController extends _$AllPetsController {
     );
   }
 
+  
+
   Future<PetModel?> save(PetModel pet) async {
     if (pet.petId == null) {
       final newPet = await _databaseService.createPet(

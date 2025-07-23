@@ -53,7 +53,7 @@ void main() {
         expect(pet, match.isNotNull);
 
         final journalEntry = await database.createJournalEntryForPet(
-          petId: pet!.petId,
+          petIdList: [pet!.petId],
           entryText: testText,
           entryDate: testDate,
         );
@@ -63,26 +63,71 @@ void main() {
         expect(journalEntry?.entryDate, equals(testDate));
 
         // Verify entry appears in getAllJournalEntriesForPet
-        final entries =
-            await database.getAllJournalEntriesForPet(pet.petId).first;
+        final entries = await database
+            .getAllJournalEntriesForPet(pet.petId)
+            .first;
         expect(entries.length, equals(1));
         expect(entries.first.entryText, equals(testText));
       },
     );
 
-    test('createJournalEntryForPet should work with null entryText', () async {
-      final testDate = DateTime(2025, 1, 1);
-      final pet = await database.getPet(1);
+    test(
+      'createJournalEntryForPet should create journal entry and link multiple records',
+      () async {
+        final testText = 'Test Entry';
+        final testDate = DateTime(2025, 1, 1);
 
-      final journalEntry = await database.createJournalEntryForPet(
-        petId: pet!.petId,
-        entryText: null,
-        entryDate: testDate,
-      );
+        // Get the pet ID from the pet created in setUp
+        final pet1 = await database.getPet(1);
+        expect(pet1, match.isNotNull);
 
-      expect(journalEntry, match.isNotNull);
-      expect(journalEntry?.entryText, match.isNull);
-    });
+        // Create a second pet for linking
+        final pet2 = await database.createPet(
+          'Rover',
+          1,
+          'Mixed',
+          'Brown',
+          PetSex.male,
+          null,
+          null,
+          '',
+          '',
+          '',
+          null,
+          null,
+          PetStatus.active,
+          null,
+          null,
+          null,
+          null,
+          null,
+        );
+        expect(pet2, match.isNotNull);
+
+        final journalEntry = await database.createJournalEntryForPet(
+          petIdList: [pet1!.petId, pet2!.petId],
+          entryText: testText,
+          entryDate: testDate,
+        );
+
+        expect(journalEntry, match.isNotNull);
+        expect(journalEntry?.entryText, equals(testText));
+        expect(journalEntry?.entryDate, equals(testDate));
+
+        // Verify entry appears in getAllJournalEntriesForPet
+        final pet1Entries = await database
+            .getAllJournalEntriesForPet(pet1.petId)
+            .first;
+        expect(pet1Entries.length, equals(1));
+        expect(pet1Entries.first.entryText, equals(testText));
+        final pet2Entries = await database
+            .getAllJournalEntriesForPet(pet2.petId)
+            .first;
+        expect(pet2Entries.length, equals(1));
+        expect(pet2Entries.first.entryText, equals(testText));
+        expect(pet1Entries.first.journalEntryId, equals(pet2Entries.first.journalEntryId));
+      },
+    );
 
     test(
       'getJournalEntry should return null for non-existent record',
@@ -97,7 +142,7 @@ void main() {
       final pet = await database.getPet(1);
 
       final created = await database.createJournalEntryForPet(
-        petId: pet!.petId,
+        petIdList: [pet!.petId],
         entryText: 'Test Entry',
         entryDate: testDate,
       );
@@ -113,8 +158,9 @@ void main() {
       'getAllJournalEntriesForPet should return empty list when no entries exist',
       () async {
         final pet = await database.getPet(1);
-        final entries =
-            await database.getAllJournalEntriesForPet(pet!.petId).first;
+        final entries = await database
+            .getAllJournalEntriesForPet(pet!.petId)
+            .first;
         expect(entries, isEmpty);
       },
     );
@@ -127,19 +173,20 @@ void main() {
         final testDate2 = DateTime(2025, 1, 2);
 
         await database.createJournalEntryForPet(
-          petId: pet!.petId,
+          petIdList: [pet!.petId],
           entryText: 'Entry 1',
           entryDate: testDate1,
         );
 
         await database.createJournalEntryForPet(
-          petId: pet.petId,
+          petIdList: [pet.petId],
           entryText: 'Entry 2',
           entryDate: testDate2,
         );
 
-        final entries =
-            await database.getAllJournalEntriesForPet(pet.petId).first;
+        final entries = await database
+            .getAllJournalEntriesForPet(pet.petId)
+            .first;
         expect(entries.length, equals(2));
         // Verify entries are present and dates are correct
         expect(
@@ -154,7 +201,7 @@ void main() {
       final originalDate = DateTime(2025, 1, 1);
 
       final entry = await database.createJournalEntryForPet(
-        petId: pet!.petId,
+        petIdList: [pet!.petId],
         entryText: 'Original Text',
         entryDate: originalDate,
       );
@@ -179,7 +226,7 @@ void main() {
       final originalDate = DateTime(2025, 1, 1);
 
       final entry = await database.createJournalEntryForPet(
-        petId: pet!.petId,
+        petIdList: [pet!.petId],
         entryText: 'Original Text',
         entryDate: originalDate,
       );
@@ -211,7 +258,7 @@ void main() {
     test('deleteJournalEntry should remove entry and link record', () async {
       final pet = await database.getPet(1);
       final entry = await database.createJournalEntryForPet(
-        petId: pet!.petId,
+        petIdList: [pet!.petId],
         entryText: 'Test Entry',
         entryDate: DateTime(2025, 1, 1),
       );
@@ -226,8 +273,9 @@ void main() {
       expect(deletedEntry, match.isNull);
 
       // Verify it's not in the pet's entries anymore
-      final entries =
-          await database.getAllJournalEntriesForPet(pet.petId).first;
+      final entries = await database
+          .getAllJournalEntriesForPet(pet.petId)
+          .first;
       expect(entries, isEmpty);
     });
 
@@ -239,7 +287,7 @@ void main() {
     test('watchJournalEntry should emit updates when entry changes', () async {
       final pet = await database.getPet(1);
       final entry = await database.createJournalEntryForPet(
-        petId: pet!.petId,
+        petIdList: [pet!.petId],
         entryText: 'Original Text',
         entryDate: DateTime(2025, 1, 1),
       );
