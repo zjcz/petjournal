@@ -2912,9 +2912,9 @@ class $JournalEntriesTable extends JournalEntries
   late final GeneratedColumn<String> entryText = GeneratedColumn<String>(
     'entry_text',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _entryDateMeta = const VerificationMeta(
     'entryDate',
@@ -2956,6 +2956,8 @@ class $JournalEntriesTable extends JournalEntries
         _entryTextMeta,
         entryText.isAcceptableOrUnknown(data['entry_text']!, _entryTextMeta),
       );
+    } else if (isInserting) {
+      context.missing(_entryTextMeta);
     }
     if (data.containsKey('entry_date')) {
       context.handle(
@@ -2979,7 +2981,7 @@ class $JournalEntriesTable extends JournalEntries
       entryText: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entry_text'],
-      ),
+      )!,
       entryDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}entry_date'],
@@ -2995,20 +2997,18 @@ class $JournalEntriesTable extends JournalEntries
 
 class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final int journalEntryId;
-  final String? entryText;
+  final String entryText;
   final DateTime entryDate;
   const JournalEntry({
     required this.journalEntryId,
-    this.entryText,
+    required this.entryText,
     required this.entryDate,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['journal_entry_id'] = Variable<int>(journalEntryId);
-    if (!nullToAbsent || entryText != null) {
-      map['entry_text'] = Variable<String>(entryText);
-    }
+    map['entry_text'] = Variable<String>(entryText);
     map['entry_date'] = Variable<DateTime>(entryDate);
     return map;
   }
@@ -3016,9 +3016,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   JournalEntriesCompanion toCompanion(bool nullToAbsent) {
     return JournalEntriesCompanion(
       journalEntryId: Value(journalEntryId),
-      entryText: entryText == null && nullToAbsent
-          ? const Value.absent()
-          : Value(entryText),
+      entryText: Value(entryText),
       entryDate: Value(entryDate),
     );
   }
@@ -3030,7 +3028,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return JournalEntry(
       journalEntryId: serializer.fromJson<int>(json['journalEntryId']),
-      entryText: serializer.fromJson<String?>(json['entryText']),
+      entryText: serializer.fromJson<String>(json['entryText']),
       entryDate: serializer.fromJson<DateTime>(json['entryDate']),
     );
   }
@@ -3039,18 +3037,18 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'journalEntryId': serializer.toJson<int>(journalEntryId),
-      'entryText': serializer.toJson<String?>(entryText),
+      'entryText': serializer.toJson<String>(entryText),
       'entryDate': serializer.toJson<DateTime>(entryDate),
     };
   }
 
   JournalEntry copyWith({
     int? journalEntryId,
-    Value<String?> entryText = const Value.absent(),
+    String? entryText,
     DateTime? entryDate,
   }) => JournalEntry(
     journalEntryId: journalEntryId ?? this.journalEntryId,
-    entryText: entryText.present ? entryText.value : this.entryText,
+    entryText: entryText ?? this.entryText,
     entryDate: entryDate ?? this.entryDate,
   );
   JournalEntry copyWithCompanion(JournalEntriesCompanion data) {
@@ -3086,7 +3084,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
 
 class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<int> journalEntryId;
-  final Value<String?> entryText;
+  final Value<String> entryText;
   final Value<DateTime> entryDate;
   const JournalEntriesCompanion({
     this.journalEntryId = const Value.absent(),
@@ -3095,9 +3093,9 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   });
   JournalEntriesCompanion.insert({
     this.journalEntryId = const Value.absent(),
-    this.entryText = const Value.absent(),
+    required String entryText,
     this.entryDate = const Value.absent(),
-  });
+  }) : entryText = Value(entryText);
   static Insertable<JournalEntry> custom({
     Expression<int>? journalEntryId,
     Expression<String>? entryText,
@@ -3112,7 +3110,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
 
   JournalEntriesCompanion copyWith({
     Value<int>? journalEntryId,
-    Value<String?>? entryText,
+    Value<String>? entryText,
     Value<DateTime>? entryDate,
   }) {
     return JournalEntriesCompanion(
@@ -6572,13 +6570,13 @@ typedef $$PetWeightsTableProcessedTableManager =
 typedef $$JournalEntriesTableCreateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> journalEntryId,
-      Value<String?> entryText,
+      required String entryText,
       Value<DateTime> entryDate,
     });
 typedef $$JournalEntriesTableUpdateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> journalEntryId,
-      Value<String?> entryText,
+      Value<String> entryText,
       Value<DateTime> entryDate,
     });
 
@@ -6853,7 +6851,7 @@ class $$JournalEntriesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> journalEntryId = const Value.absent(),
-                Value<String?> entryText = const Value.absent(),
+                Value<String> entryText = const Value.absent(),
                 Value<DateTime> entryDate = const Value.absent(),
               }) => JournalEntriesCompanion(
                 journalEntryId: journalEntryId,
@@ -6863,7 +6861,7 @@ class $$JournalEntriesTableTableManager
           createCompanionCallback:
               ({
                 Value<int> journalEntryId = const Value.absent(),
-                Value<String?> entryText = const Value.absent(),
+                required String entryText,
                 Value<DateTime> entryDate = const Value.absent(),
               }) => JournalEntriesCompanion.insert(
                 journalEntryId: journalEntryId,

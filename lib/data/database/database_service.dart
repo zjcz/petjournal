@@ -6,6 +6,7 @@ import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/tables/journal_entry.dart';
+import 'package:petjournal/data/database/tables/journal_entry_details.dart';
 import 'package:petjournal/data/database/tables/journal_entry_tag.dart';
 import 'package:petjournal/data/database/tables/pet_journal_entry.dart';
 import 'package:petjournal/data/database/tables/pet_vaccination.dart';
@@ -425,16 +426,20 @@ class DatabaseService extends _$DatabaseService {
 
   /// Create a new journal entry record
   Future<JournalEntry?> createJournalEntryForPet({
-    required int petId,
-    required String? entryText,
+    required String entryText,
     required DateTime entryDate,
+    required List<int> petIdList,
   }) async {
+    if (petIdList.isEmpty) {
+      throw Exception('No pets provided');
+    }
+
     return transaction(() async {
       try {
         // Create the journal entry
         final journalEntry = await into(journalEntries).insertReturningOrNull(
           JournalEntriesCompanion.insert(
-            entryText: Value(entryText),
+            entryText: entryText,
             entryDate: Value(entryDate),
           ),
         );
@@ -444,18 +449,18 @@ class DatabaseService extends _$DatabaseService {
           return null;
         }
 
-        // Create the PetJournalEntry record
-        final petJournalEntry = await into(petJournalEntries).insert(
-          PetJournalEntriesCompanion.insert(
-            petId: petId,
-            journalEntryId: journalEntry.journalEntryId,
-          ),
-        );
-
-        // If the PetJournalEntry creation failed, rollback the transaction
-        if (petJournalEntry == 0) {
-          throw Exception('Failed to create PetJournalEntry');
-        }
+        // Create the PetJournalEntry records for all entries
+        await batch((batch) {
+          batch.insertAll(
+            petJournalEntries,
+            petIdList.map(
+              (petId) => PetJournalEntriesCompanion.insert(
+                petId: petId,
+                journalEntryId: journalEntry.journalEntryId,
+              ),
+            ),
+          );
+        });
 
         return journalEntry;
       } catch (e) {
@@ -496,6 +501,72 @@ class DatabaseService extends _$DatabaseService {
 
     return query.watch().map((rows) {
       return rows.map((row) => row.readTable(journalEntries)).toList();
+    });
+  }
+
+  /// Retrieve all journal entries for a specific pet ID via the PetJournalEntry table
+  Stream<List<JournalEntryDetails>> getAllJournalEntryDetailsForPet(int petId) {
+
+    // Define the subquery used to extract the JournalEntries for the petId
+    final subQuery = Subquery(
+      select(petJournalEntries)..where((row) => row.petId.equals(petId)),
+      'pj',
+    );
+
+    // Define the main query.  Join the main Journal table with pet and tag subtables
+    // use the subquery to get just for the pet we need
+    // order by entry date ascending
+    final query = select(journalEntries).join([
+      leftOuterJoin(
+        petJournalEntries,
+        petJournalEntries.journalEntryId.equalsExp(
+          journalEntries.journalEntryId,
+        ),
+      ),
+      leftOuterJoin(
+        journalEntryTags,
+        journalEntryTags.journalEntryId.equalsExp(
+          journalEntries.journalEntryId,
+        ),
+      ),
+      innerJoin(
+        subQuery,
+        subQuery
+            .ref(petJournalEntries.journalEntryId)
+            .equalsExp(journalEntries.journalEntryId),
+      ),
+    ]);
+    query.orderBy([OrderingTerm.asc(journalEntries.entryDate)]);
+
+    return query.watch().map((rows) {
+      // convert the data to a list of JournalEntryDetails objects
+      // make the data heirachy
+      final Map<int, JournalEntryDetails> journalEntryDetails = {};
+      for (final row in rows) {
+        JournalEntry je = row.readTable(journalEntries);
+
+        if (!journalEntryDetails.containsKey(je.journalEntryId)) {
+          journalEntryDetails[je.journalEntryId] = JournalEntryDetails(
+            journalEntry: je,
+            tags: [],
+            pets: [],
+          );
+        }
+        JournalEntryTag? jet = row.readTableOrNull(journalEntryTags);
+        if (jet != null) {
+          if (!journalEntryDetails[je.journalEntryId]!.tags.contains(jet)) {
+            journalEntryDetails[je.journalEntryId]!.tags.add(jet);
+          }
+        }
+        PetJournalEntry? pje = row.readTableOrNull(petJournalEntries);
+        if (pje != null) {
+          if (!journalEntryDetails[je.journalEntryId]!.pets.contains(pje)) {
+            journalEntryDetails[je.journalEntryId]!.pets.add(pje);
+          }
+        }
+      }
+
+      return journalEntryDetails.values.toList();
     });
   }
 

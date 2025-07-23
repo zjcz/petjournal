@@ -11,9 +11,9 @@ import 'package:flutter/widgets.dart' as _i7;
 import 'package:go_router/src/configuration.dart' as _i6;
 import 'package:go_router/src/delegate.dart' as _i8;
 import 'package:go_router/src/information_provider.dart' as _i9;
-import 'package:go_router/src/match.dart' as _i17;
+import 'package:go_router/src/match.dart' as _i18;
 import 'package:go_router/src/parser.dart' as _i10;
-import 'package:go_router/src/router.dart' as _i16;
+import 'package:go_router/src/router.dart' as _i17;
 import 'package:go_router/src/state.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i12;
@@ -21,6 +21,8 @@ import 'package:petjournal/constants/pet_sex.dart' as _i13;
 import 'package:petjournal/constants/pet_status.dart' as _i14;
 import 'package:petjournal/constants/weight_units.dart' as _i15;
 import 'package:petjournal/data/database/database_service.dart' as _i3;
+import 'package:petjournal/data/database/tables/journal_entry_details.dart'
+    as _i16;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -844,15 +846,15 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
 
   @override
   _i5.Future<_i3.JournalEntry?> createJournalEntryForPet({
-    required int? petId,
     required String? entryText,
     required DateTime? entryDate,
+    required List<int>? petIdList,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createJournalEntryForPet, [], {
-              #petId: petId,
               #entryText: entryText,
               #entryDate: entryDate,
+              #petIdList: petIdList,
             }),
             returnValue: _i5.Future<_i3.JournalEntry?>.value(),
           )
@@ -881,6 +883,16 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
             returnValue: _i5.Stream<List<_i3.JournalEntry>>.empty(),
           )
           as _i5.Stream<List<_i3.JournalEntry>>);
+
+  @override
+  _i5.Stream<List<_i16.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
+    int? petId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllJournalEntryDetailsForPet, [petId]),
+            returnValue: _i5.Stream<List<_i16.JournalEntryDetails>>.empty(),
+          )
+          as _i5.Stream<List<_i16.JournalEntryDetails>>);
 
   @override
   _i5.Future<int> updateJournalEntry({
@@ -1553,7 +1565,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
 /// A class which mocks [GoRouter].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGoRouter extends _i1.Mock implements _i16.GoRouter {
+class MockGoRouter extends _i1.Mock implements _i17.GoRouter {
   MockGoRouter() {
     _i1.throwOnMissingStub(this);
   }
@@ -1703,7 +1715,7 @@ class MockGoRouter extends _i1.Mock implements _i16.GoRouter {
   );
 
   @override
-  void restore(_i17.RouteMatchList? matchList) => super.noSuchMethod(
+  void restore(_i18.RouteMatchList? matchList) => super.noSuchMethod(
     Invocation.method(#restore, [matchList]),
     returnValueForMissingStub: null,
   );

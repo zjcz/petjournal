@@ -13,6 +13,8 @@ import 'package:petjournal/constants/pet_sex.dart' as _i7;
 import 'package:petjournal/constants/pet_status.dart' as _i8;
 import 'package:petjournal/constants/weight_units.dart' as _i9;
 import 'package:petjournal/data/database/database_service.dart' as _i3;
+import 'package:petjournal/data/database/tables/journal_entry_details.dart'
+    as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -800,15 +802,15 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
 
   @override
   _i5.Future<_i3.JournalEntry?> createJournalEntryForPet({
-    required int? petId,
     required String? entryText,
     required DateTime? entryDate,
+    required List<int>? petIdList,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createJournalEntryForPet, [], {
-              #petId: petId,
               #entryText: entryText,
               #entryDate: entryDate,
+              #petIdList: petIdList,
             }),
             returnValue: _i5.Future<_i3.JournalEntry?>.value(),
           )
@@ -837,6 +839,16 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
             returnValue: _i5.Stream<List<_i3.JournalEntry>>.empty(),
           )
           as _i5.Stream<List<_i3.JournalEntry>>);
+
+  @override
+  _i5.Stream<List<_i10.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
+    int? petId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllJournalEntryDetailsForPet, [petId]),
+            returnValue: _i5.Stream<List<_i10.JournalEntryDetails>>.empty(),
+          )
+          as _i5.Stream<List<_i10.JournalEntryDetails>>);
 
   @override
   _i5.Future<int> updateJournalEntry({
