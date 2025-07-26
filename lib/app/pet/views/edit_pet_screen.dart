@@ -3,6 +3,7 @@ import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_sex_dropdown.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_status_dropdown.dart';
 import 'package:petjournal/app/species/views/widgets/species_dropdown.dart';
+import 'package:petjournal/data/lookups/species_lookup.dart';
 import 'package:petjournal/extensions/material_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/widgets/date_field.dart';
@@ -92,7 +93,9 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
     _neuterDate = widget.pet?.neuterDate;
 
     _status = widget.pet?.status ?? PetStatus.active;
+    _selectedSpecies = SpeciesLookup().getSpecies(widget.pet?.speciesId ?? 0);
 
+    //)
     _isMicrochipped = widget.pet?.isMicrochipped ?? false;
     _microchipDate = widget.pet?.microchipDate;
     _microchipNotesController = TextEditingController(
@@ -542,7 +545,7 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
       statusDate: widget.pet == null || widget.pet!.status != _status
           ? DateTime.now()
           : widget.pet!.statusDate,
-      species: _selectedSpecies!,
+      speciesId: _selectedSpecies!.speciesId!,
       // Assume _selectedSpecies will be validated to not be null
       isMicrochipped: _isMicrochipped,
       microchipDate: _isMicrochipped ? _microchipDate : null,

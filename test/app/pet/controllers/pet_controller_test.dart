@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/controller/pet_controller.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
@@ -104,7 +103,7 @@ void main() {
         // Verify first pet
         expect(pet!.petId, 1);
         expect(pet.name, 'Max');
-        expect(pet.species.speciesId, 1);
+        expect(pet.speciesId, 1);
         expect(pet.breed, 'Labrador');
         expect(pet.colour, 'Black');
         expect(pet.petSex, PetSex.male);

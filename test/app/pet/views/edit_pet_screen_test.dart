@@ -57,7 +57,7 @@ void main() {
       neuterDate: DateTime(2021, 1, 1),
       status: PetStatus.active,
       statusDate: DateTime.now(),
-      species: testSpecies,
+      speciesId: testSpecies.speciesId!,
       isMicrochipped: true,
       microchipDate: DateTime(2020, 2, 1),
       microchipNotes: 'No issues',

@@ -23,7 +23,7 @@ _PetModel _$PetModelFromJson(Map<String, dynamic> json) => _PetModel(
       : DateTime.parse(json['neuterDate'] as String),
   status: $enumDecode(_$PetStatusEnumMap, json['status']),
   statusDate: DateTime.parse(json['statusDate'] as String),
-  species: SpeciesModel.fromJson(json['species'] as Map<String, dynamic>),
+  speciesId: (json['speciesId'] as num).toInt(),
   isMicrochipped: json['isMicrochipped'] as bool,
   microchipDate: json['microchipDate'] == null
       ? null
@@ -48,7 +48,7 @@ Map<String, dynamic> _$PetModelToJson(_PetModel instance) => <String, dynamic>{
   'neuterDate': instance.neuterDate?.toIso8601String(),
   'status': _$PetStatusEnumMap[instance.status]!,
   'statusDate': instance.statusDate.toIso8601String(),
-  'species': instance.species,
+  'speciesId': instance.speciesId,
   'isMicrochipped': instance.isMicrochipped,
   'microchipDate': instance.microchipDate?.toIso8601String(),
   'microchipNotes': instance.microchipNotes,

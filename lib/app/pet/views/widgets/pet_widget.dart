@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:flutter/material.dart';
+import 'package:petjournal/app/species/models/species_model.dart';
+import 'package:petjournal/data/lookups/species_lookup.dart';
 import 'package:petjournal/helpers/date_helper.dart';
 
 // Widget to display pet info
@@ -18,7 +20,7 @@ class _PetWidgetState extends ConsumerState<PetWidget> {
   Widget build(BuildContext context) {
     List<Widget> listViewItems = [
       _buildListViewItem("Name", widget.pet.name),
-      _buildListViewItem("Species", widget.pet.species.name),
+      _buildListViewItem("Species", _getSpeciesName(widget.pet.speciesId)),
       _buildListViewItem("Breed", widget.pet.breed),
       _buildListViewItem("Colour", widget.pet.colour),
       _buildListViewItem(
@@ -89,5 +91,15 @@ class _PetWidgetState extends ConsumerState<PetWidget> {
       subtitle: Text(value),
       isThreeLine: isThreeLine,
     );
+  }
+
+  /// // lookup the name for the species
+  String _getSpeciesName(int speciesId) {
+    SpeciesModel? s = SpeciesLookup().getSpecies(speciesId);
+    if (s == null) {
+      return '';
+    }
+
+    return s.name;
   }
 }
