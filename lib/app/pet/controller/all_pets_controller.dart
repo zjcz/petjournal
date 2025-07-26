@@ -24,7 +24,7 @@ class AllPetsController extends _$AllPetsController {
     if (pet.petId == null) {
       final newPet = await _databaseService.createPet(
         pet.name,
-        pet.species.speciesId!,
+        pet.speciesId,
         pet.breed,
         pet.colour,
         pet.petSex,
@@ -48,7 +48,7 @@ class AllPetsController extends _$AllPetsController {
       await _databaseService.updatePet(
         pet.petId!,
         pet.name,
-        pet.species.speciesId!,
+        pet.speciesId,
         pet.breed,
         pet.colour,
         pet.petSex,

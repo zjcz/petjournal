@@ -39,7 +39,7 @@ void main() {
       // Assert
       expect(model.petId, equals(1));
       expect(model.name, equals('Rex'));
-      expect(model.species.speciesId, equals(2));
+      expect(model.speciesId, equals(2));
       expect(model.breed, equals('German Shepherd'));
       expect(model.colour, equals('Black and Tan'));
       expect(model.petSex, equals(PetSex.male));

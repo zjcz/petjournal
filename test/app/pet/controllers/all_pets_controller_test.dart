@@ -5,7 +5,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
-import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
@@ -123,7 +122,7 @@ void main() {
         // Verify first pet
         expect(pets[0].petId, 1);
         expect(pets[0].name, 'Max');
-        expect(pets[0].species.speciesId, 1);
+        expect(pets[0].speciesId, 1);
         expect(pets[0].breed, 'Labrador');
         expect(pets[0].colour, 'Black');
         expect(pets[0].petSex, PetSex.male);
@@ -137,7 +136,7 @@ void main() {
         // Verify second pet
         expect(pets[1].petId, 2);
         expect(pets[1].name, 'Luna');
-        expect(pets[1].species.speciesId, 2);
+        expect(pets[1].speciesId, 2);
         expect(pets[1].breed, 'Persian');
         expect(pets[1].colour, 'White');
         expect(pets[1].petSex, PetSex.female);
@@ -277,11 +276,7 @@ void main() {
         final initialPetModel = PetModel(
           petId: null,
           name: initialPet.name,
-          species: SpeciesModel(
-            speciesId: initialPet.speciesId,
-            name: 'test',
-            userAdded: false,
-          ),
+          speciesId: initialPet.speciesId,
           breed: initialPet.breed,
           colour: initialPet.colour,
           petSex: PetSex.fromDataValue(initialPet.sex),
@@ -303,7 +298,7 @@ void main() {
         when(
           mockDatabaseService.createPet(
             initialPetModel.name,
-            initialPetModel.species.speciesId,
+            initialPetModel.speciesId,
             initialPetModel.breed,
             initialPetModel.colour,
             initialPetModel.petSex,
@@ -340,7 +335,7 @@ void main() {
         verify(
           mockDatabaseService.createPet(
             initialPetModel.name,
-            initialPetModel.species.speciesId,
+            initialPetModel.speciesId,
             initialPetModel.breed,
             initialPetModel.colour,
             initialPetModel.petSex,
@@ -389,11 +384,7 @@ void main() {
         final initialPetModel = PetModel(
           petId: initialPet.petId,
           name: initialPet.name,
-          species: SpeciesModel(
-            speciesId: initialPet.speciesId,
-            name: 'test',
-            userAdded: false,
-          ),
+          speciesId: initialPet.speciesId,
           breed: initialPet.breed,
           colour: initialPet.colour,
           petSex: PetSex.fromDataValue(initialPet.sex),
@@ -416,7 +407,7 @@ void main() {
           mockDatabaseService.updatePet(
             initialPetModel.petId,
             initialPetModel.name,
-            initialPetModel.species.speciesId,
+            initialPetModel.speciesId,
             initialPetModel.breed,
             initialPetModel.colour,
             initialPetModel.petSex,
@@ -455,7 +446,7 @@ void main() {
           mockDatabaseService.updatePet(
             initialPetModel.petId,
             initialPetModel.name,
-            initialPetModel.species.speciesId,
+            initialPetModel.speciesId,
             initialPetModel.breed,
             initialPetModel.colour,
             initialPetModel.petSex,
@@ -486,9 +477,7 @@ void main() {
       testWidgets('Should call deletePet When petId is null', (tester) async {
         int petId = 1;
         final databaseService = MockDatabaseService();
-        when(
-          databaseService.deletePet(petId),
-        ).thenAnswer((_) async => petId);
+        when(databaseService.deletePet(petId)).thenAnswer((_) async => petId);
 
         final container = createContainer(
           overrides: [

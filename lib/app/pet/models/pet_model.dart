@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/helpers/date_helper.dart';
@@ -27,7 +26,7 @@ abstract class PetModel with _$PetModel {
     required DateTime? neuterDate,
     required PetStatus status,
     required DateTime statusDate,
-    required SpeciesModel species,
+    required int speciesId,
     required bool isMicrochipped,
     DateTime? microchipDate,
     String? microchipNotes,

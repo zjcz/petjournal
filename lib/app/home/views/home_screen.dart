@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
+import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/data/database/database_service.dart';
+import 'package:petjournal/data/lookups/species_lookup.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -84,13 +86,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String getPetSubTitle(PetModel pet) {
     final data = [
-      pet.species.name,
+      _getSpeciesName(pet.speciesId),
       pet.breed,
       pet.colour,
       ?pet.getAge(longFormat: false),
     ];
 
     return data.join(" | ");
+  }
+
+  /// // lookup the name for the species
+  String _getSpeciesName(int speciesId) {
+    SpeciesModel? s = SpeciesLookup().getSpecies(speciesId);
+    if (s == null) {
+      return '';
+    }
+
+    return s.name;
   }
 
   Widget buildPetListTile(PetModel pet) {

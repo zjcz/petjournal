@@ -1,4 +1,3 @@
-import 'package:petjournal/app/species/models/species_model.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
@@ -21,11 +20,7 @@ class PetMapper {
       neuterDate: pet.neuterDate,
       status: PetStatus.fromDataValue(pet.status),
       statusDate: pet.statusDate,
-      species: SpeciesModel(
-        speciesId: pet.speciesId,
-        name: 'Test Species',
-        userAdded: false,
-      ),
+      speciesId: pet.speciesId,
       isMicrochipped: pet.isMicrochipped ?? false,
       microchipDate: pet.microchipDate,
       microchipNotes: pet.microchipNotes,
