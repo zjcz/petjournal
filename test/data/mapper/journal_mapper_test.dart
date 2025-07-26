@@ -16,7 +16,8 @@ void main() {
           final jed = JournalEntryDetails(
             journalEntry: JournalEntry(
               journalEntryId: 1,
-              entryDate: DateTime(2025, 1, 1),
+              createdDateTime: DateTime(2025, 1, 1, 12, 30, 45),
+              lastUpdatedDateTime: DateTime(2025, 1, 2, 21, 25, 59),
               entryText: 'New Entry',
             ),
             tags: [
@@ -42,7 +43,50 @@ void main() {
 
           // Assert
           expect(result.journalEntryId, 1);
-          expect(result.entryDate, DateTime(2025, 1, 1));
+          expect(result.createdDateTime, DateTime(2025, 1, 1, 12, 30, 45));
+          expect(result.lastUpdatedDateTime, DateTime(2025, 1, 2, 21, 25, 59));
+          expect(result.entryText, 'New Entry');
+          expect(result.petIdList, [1, 2]);
+          expect(result.tags, ['Tag1', 'Tag2']);
+        },
+      );
+
+      test(
+        'mapToModel should return correct JournalModel when last updated is null',
+        () {
+          // Arrange
+          final jed = JournalEntryDetails(
+            journalEntry: JournalEntry(
+              journalEntryId: 1,
+              createdDateTime: DateTime(2025, 1, 1, 12, 30, 45),
+              lastUpdatedDateTime: null,
+              entryText: 'New Entry',
+            ),
+            tags: [
+              JournalEntryTag(
+                journalEntryTagId: 1,
+                journalEntryId: 1,
+                tag: 'Tag1',
+              ),
+              JournalEntryTag(
+                journalEntryTagId: 2,
+                journalEntryId: 1,
+                tag: 'Tag2',
+              ),
+            ],
+            pets: [
+              PetJournalEntry(journalEntryId: 1, petId: 1),
+              PetJournalEntry(journalEntryId: 1, petId: 2),
+            ],
+          );
+
+          // Act
+          final result = JournalMapper.mapToModel(jed);
+
+          // Assert
+          expect(result.journalEntryId, 1);
+          expect(result.createdDateTime, DateTime(2025, 1, 1, 12, 30, 45));
+          expect(result.lastUpdatedDateTime, null);
           expect(result.entryText, 'New Entry');
           expect(result.petIdList, [1, 2]);
           expect(result.tags, ['Tag1', 'Tag2']);
@@ -56,7 +100,7 @@ void main() {
           final jed = JournalEntryDetails(
             journalEntry: JournalEntry(
               journalEntryId: 1,
-              entryDate: DateTime(2025, 1, 1),
+              createdDateTime: DateTime(2025, 1, 1),
               entryText: 'New Entry',
             ),
             tags: [
@@ -79,7 +123,7 @@ void main() {
 
           // Assert
           expect(result.journalEntryId, 1);
-          expect(result.entryDate, DateTime(2025, 1, 1));
+          expect(result.createdDateTime, DateTime(2025, 1, 1));
           expect(result.entryText, 'New Entry');
           expect(result.petIdList, []);
           expect(result.tags, ['Tag1', 'Tag2']);
@@ -93,7 +137,7 @@ void main() {
           final jed = JournalEntryDetails(
             journalEntry: JournalEntry(
               journalEntryId: 1,
-              entryDate: DateTime(2025, 1, 1),
+              createdDateTime: DateTime(2025, 1, 1),
               entryText: 'New Entry',
             ),
             tags: [],
@@ -108,7 +152,7 @@ void main() {
 
           // Assert
           expect(result.journalEntryId, 1);
-          expect(result.entryDate, DateTime(2025, 1, 1));
+          expect(result.createdDateTime, DateTime(2025, 1, 1));
           expect(result.entryText, 'New Entry');
           expect(result.petIdList, [1, 2]);
           expect(result.tags, []);
@@ -137,7 +181,7 @@ void main() {
               JournalEntryDetails(
                 journalEntry: JournalEntry(
                   journalEntryId: 1,
-                  entryDate: DateTime(2025, 1, 1),
+                  createdDateTime: DateTime(2025, 1, 1),
                   entryText: 'New Entry 1',
                 ),
                 tags: [
@@ -158,7 +202,7 @@ void main() {
               JournalEntryDetails(
                 journalEntry: JournalEntry(
                   journalEntryId: 2,
-                  entryDate: DateTime(2025, 1, 1),
+                  createdDateTime: DateTime(2025, 1, 1),
                   entryText: 'New Entry 2',
                 ),
                 tags: [

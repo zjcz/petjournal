@@ -75,7 +75,7 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
 
         // ACT
@@ -101,7 +101,7 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
 
         // ACT
@@ -122,7 +122,7 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId, pet2!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
 
         // ACT
@@ -158,7 +158,7 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId, pet2!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
 
         // ACT
@@ -184,12 +184,12 @@ void main() {
         final journalEntry1 = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId],
           entryText: 'Test Entry 1',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
         final journalEntry2 = (await database.createJournalEntryForPet(
           petIdList: [pet2!.petId],
           entryText: 'Test Entry 2',
-          entryDate: DateTime(2025, 1, 1),
+          tags: [],
         ))!;
 
         // ACT
@@ -218,12 +218,8 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: ['new tag'],
         ))!;
-        await database.createJournalEntryTag(
-          journalEntryId: journalEntry.journalEntryId,
-          tag: 'new tag',
-        );
 
         // ACT
         final records = await database
@@ -245,16 +241,8 @@ void main() {
         journalEntry = (await database.createJournalEntryForPet(
           petIdList: [pet1!.petId],
           entryText: 'Test Entry',
-          entryDate: DateTime(2025, 1, 1),
+          tags: ['new tag 1', 'new tag 2'],
         ))!;
-        await database.createJournalEntryTag(
-          journalEntryId: journalEntry.journalEntryId,
-          tag: 'new tag 1',
-        );
-        await database.createJournalEntryTag(
-          journalEntryId: journalEntry.journalEntryId,
-          tag: 'new tag 2',
-        );        
 
         // ACT
         final records = await database

@@ -2,9 +2,19 @@ import 'package:intl/intl.dart';
 
 class DateHelper {
   static const String dateFormat = 'dd MMMM yyyy';
+  static const String timeFormat = 'HH:mm:ss';
+  static const String dateTimeFormat = '$dateFormat $timeFormat';
 
   static String formatDate(DateTime date) {
     return DateFormat(dateFormat).format(date);
+  }
+
+  static String formatTime(DateTime dateTime) {
+    return DateFormat(timeFormat).format(dateTime);
+  }
+
+  static String formatDateTime(DateTime dateTime) {
+    return DateFormat(dateTimeFormat).format(dateTime);
   }
 
   static DateTime? parseDate(String date) {

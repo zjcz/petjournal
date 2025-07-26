@@ -78,7 +78,7 @@ void main() {
         final databaseEntry = JournalEntryDetails(
           journalEntry: JournalEntry(
             journalEntryId: 1,
-            entryDate: DateTime(2025, 1, 1),
+            createdDateTime: DateTime(2025, 1, 1),
             entryText: 'New Entry',
           ),
           tags: [
@@ -112,7 +112,8 @@ void main() {
         // Verify first journal
         expect(journalList.length, 1);
         expect(journalList[0].journalEntryId, 1);
-        expect(journalList[0].entryDate, DateTime(2025, 1, 1));
+        expect(journalList[0].createdDateTime, DateTime(2025, 1, 1));
+        expect(journalList[0].lastUpdatedDateTime, null);
         expect(journalList[0].entryText, 'New Entry');
         expect(journalList[0].tags, ['Tag1']);
         expect(journalList[0].petIdList, [1]);
@@ -160,7 +161,7 @@ void main() {
           final initialJournal = JournalEntryDetails(
             journalEntry: JournalEntry(
               journalEntryId: 1,
-              entryDate: DateTime(2025, 1, 1),
+              createdDateTime: DateTime(2025, 1, 1),
               entryText: 'New Entry',
             ),
             tags: [],
@@ -170,7 +171,7 @@ void main() {
           final updatedJournal = JournalEntryDetails(
             journalEntry: JournalEntry(
               journalEntryId: 1,
-              entryDate: DateTime(2025, 1, 1),
+              createdDateTime: DateTime(2025, 1, 1),
               entryText: 'Updated Entry',
             ),
             tags: [],
@@ -229,7 +230,7 @@ void main() {
         final initialJournal = JournalEntryDetails(
           journalEntry: JournalEntry(
             journalEntryId: 1,
-            entryDate: DateTime(2025, 1, 1),
+            createdDateTime: DateTime(2025, 1, 1),
             entryText: 'New Entry',
           ),
           tags: [
@@ -244,7 +245,8 @@ void main() {
 
         final initialJournalModel = JournalModel(
           journalEntryId: null,
-          entryDate: initialJournal.journalEntry.entryDate,
+          createdDateTime: initialJournal.journalEntry.createdDateTime,
+          lastUpdatedDateTime: null,
           entryText: initialJournal.journalEntry.entryText,
           tags: [initialJournal.tags[0].tag],
           petIdList: [1],
@@ -256,8 +258,8 @@ void main() {
         when(
           mockDatabaseService.createJournalEntryForPet(
             entryText: initialJournalModel.entryText,
-            entryDate: initialJournalModel.entryDate,
             petIdList: [1],
+            tags: ['Tag1'],
           ),
         ).thenAnswer((_) => Future.value(initialJournal.journalEntry));
 
@@ -282,8 +284,8 @@ void main() {
         verify(
           mockDatabaseService.createJournalEntryForPet(
             entryText: initialJournalModel.entryText,
-            entryDate: initialJournalModel.entryDate,
             petIdList: [1],
+            tags: ['Tag1'],
           ),
         ).called(1);
 
@@ -298,7 +300,7 @@ void main() {
         final initialJournal = JournalEntryDetails(
           journalEntry: JournalEntry(
             journalEntryId: 1,
-            entryDate: DateTime(2025, 1, 1),
+            createdDateTime: DateTime(2025, 1, 1),
             entryText: 'New Entry',
           ),
           tags: [
@@ -313,7 +315,8 @@ void main() {
 
         final initialJournalModel = JournalModel(
           journalEntryId: initialJournal.journalEntry.journalEntryId,
-          entryDate: initialJournal.journalEntry.entryDate,
+          createdDateTime: initialJournal.journalEntry.createdDateTime,
+          lastUpdatedDateTime: null,
           entryText: initialJournal.journalEntry.entryText,
           tags: [initialJournal.tags[0].tag],
           petIdList: [1],
@@ -326,7 +329,8 @@ void main() {
           mockDatabaseService.updateJournalEntry(
             id: initialJournalModel.journalEntryId,
             entryText: initialJournalModel.entryText,
-            entryDate: initialJournalModel.entryDate,
+            tags: ['Tag1'],
+            petIdList: [1],
           ),
         ).thenAnswer((_) => Future.value(1));
 
@@ -351,7 +355,8 @@ void main() {
           mockDatabaseService.updateJournalEntry(
             id: initialJournalModel.journalEntryId,
             entryText: initialJournalModel.entryText,
-            entryDate: initialJournalModel.entryDate,
+            tags: ['Tag1'],
+            petIdList: [1],
           ),
         ).called(1);
 

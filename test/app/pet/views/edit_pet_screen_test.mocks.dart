@@ -847,18 +847,36 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   @override
   _i5.Future<_i3.JournalEntry?> createJournalEntryForPet({
     required String? entryText,
-    required DateTime? entryDate,
     required List<int>? petIdList,
+    required List<String>? tags,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createJournalEntryForPet, [], {
               #entryText: entryText,
-              #entryDate: entryDate,
               #petIdList: petIdList,
+              #tags: tags,
             }),
             returnValue: _i5.Future<_i3.JournalEntry?>.value(),
           )
           as _i5.Future<_i3.JournalEntry?>);
+
+  @override
+  _i5.Future<int> updateJournalEntry({
+    required int? id,
+    required String? entryText,
+    required List<int>? petIdList,
+    required List<String>? tags,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateJournalEntry, [], {
+              #id: id,
+              #entryText: entryText,
+              #petIdList: petIdList,
+              #tags: tags,
+            }),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
 
   @override
   _i5.Future<_i3.JournalEntry?> getJournalEntry(int? id) =>
@@ -895,42 +913,12 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
           as _i5.Stream<List<_i16.JournalEntryDetails>>);
 
   @override
-  _i5.Future<int> updateJournalEntry({
-    required int? id,
-    String? entryText,
-    DateTime? entryDate,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateJournalEntry, [], {
-              #id: id,
-              #entryText: entryText,
-              #entryDate: entryDate,
-            }),
-            returnValue: _i5.Future<int>.value(0),
-          )
-          as _i5.Future<int>);
-
-  @override
   _i5.Future<int> deleteJournalEntry(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteJournalEntry, [id]),
             returnValue: _i5.Future<int>.value(0),
           )
           as _i5.Future<int>);
-
-  @override
-  _i5.Future<_i3.JournalEntryTag?> createJournalEntryTag({
-    required int? journalEntryId,
-    required String? tag,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#createJournalEntryTag, [], {
-              #journalEntryId: journalEntryId,
-              #tag: tag,
-            }),
-            returnValue: _i5.Future<_i3.JournalEntryTag?>.value(),
-          )
-          as _i5.Future<_i3.JournalEntryTag?>);
 
   @override
   _i5.Stream<List<_i3.JournalEntryTag>> getAllJournalEntryTagsForEntry(
@@ -943,14 +931,6 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
             returnValue: _i5.Stream<List<_i3.JournalEntryTag>>.empty(),
           )
           as _i5.Stream<List<_i3.JournalEntryTag>>);
-
-  @override
-  _i5.Future<int> deleteJournalEntryTag(int? journalEntryTagId) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteJournalEntryTag, [journalEntryTagId]),
-            returnValue: _i5.Future<int>.value(0),
-          )
-          as _i5.Future<int>);
 
   @override
   _i5.Stream<List<_i3.SpeciesType>> getAllSpeciesTypes() =>

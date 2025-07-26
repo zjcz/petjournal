@@ -5,7 +5,8 @@ class JournalMapper {
   static JournalModel mapToModel(JournalEntryDetails journalEntryDetail) {
     return JournalModel(
       journalEntryId: journalEntryDetail.journalEntry.journalEntryId,
-      entryDate: journalEntryDetail.journalEntry.entryDate,
+      createdDateTime: journalEntryDetail.journalEntry.createdDateTime,
+      lastUpdatedDateTime: journalEntryDetail.journalEntry.lastUpdatedDateTime,
       entryText: journalEntryDetail.journalEntry.entryText,
       petIdList: journalEntryDetail.pets.map((pet) => pet.petId).toList(),
       tags: journalEntryDetail.tags.map((tag) => tag.tag).toList(),

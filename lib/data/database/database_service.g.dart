@@ -2916,20 +2916,37 @@ class $JournalEntriesTable extends JournalEntries
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _entryDateMeta = const VerificationMeta(
-    'entryDate',
+  static const VerificationMeta _createdDateTimeMeta = const VerificationMeta(
+    'createdDateTime',
   );
   @override
-  late final GeneratedColumn<DateTime> entryDate = GeneratedColumn<DateTime>(
-    'entry_date',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
+  late final GeneratedColumn<DateTime> createdDateTime =
+      GeneratedColumn<DateTime>(
+        'created_date_time',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastUpdatedDateTimeMeta =
+      const VerificationMeta('lastUpdatedDateTime');
   @override
-  List<GeneratedColumn> get $columns => [journalEntryId, entryText, entryDate];
+  late final GeneratedColumn<DateTime> lastUpdatedDateTime =
+      GeneratedColumn<DateTime>(
+        'last_updated_date_time',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    journalEntryId,
+    entryText,
+    createdDateTime,
+    lastUpdatedDateTime,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2959,10 +2976,22 @@ class $JournalEntriesTable extends JournalEntries
     } else if (isInserting) {
       context.missing(_entryTextMeta);
     }
-    if (data.containsKey('entry_date')) {
+    if (data.containsKey('created_date_time')) {
       context.handle(
-        _entryDateMeta,
-        entryDate.isAcceptableOrUnknown(data['entry_date']!, _entryDateMeta),
+        _createdDateTimeMeta,
+        createdDateTime.isAcceptableOrUnknown(
+          data['created_date_time']!,
+          _createdDateTimeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_updated_date_time')) {
+      context.handle(
+        _lastUpdatedDateTimeMeta,
+        lastUpdatedDateTime.isAcceptableOrUnknown(
+          data['last_updated_date_time']!,
+          _lastUpdatedDateTimeMeta,
+        ),
       );
     }
     return context;
@@ -2982,10 +3011,14 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.string,
         data['${effectivePrefix}entry_text'],
       )!,
-      entryDate: attachedDatabase.typeMapping.read(
+      createdDateTime: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}entry_date'],
+        data['${effectivePrefix}created_date_time'],
       )!,
+      lastUpdatedDateTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_updated_date_time'],
+      ),
     );
   }
 
@@ -2998,18 +3031,23 @@ class $JournalEntriesTable extends JournalEntries
 class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final int journalEntryId;
   final String entryText;
-  final DateTime entryDate;
+  final DateTime createdDateTime;
+  final DateTime? lastUpdatedDateTime;
   const JournalEntry({
     required this.journalEntryId,
     required this.entryText,
-    required this.entryDate,
+    required this.createdDateTime,
+    this.lastUpdatedDateTime,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['journal_entry_id'] = Variable<int>(journalEntryId);
     map['entry_text'] = Variable<String>(entryText);
-    map['entry_date'] = Variable<DateTime>(entryDate);
+    map['created_date_time'] = Variable<DateTime>(createdDateTime);
+    if (!nullToAbsent || lastUpdatedDateTime != null) {
+      map['last_updated_date_time'] = Variable<DateTime>(lastUpdatedDateTime);
+    }
     return map;
   }
 
@@ -3017,7 +3055,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return JournalEntriesCompanion(
       journalEntryId: Value(journalEntryId),
       entryText: Value(entryText),
-      entryDate: Value(entryDate),
+      createdDateTime: Value(createdDateTime),
+      lastUpdatedDateTime: lastUpdatedDateTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastUpdatedDateTime),
     );
   }
 
@@ -3029,7 +3070,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return JournalEntry(
       journalEntryId: serializer.fromJson<int>(json['journalEntryId']),
       entryText: serializer.fromJson<String>(json['entryText']),
-      entryDate: serializer.fromJson<DateTime>(json['entryDate']),
+      createdDateTime: serializer.fromJson<DateTime>(json['createdDateTime']),
+      lastUpdatedDateTime: serializer.fromJson<DateTime?>(
+        json['lastUpdatedDateTime'],
+      ),
     );
   }
   @override
@@ -3038,18 +3082,23 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return <String, dynamic>{
       'journalEntryId': serializer.toJson<int>(journalEntryId),
       'entryText': serializer.toJson<String>(entryText),
-      'entryDate': serializer.toJson<DateTime>(entryDate),
+      'createdDateTime': serializer.toJson<DateTime>(createdDateTime),
+      'lastUpdatedDateTime': serializer.toJson<DateTime?>(lastUpdatedDateTime),
     };
   }
 
   JournalEntry copyWith({
     int? journalEntryId,
     String? entryText,
-    DateTime? entryDate,
+    DateTime? createdDateTime,
+    Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
   }) => JournalEntry(
     journalEntryId: journalEntryId ?? this.journalEntryId,
     entryText: entryText ?? this.entryText,
-    entryDate: entryDate ?? this.entryDate,
+    createdDateTime: createdDateTime ?? this.createdDateTime,
+    lastUpdatedDateTime: lastUpdatedDateTime.present
+        ? lastUpdatedDateTime.value
+        : this.lastUpdatedDateTime,
   );
   JournalEntry copyWithCompanion(JournalEntriesCompanion data) {
     return JournalEntry(
@@ -3057,7 +3106,12 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           ? data.journalEntryId.value
           : this.journalEntryId,
       entryText: data.entryText.present ? data.entryText.value : this.entryText,
-      entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
+      createdDateTime: data.createdDateTime.present
+          ? data.createdDateTime.value
+          : this.createdDateTime,
+      lastUpdatedDateTime: data.lastUpdatedDateTime.present
+          ? data.lastUpdatedDateTime.value
+          : this.lastUpdatedDateTime,
     );
   }
 
@@ -3066,57 +3120,72 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return (StringBuffer('JournalEntry(')
           ..write('journalEntryId: $journalEntryId, ')
           ..write('entryText: $entryText, ')
-          ..write('entryDate: $entryDate')
+          ..write('createdDateTime: $createdDateTime, ')
+          ..write('lastUpdatedDateTime: $lastUpdatedDateTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(journalEntryId, entryText, entryDate);
+  int get hashCode => Object.hash(
+    journalEntryId,
+    entryText,
+    createdDateTime,
+    lastUpdatedDateTime,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is JournalEntry &&
           other.journalEntryId == this.journalEntryId &&
           other.entryText == this.entryText &&
-          other.entryDate == this.entryDate);
+          other.createdDateTime == this.createdDateTime &&
+          other.lastUpdatedDateTime == this.lastUpdatedDateTime);
 }
 
 class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<int> journalEntryId;
   final Value<String> entryText;
-  final Value<DateTime> entryDate;
+  final Value<DateTime> createdDateTime;
+  final Value<DateTime?> lastUpdatedDateTime;
   const JournalEntriesCompanion({
     this.journalEntryId = const Value.absent(),
     this.entryText = const Value.absent(),
-    this.entryDate = const Value.absent(),
+    this.createdDateTime = const Value.absent(),
+    this.lastUpdatedDateTime = const Value.absent(),
   });
   JournalEntriesCompanion.insert({
     this.journalEntryId = const Value.absent(),
     required String entryText,
-    this.entryDate = const Value.absent(),
+    this.createdDateTime = const Value.absent(),
+    this.lastUpdatedDateTime = const Value.absent(),
   }) : entryText = Value(entryText);
   static Insertable<JournalEntry> custom({
     Expression<int>? journalEntryId,
     Expression<String>? entryText,
-    Expression<DateTime>? entryDate,
+    Expression<DateTime>? createdDateTime,
+    Expression<DateTime>? lastUpdatedDateTime,
   }) {
     return RawValuesInsertable({
       if (journalEntryId != null) 'journal_entry_id': journalEntryId,
       if (entryText != null) 'entry_text': entryText,
-      if (entryDate != null) 'entry_date': entryDate,
+      if (createdDateTime != null) 'created_date_time': createdDateTime,
+      if (lastUpdatedDateTime != null)
+        'last_updated_date_time': lastUpdatedDateTime,
     });
   }
 
   JournalEntriesCompanion copyWith({
     Value<int>? journalEntryId,
     Value<String>? entryText,
-    Value<DateTime>? entryDate,
+    Value<DateTime>? createdDateTime,
+    Value<DateTime?>? lastUpdatedDateTime,
   }) {
     return JournalEntriesCompanion(
       journalEntryId: journalEntryId ?? this.journalEntryId,
       entryText: entryText ?? this.entryText,
-      entryDate: entryDate ?? this.entryDate,
+      createdDateTime: createdDateTime ?? this.createdDateTime,
+      lastUpdatedDateTime: lastUpdatedDateTime ?? this.lastUpdatedDateTime,
     );
   }
 
@@ -3129,8 +3198,13 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     if (entryText.present) {
       map['entry_text'] = Variable<String>(entryText.value);
     }
-    if (entryDate.present) {
-      map['entry_date'] = Variable<DateTime>(entryDate.value);
+    if (createdDateTime.present) {
+      map['created_date_time'] = Variable<DateTime>(createdDateTime.value);
+    }
+    if (lastUpdatedDateTime.present) {
+      map['last_updated_date_time'] = Variable<DateTime>(
+        lastUpdatedDateTime.value,
+      );
     }
     return map;
   }
@@ -3140,7 +3214,8 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     return (StringBuffer('JournalEntriesCompanion(')
           ..write('journalEntryId: $journalEntryId, ')
           ..write('entryText: $entryText, ')
-          ..write('entryDate: $entryDate')
+          ..write('createdDateTime: $createdDateTime, ')
+          ..write('lastUpdatedDateTime: $lastUpdatedDateTime')
           ..write(')'))
         .toString();
   }
@@ -6571,13 +6646,15 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> journalEntryId,
       required String entryText,
-      Value<DateTime> entryDate,
+      Value<DateTime> createdDateTime,
+      Value<DateTime?> lastUpdatedDateTime,
     });
 typedef $$JournalEntriesTableUpdateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> journalEntryId,
       Value<String> entryText,
-      Value<DateTime> entryDate,
+      Value<DateTime> createdDateTime,
+      Value<DateTime?> lastUpdatedDateTime,
     });
 
 final class $$JournalEntriesTableReferences
@@ -6664,8 +6741,13 @@ class $$JournalEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get entryDate => $composableBuilder(
-    column: $table.entryDate,
+  ColumnFilters<DateTime> get createdDateTime => $composableBuilder(
+    column: $table.createdDateTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastUpdatedDateTime => $composableBuilder(
+    column: $table.lastUpdatedDateTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6739,8 +6821,13 @@ class $$JournalEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get entryDate => $composableBuilder(
-    column: $table.entryDate,
+  ColumnOrderings<DateTime> get createdDateTime => $composableBuilder(
+    column: $table.createdDateTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastUpdatedDateTime => $composableBuilder(
+    column: $table.lastUpdatedDateTime,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -6762,8 +6849,15 @@ class $$JournalEntriesTableAnnotationComposer
   GeneratedColumn<String> get entryText =>
       $composableBuilder(column: $table.entryText, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get entryDate =>
-      $composableBuilder(column: $table.entryDate, builder: (column) => column);
+  GeneratedColumn<DateTime> get createdDateTime => $composableBuilder(
+    column: $table.createdDateTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastUpdatedDateTime => $composableBuilder(
+    column: $table.lastUpdatedDateTime,
+    builder: (column) => column,
+  );
 
   Expression<T> journalEntryTagsRefs<T extends Object>(
     Expression<T> Function($$JournalEntryTagsTableAnnotationComposer a) f,
@@ -6852,21 +6946,25 @@ class $$JournalEntriesTableTableManager
               ({
                 Value<int> journalEntryId = const Value.absent(),
                 Value<String> entryText = const Value.absent(),
-                Value<DateTime> entryDate = const Value.absent(),
+                Value<DateTime> createdDateTime = const Value.absent(),
+                Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
               }) => JournalEntriesCompanion(
                 journalEntryId: journalEntryId,
                 entryText: entryText,
-                entryDate: entryDate,
+                createdDateTime: createdDateTime,
+                lastUpdatedDateTime: lastUpdatedDateTime,
               ),
           createCompanionCallback:
               ({
                 Value<int> journalEntryId = const Value.absent(),
                 required String entryText,
-                Value<DateTime> entryDate = const Value.absent(),
+                Value<DateTime> createdDateTime = const Value.absent(),
+                Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
               }) => JournalEntriesCompanion.insert(
                 journalEntryId: journalEntryId,
                 entryText: entryText,
-                entryDate: entryDate,
+                createdDateTime: createdDateTime,
+                lastUpdatedDateTime: lastUpdatedDateTime,
               ),
           withReferenceMapper: (p0) => p0
               .map(

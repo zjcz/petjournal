@@ -20,6 +20,50 @@ void main() {
     });
   });
 
+  group('Test formatting of times', () {
+    test('Test the time format', () {
+      DateTime dateToFormat = DateTime(2024, 1, 1, 12, 30, 45);
+
+      String formattedTime = DateHelper.formatTime(dateToFormat);
+
+      expect(formattedTime, '12:30:45');
+    });
+
+    test('Test the time format for midnight', () {
+      DateTime dateToFormat = DateTime(2024, 1, 1);
+
+      String formattedTime = DateHelper.formatTime(dateToFormat);
+
+      expect(formattedTime, '00:00:00');
+    });
+
+        test('Test the time format for 24hr clock', () {
+      DateTime dateToFormat = DateTime(2024, 1, 1, 19, 20, 30);
+
+      String formattedTime = DateHelper.formatTime(dateToFormat);
+
+      expect(formattedTime, '19:20:30');
+    });
+  });
+
+group('Test formatting of dates and times', () {
+    test('Test the date time format', () {
+      DateTime dateToFormat = DateTime(2024, 1, 1, 1, 2, 3);
+
+      String formattedDate = DateHelper.formatDateTime(dateToFormat);
+
+      expect(formattedDate, '01 January 2024 01:02:03');
+    });
+
+    test('Test the date time format when no time', () {
+      DateTime dateToFormat = DateTime(2024, 2, 29);
+
+      String formattedDate = DateHelper.formatDateTime(dateToFormat);
+
+      expect(formattedDate, '29 February 2024 00:00:00');
+    });
+  });
+
   group('Test get todays date', () {
     test('Test the date has no time elements', () {
       DateTime dateToTest = DateHelper.getToday();

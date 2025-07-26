@@ -24,7 +24,7 @@ class JournalController extends _$JournalController {
       final newJournalEntry = await _databaseService.createJournalEntryForPet(
         petIdList: journal.petIdList,
         entryText: journal.entryText,
-        entryDate: journal.entryDate,
+        tags: journal.tags,
       );
 
       return newJournalEntry == null
@@ -47,7 +47,8 @@ class JournalController extends _$JournalController {
       await _databaseService.updateJournalEntry(
         id: journal.journalEntryId!,
         entryText: journal.entryText,
-        entryDate: journal.entryDate,
+        tags: journal.tags,
+        petIdList: journal.petIdList,
       );
       return journal;
     }
