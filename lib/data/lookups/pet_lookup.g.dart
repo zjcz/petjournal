@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'route_config.dart';
+part of 'pet_lookup.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$setupRouterHash() => r'2448f9c05b23d88c7ff63524bf02da622a320ecd';
+String _$populatePetLookupHash() => r'66c842975165f5cb785e487ca3e9117f334e9e57';
 
-/// See also [setupRouter].
-@ProviderFor(setupRouter)
-final setupRouterProvider = AutoDisposeProvider<GoRouter>.internal(
-  setupRouter,
-  name: r'setupRouterProvider',
+/// See also [populatePetLookup].
+@ProviderFor(populatePetLookup)
+final populatePetLookupProvider = FutureProvider<void>.internal(
+  populatePetLookup,
+  name: r'populatePetLookupProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$setupRouterHash,
+      : _$populatePetLookupHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SetupRouterRef = AutoDisposeProviderRef<GoRouter>;
+typedef PopulatePetLookupRef = FutureProviderRef<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

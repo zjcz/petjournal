@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:petjournal/app/pet/models/journal_model.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/app/home/views/about_screen.dart';
@@ -9,6 +10,7 @@ import 'package:petjournal/app/home/views/policy_viewer_screen.dart';
 import 'package:petjournal/app/home/views/welcome_screen.dart';
 import 'package:petjournal/app/pet/models/pet_vaccination_model.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/app/pet/views/edit_journal_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_med_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_vaccination_screen.dart';
@@ -28,6 +30,7 @@ class RouteDefs {
   static const String editPetWeight = '/home/edit_petWeight';
   static const String editPetMed = '/home/edit_petMed';
   static const String editPetVaccination = '/home/edit_petVaccination';
+  static const String editJournalEntry = '/home/edit_journalEntry';
   static const String aboutScreen = '/home/about_screen';
   static const String editSettings = '/home/edit_settings';
   // static const String loading = '/';
@@ -138,6 +141,21 @@ GoRouter setupRouter(Ref ref) {
               }
               return EditPetVaccinationScreen(
                 petVaccination: pv,
+                petId: int.parse(state.pathParameters['petId']!),
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '${RouteDefs.getPageName(RouteDefs.editJournalEntry, parentPage: RouteDefs.home)}/:petId',
+            name: 'editJournalEntry',
+            builder: (BuildContext context, GoRouterState state) {
+              JournalModel? journal;
+              if (state.extra != null) {
+                journal = state.extra! as JournalModel;
+              }
+              return EditJournalScreen(
+                journalEntry: journal,
                 petId: int.parse(state.pathParameters['petId']!),
               );
             },

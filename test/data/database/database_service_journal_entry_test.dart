@@ -46,7 +46,6 @@ void main() {
       'createJournalEntryForPet should create journal entry and link record',
       () async {
         final testText = 'Test Entry';
-        final testDate = DateTime(2025, 1, 1);
 
         // Get the pet ID from the pet created in setUp
         final pet = await database.getPet(1);
@@ -55,12 +54,13 @@ void main() {
         final journalEntry = await database.createJournalEntryForPet(
           petIdList: [pet!.petId],
           entryText: testText,
-          entryDate: testDate,
+          tags: [],
         );
 
         expect(journalEntry, match.isNotNull);
         expect(journalEntry?.entryText, equals(testText));
-        expect(journalEntry?.entryDate, equals(testDate));
+        expect(journalEntry?.createdDateTime, equals(match.isNotNull));
+        expect(journalEntry?.lastUpdatedDateTime, equals(match.isNull));
 
         // Verify entry appears in getAllJournalEntriesForPet
         final entries = await database
@@ -75,7 +75,6 @@ void main() {
       'createJournalEntryForPet should create journal entry and link multiple records',
       () async {
         final testText = 'Test Entry';
-        final testDate = DateTime(2025, 1, 1);
 
         // Get the pet ID from the pet created in setUp
         final pet1 = await database.getPet(1);
@@ -107,12 +106,13 @@ void main() {
         final journalEntry = await database.createJournalEntryForPet(
           petIdList: [pet1!.petId, pet2!.petId],
           entryText: testText,
-          entryDate: testDate,
+          tags: [],
         );
 
         expect(journalEntry, match.isNotNull);
         expect(journalEntry?.entryText, equals(testText));
-        expect(journalEntry?.entryDate, equals(testDate));
+        expect(journalEntry?.createdDateTime, match.isNotNull);
+        expect(journalEntry?.lastUpdatedDateTime, equals(match.isNull));
 
         // Verify entry appears in getAllJournalEntriesForPet
         final pet1Entries = await database
@@ -125,7 +125,10 @@ void main() {
             .first;
         expect(pet2Entries.length, equals(1));
         expect(pet2Entries.first.entryText, equals(testText));
-        expect(pet1Entries.first.journalEntryId, equals(pet2Entries.first.journalEntryId));
+        expect(
+          pet1Entries.first.journalEntryId,
+          equals(pet2Entries.first.journalEntryId),
+        );
       },
     );
 
@@ -138,20 +141,18 @@ void main() {
     );
 
     test('getJournalEntry should return correct record', () async {
-      final testDate = DateTime(2025, 1, 1);
       final pet = await database.getPet(1);
 
       final created = await database.createJournalEntryForPet(
         petIdList: [pet!.petId],
         entryText: 'Test Entry',
-        entryDate: testDate,
+        tags: [],
       );
       expect(created, match.isNotNull);
 
       final retrieved = await database.getJournalEntry(created!.journalEntryId);
       expect(retrieved, match.isNotNull);
       expect(retrieved?.entryText, equals('Test Entry'));
-      expect(retrieved?.entryDate, equals(testDate));
     });
 
     test(
@@ -169,87 +170,57 @@ void main() {
       'getAllJournalEntriesForPet should return all entries for a pet',
       () async {
         final pet = await database.getPet(1);
-        final testDate1 = DateTime(2025, 1, 1);
-        final testDate2 = DateTime(2025, 1, 2);
 
         await database.createJournalEntryForPet(
           petIdList: [pet!.petId],
           entryText: 'Entry 1',
-          entryDate: testDate1,
+          tags: [],
         );
 
         await database.createJournalEntryForPet(
           petIdList: [pet.petId],
           entryText: 'Entry 2',
-          entryDate: testDate2,
+          tags: [],
         );
 
         final entries = await database
             .getAllJournalEntriesForPet(pet.petId)
             .first;
         expect(entries.length, equals(2));
-        // Verify entries are present and dates are correct
-        expect(
-          entries.map((e) => e.entryDate).toList(),
-          containsAll([testDate1, testDate2]),
-        );
+        expect(entries[0].entryText, equals('Entry 1'));
+        expect(entries[1].entryText, equals('Entry 2'));
       },
     );
 
     test('updateJournalEntry should update all fields correctly', () async {
       final pet = await database.getPet(1);
-      final originalDate = DateTime(2025, 1, 1);
 
       final entry = await database.createJournalEntryForPet(
         petIdList: [pet!.petId],
         entryText: 'Original Text',
-        entryDate: originalDate,
+        tags: [],
       );
       expect(entry, match.isNotNull);
 
-      final newDate = DateTime(2025, 2, 1);
       final updatedCount = await database.updateJournalEntry(
         id: entry!.journalEntryId,
         entryText: 'Updated Text',
-        entryDate: newDate,
+        petIdList: [pet.petId],
+        tags: [],
       );
 
       expect(updatedCount, equals(1));
 
       final updated = await database.getJournalEntry(entry.journalEntryId);
       expect(updated?.entryText, equals('Updated Text'));
-      expect(updated?.entryDate, equals(newDate));
-    });
-
-    test('updateJournalEntry should handle partial updates', () async {
-      final pet = await database.getPet(1);
-      final originalDate = DateTime(2025, 1, 1);
-
-      final entry = await database.createJournalEntryForPet(
-        petIdList: [pet!.petId],
-        entryText: 'Original Text',
-        entryDate: originalDate,
-      );
-
-      // Update only the text
-      await database.updateJournalEntry(
-        id: entry!.journalEntryId,
-        entryText: 'Updated Text',
-      );
-
-      final updated = await database.getJournalEntry(entry.journalEntryId);
-      expect(updated?.entryText, equals('Updated Text'));
-      expect(
-        updated?.entryDate,
-        equals(originalDate),
-      ); // Date should remain unchanged
     });
 
     test('updateJournalEntry should return 0 for non-existent entry', () async {
       final updatedCount = await database.updateJournalEntry(
         id: 999,
         entryText: 'Test',
-        entryDate: DateTime.now(),
+        tags: [],
+        petIdList: [],
       );
 
       expect(updatedCount, equals(0));
@@ -260,7 +231,7 @@ void main() {
       final entry = await database.createJournalEntryForPet(
         petIdList: [pet!.petId],
         entryText: 'Test Entry',
-        entryDate: DateTime(2025, 1, 1),
+        tags: [],
       );
 
       final deletedCount = await database.deleteJournalEntry(
@@ -289,7 +260,7 @@ void main() {
       final entry = await database.createJournalEntryForPet(
         petIdList: [pet!.petId],
         entryText: 'Original Text',
-        entryDate: DateTime(2025, 1, 1),
+        tags: [],
       );
 
       final stream = database.watchJournalEntry(entry!.journalEntryId);
@@ -302,6 +273,8 @@ void main() {
       await database.updateJournalEntry(
         id: entry.journalEntryId,
         entryText: 'Updated Text',
+        petIdList: [pet.petId],
+        tags: [],
       );
 
       // Wait for the update to propagate
@@ -311,5 +284,87 @@ void main() {
       final updatedValue = await stream.first;
       expect(updatedValue?.entryText, equals('Updated Text'));
     });
+  });
+
+  group('JournalEntry Tags', () {
+    test(
+      'createJournalEntryForPet should create save single tag record',
+      () async {
+        // Get the pet ID from the pet created in setUp
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final journalEntry = await database.createJournalEntryForPet(
+          petIdList: [pet!.petId],
+          entryText: 'Test Entry',
+          tags: ['new tag'],
+        );
+
+        final tagList = await database
+            .getAllJournalEntryTagsForEntry(journalEntry!.journalEntryId)
+            .first;
+
+        expect(tagList, match.isNotNull);
+        expect(tagList.length, equals(1));
+        expect(tagList[0].tag, equals('new tag'));
+      },
+    );
+
+    test(
+      'createJournalEntryForPet should create save multiple tag records',
+      () async {
+        // Get the pet ID from the pet created in setUp
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final journalEntry = await database.createJournalEntryForPet(
+          petIdList: [pet!.petId],
+          entryText: 'Test Entry',
+          tags: ['new tag', 'new tag 2', 'new tag 3'],
+        );
+
+        final tagList = await database
+            .getAllJournalEntryTagsForEntry(journalEntry!.journalEntryId)
+            .first;
+
+        expect(tagList, match.isNotNull);
+        expect(tagList.length, equals(3));
+        expect(tagList[0].tag, equals('new tag'));
+        expect(tagList[1].tag, equals('new tag 2'));
+        expect(tagList[2].tag, equals('new tag 3'));
+      },
+    );
+
+    test(
+      'updateJournalEntryForPet should create save new tag records',
+      () async {
+        // Get the pet ID from the pet created in setUp
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final journalEntry = await database.createJournalEntryForPet(
+          petIdList: [pet!.petId],
+          entryText: 'Test Entry',
+          tags: ['new tag', 'new tag 2', 'new tag 3'],
+        );
+
+        await database.updateJournalEntry(
+          id: journalEntry!.journalEntryId,
+          entryText: 'Updated Text',
+          petIdList: [pet.petId],
+          tags: ['updated tag', 'updated tag 2', 'updated tag 3'],
+        );
+
+        final tagList = await database
+            .getAllJournalEntryTagsForEntry(journalEntry.journalEntryId)
+            .first;
+
+        expect(tagList, match.isNotNull);
+        expect(tagList.length, equals(3));
+        expect(tagList[0].tag, equals('updated tag'));
+        expect(tagList[1].tag, equals('updated tag 2'));
+        expect(tagList[2].tag, equals('updated tag 3'));
+      },
+    );
   });
 }

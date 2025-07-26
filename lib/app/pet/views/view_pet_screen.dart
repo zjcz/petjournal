@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_controller.dart';
+import 'package:petjournal/app/pet/views/widgets/journal_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_meds_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_vaccinations_widget.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_weights_widget.dart';
@@ -75,6 +76,14 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
           children: [
             ActionButton(
               onPressed: () async {
+                await context.push(
+                  '${RouteDefs.editJournalEntry}/${pet.petId}',
+                );
+              },
+              icon: const Icon(Icons.content_paste),
+            ),
+            ActionButton(
+              onPressed: () async {
                 await context.push('${RouteDefs.editPetWeight}/${pet.petId}');
               },
               icon: const Icon(Icons.balance),
@@ -132,7 +141,9 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
   }
 
   Widget _buildPetJournalTab(PetModel pet) {
-    // Placeholder for future journal implementation
-    return Center(child: Text('Journal feature coming soon!'));
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: JournalWidget(petId: pet.petId!),
+    );
   }
 }

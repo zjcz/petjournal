@@ -6,5 +6,7 @@ import 'package:drift/drift.dart';
 class JournalEntries extends Table {
   IntColumn get journalEntryId => integer().autoIncrement()();
   TextColumn get entryText => text()();
-  DateTimeColumn get entryDate => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdDateTime =>
+      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get lastUpdatedDateTime => dateTime().nullable()();
 }

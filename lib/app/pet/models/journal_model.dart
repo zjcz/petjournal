@@ -9,7 +9,8 @@ abstract class JournalModel with _$JournalModel {
   const factory JournalModel({
     int? journalEntryId,
     required String entryText,
-    required DateTime entryDate,
+    DateTime? createdDateTime,
+    DateTime? lastUpdatedDateTime,
     required List<int> petIdList,
     required List<String> tags,
   }) = _JournalModel;

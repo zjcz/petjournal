@@ -427,8 +427,8 @@ class DatabaseService extends _$DatabaseService {
   /// Create a new journal entry record
   Future<JournalEntry?> createJournalEntryForPet({
     required String entryText,
-    required DateTime entryDate,
     required List<int> petIdList,
+    required List<String> tags,
   }) async {
     if (petIdList.isEmpty) {
       throw Exception('No pets provided');
@@ -438,10 +438,7 @@ class DatabaseService extends _$DatabaseService {
       try {
         // Create the journal entry
         final journalEntry = await into(journalEntries).insertReturningOrNull(
-          JournalEntriesCompanion.insert(
-            entryText: entryText,
-            entryDate: Value(entryDate),
-          ),
+          JournalEntriesCompanion.insert(entryText: entryText),
         );
 
         // If the journal entry creation failed, return null
@@ -462,11 +459,86 @@ class DatabaseService extends _$DatabaseService {
           );
         });
 
+        // Create the JournalEntryTag records for all entries
+        await batch((batch) {
+          batch.insertAll(
+            journalEntryTags,
+            tags.map(
+              (tag) => JournalEntryTagsCompanion.insert(
+                journalEntryId: journalEntry.journalEntryId,
+                tag: tag,
+              ),
+            ),
+          );
+        });
+
         return journalEntry;
       } catch (e) {
         throw Exception('Error creating journal entry for pet: $e');
       }
     });
+  }
+
+  /// Update an existing journal entry record
+  Future<int> updateJournalEntry({
+    required int id,
+    required String entryText,
+    required List<int> petIdList,
+    required List<String> tags,
+  }) async {
+    try {
+      return transaction(() async {
+        final ret =
+            await (update(
+              journalEntries,
+            )..where((entry) => entry.journalEntryId.equals(id))).write(
+              JournalEntriesCompanion(
+                entryText: Value(entryText),
+                lastUpdatedDateTime: Value(DateTime.now()),
+              ),
+            );
+
+        // Delete and recreate the PetJournalEntry records for all entries
+        await batch((batch) {
+          batch.deleteWhere(
+            petJournalEntries,
+            (petJournalEntry) => petJournalEntry.journalEntryId.equals(id),
+          );
+
+          batch.insertAll(
+            petJournalEntries,
+            petIdList.map(
+              (petId) => PetJournalEntriesCompanion.insert(
+                petId: petId,
+                journalEntryId: id,
+              ),
+            ),
+          );
+        });
+
+        // Delete and recreate the JournalEntryTag records for all entries
+        await batch((batch) {
+          batch.deleteWhere(
+            journalEntryTags,
+            (tag) => tag.journalEntryId.equals(id),
+          );
+
+          batch.insertAll(
+            journalEntryTags,
+            tags.map(
+              (tag) => JournalEntryTagsCompanion.insert(
+                journalEntryId: id,
+                tag: tag,
+              ),
+            ),
+          );
+        });
+
+        return ret;
+      });
+    } catch (e) {
+      throw Exception('Error updating journal entry: $e');
+    }
   }
 
   /// Retrieve a single journal entry by its ID
@@ -506,7 +578,6 @@ class DatabaseService extends _$DatabaseService {
 
   /// Retrieve all journal entries for a specific pet ID via the PetJournalEntry table
   Stream<List<JournalEntryDetails>> getAllJournalEntryDetailsForPet(int petId) {
-
     // Define the subquery used to extract the JournalEntries for the petId
     final subQuery = Subquery(
       select(petJournalEntries)..where((row) => row.petId.equals(petId)),
@@ -536,7 +607,11 @@ class DatabaseService extends _$DatabaseService {
             .equalsExp(journalEntries.journalEntryId),
       ),
     ]);
-    query.orderBy([OrderingTerm.asc(journalEntries.entryDate)]);
+    query.orderBy([
+      OrderingTerm.asc(journalEntries.createdDateTime),
+      OrderingTerm.asc(journalEntryTags.journalEntryTagId),
+      OrderingTerm.asc(petJournalEntries.petId),
+    ]);
 
     return query.watch().map((rows) {
       // convert the data to a list of JournalEntryDetails objects
@@ -570,30 +645,6 @@ class DatabaseService extends _$DatabaseService {
     });
   }
 
-  /// Update an existing journal entry record
-  Future<int> updateJournalEntry({
-    required int id,
-    String? entryText,
-    DateTime? entryDate,
-  }) async {
-    try {
-      return await (update(
-        journalEntries,
-      )..where((entry) => entry.journalEntryId.equals(id))).write(
-        JournalEntriesCompanion(
-          entryText: entryText != null
-              ? Value(entryText)
-              : const Value.absent(),
-          entryDate: entryDate != null
-              ? Value(entryDate)
-              : const Value.absent(),
-        ),
-      );
-    } catch (e) {
-      throw Exception('Error updating journal entry: $e');
-    }
-  }
-
   /// Delete a journal entry record by its ID
   Future<int> deleteJournalEntry(int id) async {
     try {
@@ -602,23 +653,6 @@ class DatabaseService extends _$DatabaseService {
       )..where((entry) => entry.journalEntryId.equals(id))).go();
     } catch (e) {
       throw Exception('Error deleting journal entry: $e');
-    }
-  }
-
-  /// Create a new journal entry tag record
-  Future<JournalEntryTag?> createJournalEntryTag({
-    required int journalEntryId,
-    required String tag,
-  }) async {
-    try {
-      return await into(journalEntryTags).insertReturningOrNull(
-        JournalEntryTagsCompanion.insert(
-          journalEntryId: journalEntryId,
-          tag: tag,
-        ),
-      );
-    } catch (e) {
-      throw Exception('Error creating journal entry tag: $e');
     }
   }
 
@@ -632,17 +666,6 @@ class DatabaseService extends _$DatabaseService {
       )..where((tag) => tag.journalEntryId.equals(journalEntryId))).watch();
     } catch (e) {
       throw Exception('Error retrieving journal entry tags: $e');
-    }
-  }
-
-  /// Delete a journal entry tag record by its ID
-  Future<int> deleteJournalEntryTag(int journalEntryTagId) async {
-    try {
-      return await (delete(
-        journalEntryTags,
-      )..where((tag) => tag.journalEntryTagId.equals(journalEntryTagId))).go();
-    } catch (e) {
-      throw Exception('Error deleting journal entry tag: $e');
     }
   }
 
