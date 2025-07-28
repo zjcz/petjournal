@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -108,7 +109,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget buildPetListTile(PetModel pet) {
     return ListTile(
       leading: CircleAvatar(
-        child: Icon(Icons.pets, semanticLabel: 'Pet Icon', color: Colors.white),
+        backgroundImage: pet.imageUrl != null ? FileImage(File(pet.imageUrl!)) : null,
+        child: pet.imageUrl == null ? const Icon(Icons.pets, semanticLabel: 'Pet Icon', color: Colors.white) : null,
       ),
       title: Text(pet.name),
       subtitle: Text(getPetSubTitle(pet)),

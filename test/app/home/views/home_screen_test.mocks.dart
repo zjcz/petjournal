@@ -478,6 +478,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     String? microchipNumber,
     String? microchipCompany,
     String? microchipNotes,
+    String? imageUrl,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#createPet, [
@@ -499,6 +500,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
               microchipNumber,
               microchipCompany,
               microchipNotes,
+              imageUrl,
             ]),
             returnValue: _i5.Future<_i3.Pet?>.value(),
           )
@@ -526,6 +528,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     String? microchipNumber,
     String? microchipCompany,
     String? microchipNotes,
+    String? imageUrl,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updatePet, [
@@ -549,6 +552,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
               microchipNumber,
               microchipCompany,
               microchipNotes,
+              imageUrl,
             ]),
             returnValue: _i5.Future<int>.value(0),
           )

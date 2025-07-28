@@ -493,6 +493,17 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     petId,
@@ -515,6 +526,7 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     microchipNotes,
     microchipNumber,
     microchipCompany,
+    imageUrl,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -674,6 +686,12 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         ),
       );
     }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
     return context;
   }
 
@@ -763,6 +781,10 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.string,
         data['${effectivePrefix}microchip_company'],
       ),
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
     );
   }
 
@@ -793,6 +815,7 @@ class Pet extends DataClass implements Insertable<Pet> {
   final String? microchipNotes;
   final String? microchipNumber;
   final String? microchipCompany;
+  final String? imageUrl;
   const Pet({
     required this.petId,
     required this.name,
@@ -814,6 +837,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     this.microchipNotes,
     this.microchipNumber,
     this.microchipCompany,
+    this.imageUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -858,6 +882,9 @@ class Pet extends DataClass implements Insertable<Pet> {
     if (!nullToAbsent || microchipCompany != null) {
       map['microchip_company'] = Variable<String>(microchipCompany);
     }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
     return map;
   }
 
@@ -899,6 +926,9 @@ class Pet extends DataClass implements Insertable<Pet> {
       microchipCompany: microchipCompany == null && nullToAbsent
           ? const Value.absent()
           : Value(microchipCompany),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
     );
   }
 
@@ -928,6 +958,7 @@ class Pet extends DataClass implements Insertable<Pet> {
       microchipNotes: serializer.fromJson<String?>(json['microchipNotes']),
       microchipNumber: serializer.fromJson<String?>(json['microchipNumber']),
       microchipCompany: serializer.fromJson<String?>(json['microchipCompany']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
     );
   }
   @override
@@ -954,6 +985,7 @@ class Pet extends DataClass implements Insertable<Pet> {
       'microchipNotes': serializer.toJson<String?>(microchipNotes),
       'microchipNumber': serializer.toJson<String?>(microchipNumber),
       'microchipCompany': serializer.toJson<String?>(microchipCompany),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
     };
   }
 
@@ -978,6 +1010,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     Value<String?> microchipNotes = const Value.absent(),
     Value<String?> microchipNumber = const Value.absent(),
     Value<String?> microchipCompany = const Value.absent(),
+    Value<String?> imageUrl = const Value.absent(),
   }) => Pet(
     petId: petId ?? this.petId,
     name: name ?? this.name,
@@ -1009,6 +1042,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     microchipCompany: microchipCompany.present
         ? microchipCompany.value
         : this.microchipCompany,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
   );
   Pet copyWithCompanion(PetsCompanion data) {
     return Pet(
@@ -1050,6 +1084,7 @@ class Pet extends DataClass implements Insertable<Pet> {
       microchipCompany: data.microchipCompany.present
           ? data.microchipCompany.value
           : this.microchipCompany,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
     );
   }
 
@@ -1075,13 +1110,14 @@ class Pet extends DataClass implements Insertable<Pet> {
           ..write('microchipDate: $microchipDate, ')
           ..write('microchipNotes: $microchipNotes, ')
           ..write('microchipNumber: $microchipNumber, ')
-          ..write('microchipCompany: $microchipCompany')
+          ..write('microchipCompany: $microchipCompany, ')
+          ..write('imageUrl: $imageUrl')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     petId,
     name,
     speciesId,
@@ -1102,7 +1138,8 @@ class Pet extends DataClass implements Insertable<Pet> {
     microchipNotes,
     microchipNumber,
     microchipCompany,
-  );
+    imageUrl,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1126,7 +1163,8 @@ class Pet extends DataClass implements Insertable<Pet> {
           other.microchipDate == this.microchipDate &&
           other.microchipNotes == this.microchipNotes &&
           other.microchipNumber == this.microchipNumber &&
-          other.microchipCompany == this.microchipCompany);
+          other.microchipCompany == this.microchipCompany &&
+          other.imageUrl == this.imageUrl);
 }
 
 class PetsCompanion extends UpdateCompanion<Pet> {
@@ -1150,6 +1188,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<String?> microchipNotes;
   final Value<String?> microchipNumber;
   final Value<String?> microchipCompany;
+  final Value<String?> imageUrl;
   const PetsCompanion({
     this.petId = const Value.absent(),
     this.name = const Value.absent(),
@@ -1171,6 +1210,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     this.microchipNotes = const Value.absent(),
     this.microchipNumber = const Value.absent(),
     this.microchipCompany = const Value.absent(),
+    this.imageUrl = const Value.absent(),
   });
   PetsCompanion.insert({
     this.petId = const Value.absent(),
@@ -1193,6 +1233,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     this.microchipNotes = const Value.absent(),
     this.microchipNumber = const Value.absent(),
     this.microchipCompany = const Value.absent(),
+    this.imageUrl = const Value.absent(),
   }) : name = Value(name),
        speciesId = Value(speciesId),
        breed = Value(breed),
@@ -1218,6 +1259,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Expression<String>? microchipNotes,
     Expression<String>? microchipNumber,
     Expression<String>? microchipCompany,
+    Expression<String>? imageUrl,
   }) {
     return RawValuesInsertable({
       if (petId != null) 'pet_id': petId,
@@ -1240,6 +1282,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       if (microchipNotes != null) 'microchip_notes': microchipNotes,
       if (microchipNumber != null) 'microchip_number': microchipNumber,
       if (microchipCompany != null) 'microchip_company': microchipCompany,
+      if (imageUrl != null) 'image_url': imageUrl,
     });
   }
 
@@ -1264,6 +1307,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<String?>? microchipNotes,
     Value<String?>? microchipNumber,
     Value<String?>? microchipCompany,
+    Value<String?>? imageUrl,
   }) {
     return PetsCompanion(
       petId: petId ?? this.petId,
@@ -1286,6 +1330,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       microchipNotes: microchipNotes ?? this.microchipNotes,
       microchipNumber: microchipNumber ?? this.microchipNumber,
       microchipCompany: microchipCompany ?? this.microchipCompany,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
@@ -1352,6 +1397,9 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     if (microchipCompany.present) {
       map['microchip_company'] = Variable<String>(microchipCompany.value);
     }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
     return map;
   }
 
@@ -1377,7 +1425,8 @@ class PetsCompanion extends UpdateCompanion<Pet> {
           ..write('microchipDate: $microchipDate, ')
           ..write('microchipNotes: $microchipNotes, ')
           ..write('microchipNumber: $microchipNumber, ')
-          ..write('microchipCompany: $microchipCompany')
+          ..write('microchipCompany: $microchipCompany, ')
+          ..write('imageUrl: $imageUrl')
           ..write(')'))
         .toString();
   }
@@ -4554,6 +4603,7 @@ typedef $$PetsTableCreateCompanionBuilder =
       Value<String?> microchipNotes,
       Value<String?> microchipNumber,
       Value<String?> microchipCompany,
+      Value<String?> imageUrl,
     });
 typedef $$PetsTableUpdateCompanionBuilder =
     PetsCompanion Function({
@@ -4577,6 +4627,7 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<String?> microchipNotes,
       Value<String?> microchipNumber,
       Value<String?> microchipCompany,
+      Value<String?> imageUrl,
     });
 
 final class $$PetsTableReferences
@@ -4786,6 +4837,11 @@ class $$PetsTableFilterComposer
 
   ColumnFilters<String> get microchipCompany => $composableBuilder(
     column: $table.microchipCompany,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5017,6 +5073,11 @@ class $$PetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$SpeciesTypesTableOrderingComposer get speciesId {
     final $$SpeciesTypesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5124,6 +5185,9 @@ class $$PetsTableAnnotationComposer
     column: $table.microchipCompany,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
 
   $$SpeciesTypesTableAnnotationComposer get speciesId {
     final $$SpeciesTypesTableAnnotationComposer composer = $composerBuilder(
@@ -5304,6 +5368,7 @@ class $$PetsTableTableManager
                 Value<String?> microchipNotes = const Value.absent(),
                 Value<String?> microchipNumber = const Value.absent(),
                 Value<String?> microchipCompany = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
               }) => PetsCompanion(
                 petId: petId,
                 name: name,
@@ -5325,6 +5390,7 @@ class $$PetsTableTableManager
                 microchipNotes: microchipNotes,
                 microchipNumber: microchipNumber,
                 microchipCompany: microchipCompany,
+                imageUrl: imageUrl,
               ),
           createCompanionCallback:
               ({
@@ -5348,6 +5414,7 @@ class $$PetsTableTableManager
                 Value<String?> microchipNotes = const Value.absent(),
                 Value<String?> microchipNumber = const Value.absent(),
                 Value<String?> microchipCompany = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
               }) => PetsCompanion.insert(
                 petId: petId,
                 name: name,
@@ -5369,6 +5436,7 @@ class $$PetsTableTableManager
                 microchipNotes: microchipNotes,
                 microchipNumber: microchipNumber,
                 microchipCompany: microchipCompany,
+                imageUrl: imageUrl,
               ),
           withReferenceMapper: (p0) => p0
               .map(
