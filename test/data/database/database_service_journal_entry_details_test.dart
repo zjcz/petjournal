@@ -40,6 +40,7 @@ void main() {
       null,
       null,
       null,
+      null
     );
 
     pet2 = await database.createPet(
@@ -62,6 +63,7 @@ void main() {
       null,
       null,
       null,
+      null
     );
   });
 

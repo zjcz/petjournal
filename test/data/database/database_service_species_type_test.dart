@@ -270,6 +270,7 @@ void main() {
           null,
           null,
           null,
+          null,
         );
 
         // Attempt to delete the species type should throw an exception

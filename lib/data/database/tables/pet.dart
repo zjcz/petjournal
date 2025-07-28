@@ -38,4 +38,5 @@ class Pets extends Table {
   TextColumn get microchipNotes => text().nullable()();
   TextColumn get microchipNumber => text().nullable()();
   TextColumn get microchipCompany => text().nullable()();
+  TextColumn get imageUrl => text().nullable()();
 }

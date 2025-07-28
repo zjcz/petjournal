@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/app/pet/controller/pet_controller.dart';
@@ -54,21 +55,32 @@ class _ViewPetScreenState extends ConsumerState<ViewPetScreen> {
               },
             ),
           ],
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.info), text: 'General'),
-              Tab(icon: Icon(Icons.medical_services), text: 'Health'),
-              Tab(icon: Icon(Icons.balance), text: 'Weight'),
-              Tab(icon: Icon(Icons.content_paste), text: 'Journal'),
-            ],
-          ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            _buildGeneralInfoTab(pet),
-            _buildPetMedsAndVaccinationInfoTab(pet),
-            _buildPetWeightInfoTab(pet),
-            _buildPetJournalTab(pet),
+            if (pet.imageUrl != null)
+              CircleAvatar(
+                radius: 75,
+                backgroundImage: FileImage(File(pet.imageUrl!)),
+              ),
+            const TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.info), text: 'General'),
+                Tab(icon: Icon(Icons.medical_services), text: 'Health'),
+                Tab(icon: Icon(Icons.balance), text: 'Weight'),
+                Tab(icon: Icon(Icons.content_paste), text: 'Journal'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildGeneralInfoTab(pet),
+                  _buildPetMedsAndVaccinationInfoTab(pet),
+                  _buildPetWeightInfoTab(pet),
+                  _buildPetJournalTab(pet),
+                ],
+              ),
+            ),
           ],
         ),
         floatingActionButton: ExpandableFab(

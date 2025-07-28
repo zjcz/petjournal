@@ -184,6 +184,7 @@ void main() {
           any,
           any,
           any,
+          any,
         ),
       ).thenAnswer((_) async => null);
       // Act
@@ -193,33 +194,73 @@ void main() {
       await tester.enterText(find.byKey(EditPetScreen.petNameKey), 'Buddy');
       await tester.pumpAndSettle();
 
+      final scrollableFinder = find.byType(Scrollable).last;
+
       // Select species
-      await tester.tap(find.byKey(EditPetScreen.petSpeciesKey));
+      final speciesWidget = find.byKey(EditPetScreen.petSpeciesKey);
+      await tester.scrollUntilVisible(
+        speciesWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.tap(speciesWidget);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Dog').last);
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(EditPetScreen.petBreedKey), 'Beagle');
+      final breedWidget = find.byKey(EditPetScreen.petBreedKey);
+      await tester.scrollUntilVisible(
+        breedWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.enterText(breedWidget, 'Beagle');
       await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(EditPetScreen.petColourKey), 'Brown');
+
+      final colourWidget = find.byKey(EditPetScreen.petColourKey);
+      await tester.scrollUntilVisible(
+        colourWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.enterText(colourWidget, 'Brown');
       await tester.pumpAndSettle();
 
       // Select sex
-      await tester.tap(find.byKey(EditPetScreen.petSexKey));
+      final petSexWidget = find.byKey(EditPetScreen.petSexKey);
+      await tester.scrollUntilVisible(
+        petSexWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.tap(petSexWidget);
       await tester.pumpAndSettle();
       await tester.tap(find.text('male').last);
       await tester.pumpAndSettle();
       // Select status
-      await tester.tap(find.byKey(EditPetScreen.petStatusKey));
+      final petStatusWidget = find.byKey(EditPetScreen.petStatusKey);
+      await tester.scrollUntilVisible(
+        petStatusWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.tap(petStatusWidget);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Active').last);
       await tester.pumpAndSettle();
       // Save
-      await tester.tap(find.text('Save'));
+      final saveButtonWidget = find.text('Save');
+      await tester.scrollUntilVisible(
+        saveButtonWidget,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.tap(saveButtonWidget);
       await tester.pumpAndSettle();
       // Assert
       verify(
         mockDb.createPet(
+          any,
           any,
           any,
           any,

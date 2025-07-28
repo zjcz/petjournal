@@ -26,6 +26,7 @@ class PetMapper {
       microchipNotes: pet.microchipNotes,
       microchipNumber: pet.microchipNumber,
       microchipCompany: pet.microchipCompany,
+      imageUrl: pet.imageUrl,
     );
   }
 

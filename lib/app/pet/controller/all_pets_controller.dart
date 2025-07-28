@@ -18,8 +18,6 @@ class AllPetsController extends _$AllPetsController {
     );
   }
 
-  
-
   Future<PetModel?> save(PetModel pet) async {
     if (pet.petId == null) {
       final newPet = await _databaseService.createPet(
@@ -41,6 +39,7 @@ class AllPetsController extends _$AllPetsController {
         pet.microchipNumber,
         pet.microchipCompany,
         pet.microchipNotes,
+        pet.imageUrl,
       );
 
       return newPet == null ? null : PetMapper.mapToModel(newPet);
@@ -66,6 +65,7 @@ class AllPetsController extends _$AllPetsController {
         pet.microchipNumber,
         pet.microchipCompany,
         pet.microchipNotes,
+        pet.imageUrl,
       );
       return pet;
     }

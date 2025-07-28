@@ -31,6 +31,7 @@ void main() {
         microchipNotes: 'Healthy',
         microchipNumber: '123456789',
         microchipCompany: 'PetSafe',
+        imageUrl: 'path/to/image.jpg',
       );
 
       // Act
@@ -57,6 +58,7 @@ void main() {
       expect(model.microchipNotes, equals('Healthy'));
       expect(model.microchipNumber, equals('123456789'));
       expect(model.microchipCompany, equals('PetSafe'));
+      expect(model.imageUrl, equals('path/to/image.jpg'));
     });
 
     test('mapToModel should handle null optional fields', () {
@@ -82,6 +84,7 @@ void main() {
         microchipNotes: null,
         microchipNumber: null,
         microchipCompany: null,
+        imageUrl: null,
       );
 
       // Act
@@ -100,6 +103,7 @@ void main() {
       expect(model.microchipNotes, match.isNull);
       expect(model.microchipNumber, match.isNull);
       expect(model.microchipCompany, match.isNull);
+      expect(model.imageUrl, match.isNull);
     });
 
     test('mapToModelList should correctly map a list of Pets to PetModels', () {
@@ -126,6 +130,7 @@ void main() {
           microchipNotes: null,
           microchipNumber: null,
           microchipCompany: null,
+          imageUrl: null,
         ),
         Pet(
           petId: 2,
@@ -148,6 +153,7 @@ void main() {
           microchipNotes: 'Healthy',
           microchipNumber: '123456789',
           microchipCompany: 'PetSafe',
+          imageUrl: 'path/to/image.jpg',
         ),
       ];
 
@@ -159,9 +165,11 @@ void main() {
       expect(models[0].name, equals('Rex'));
       expect(models[0].breed, equals('German Shepherd'));
       expect(models[0].isMicrochipped, match.isFalse);
+      expect(models[0].imageUrl, match.isNull);
       expect(models[1].name, equals('Luna'));
       expect(models[1].breed, equals('Labrador'));
       expect(models[1].isMicrochipped, match.isTrue);
+      expect(models[1].imageUrl, equals('path/to/image.jpg'));
     });
 
     test('mapToModelList should return empty list for empty input', () {

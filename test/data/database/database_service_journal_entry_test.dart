@@ -36,6 +36,7 @@ void main() {
       null,
       null,
       null,
+      null,
     );
   });
 
@@ -95,6 +96,7 @@ void main() {
           null,
           null,
           PetStatus.active,
+          null,
           null,
           null,
           null,

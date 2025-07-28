@@ -32,6 +32,7 @@ abstract class PetModel with _$PetModel {
     String? microchipNotes,
     String? microchipNumber,
     String? microchipCompany,
+    String? imageUrl,
   }) = _PetModel;
 
   factory PetModel.fromJson(Map<String, Object?> json) =>

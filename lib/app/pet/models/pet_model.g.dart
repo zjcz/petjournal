@@ -31,6 +31,7 @@ _PetModel _$PetModelFromJson(Map<String, dynamic> json) => _PetModel(
   microchipNotes: json['microchipNotes'] as String?,
   microchipNumber: json['microchipNumber'] as String?,
   microchipCompany: json['microchipCompany'] as String?,
+  imageUrl: json['imageUrl'] as String?,
 );
 
 Map<String, dynamic> _$PetModelToJson(_PetModel instance) => <String, dynamic>{
@@ -54,6 +55,7 @@ Map<String, dynamic> _$PetModelToJson(_PetModel instance) => <String, dynamic>{
   'microchipNotes': instance.microchipNotes,
   'microchipNumber': instance.microchipNumber,
   'microchipCompany': instance.microchipCompany,
+  'imageUrl': instance.imageUrl,
 };
 
 const _$PetSexEnumMap = {

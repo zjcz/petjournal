@@ -271,6 +271,7 @@ void main() {
           neuterDate: null,
           status: PetStatus.active.dataValue,
           statusDate: DateTime.now(),
+          imageUrl: '/files/images/pet_pic.png',
         );
 
         final initialPetModel = PetModel(
@@ -290,6 +291,7 @@ void main() {
           status: PetStatus.fromDataValue(initialPet.status),
           statusDate: initialPet.statusDate,
           isMicrochipped: false,
+          imageUrl: initialPet.imageUrl,
         );
 
         when(
@@ -315,6 +317,7 @@ void main() {
             initialPetModel.microchipNumber,
             initialPetModel.microchipCompany,
             initialPetModel.microchipNotes,
+            initialPetModel.imageUrl,
           ),
         ).thenAnswer((_) => Future.value(initialPet));
 
@@ -352,6 +355,7 @@ void main() {
             initialPetModel.microchipNumber,
             initialPetModel.microchipCompany,
             initialPetModel.microchipNotes,
+            initialPetModel.imageUrl,
           ),
         ).called(1);
 
@@ -379,6 +383,7 @@ void main() {
           neuterDate: null,
           status: PetStatus.active.dataValue,
           statusDate: DateTime.now(),
+          imageUrl: '/files/images/pet_pic.png',
         );
 
         final initialPetModel = PetModel(
@@ -398,6 +403,7 @@ void main() {
           status: PetStatus.fromDataValue(initialPet.status),
           statusDate: initialPet.statusDate,
           isMicrochipped: false,
+          imageUrl: initialPet.imageUrl,
         );
 
         when(
@@ -425,6 +431,7 @@ void main() {
             initialPetModel.microchipNumber,
             initialPetModel.microchipCompany,
             initialPetModel.microchipNotes,
+            initialPetModel.imageUrl,
           ),
         ).thenAnswer((_) => Future.value(1));
 
@@ -464,6 +471,7 @@ void main() {
             initialPetModel.microchipNumber,
             initialPetModel.microchipCompany,
             initialPetModel.microchipNotes,
+            initialPetModel.imageUrl,
           ),
         ).called(1);
 

@@ -38,6 +38,7 @@ void main() {
       final testMicrochipNumber = '12345';
       final testMicrochipNotes = 'Test notes';
       final testMicrochipCompany = 'Test company';
+      final testImageUrl = 'https://example.com/image.jpg';
 
       final pet = await database.createPet(
         testName,
@@ -58,6 +59,7 @@ void main() {
         testMicrochipNumber,
         testMicrochipCompany,
         testMicrochipNotes,
+        testImageUrl,
       );
 
       expect(pet, match.isNotNull);
@@ -79,6 +81,7 @@ void main() {
       expect(pet?.microchipNumber, equals(testMicrochipNumber));
       expect(pet?.microchipCompany, equals(testMicrochipCompany));
       expect(pet?.microchipNotes, equals(testMicrochipNotes));
+      expect(pet?.imageUrl, equals(testImageUrl));
     });
 
     test('create pet with minimal required fields', () async {
@@ -96,6 +99,7 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
         null,
         null,
         null,
@@ -122,6 +126,7 @@ void main() {
       expect(pet?.microchipNumber, match.isNull);
       expect(pet?.microchipCompany, match.isNull);
       expect(pet?.microchipNotes, match.isNull);
+      expect(pet?.imageUrl, match.isNull);
     });
 
     test('get pet by id returns correct pet', () async {
@@ -140,6 +145,7 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
         null,
         null,
         null,
@@ -185,6 +191,7 @@ void main() {
         null,
         null,
         null,
+        null,
       );
 
       await database.createPet(
@@ -201,6 +208,7 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
         null,
         null,
         null,
@@ -230,6 +238,7 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
         null,
         null,
         null,
@@ -267,6 +276,7 @@ void main() {
         '12345',
         'New Microchip Company',
         'New Microchip Notes',
+        'https://example.com/image.jpg',
       );
 
       expect(updatedCount, equals(1));
@@ -290,6 +300,7 @@ void main() {
       expect(updatedPet?.microchipNumber, equals('12345'));
       expect(updatedPet?.microchipCompany, equals('New Microchip Company'));
       expect(updatedPet?.microchipNotes, equals('New Microchip Notes'));
+      expect(updatedPet?.imageUrl, equals('https://example.com/image.jpg'));
     });
 
     test('update non-existent pet returns zero', () async {
@@ -310,6 +321,7 @@ void main() {
         null,
         PetStatus.active,
         updateDate,
+        null,
         null,
         null,
         null,
@@ -336,6 +348,7 @@ void main() {
         null,
         null,
         PetStatus.active,
+        null,
         null,
         null,
         null,
@@ -381,6 +394,7 @@ void main() {
         null,
         null,
         null,
+        null,
       );
 
       expect(pet, match.isNotNull);
@@ -412,6 +426,7 @@ void main() {
         '12345',
         'New Microchip Company',
         'New Microchip Notes',
+        'https://example.com/image.jpg',
       );
 
       // Verify the stream emits the updated pet
@@ -419,6 +434,7 @@ void main() {
       expect(updatedPet?.name, equals('Luna Updated'));
       expect(updatedPet?.breed, equals('Poodle'));
       expect(updatedPet?.microchipNumber, equals('12345'));
+      expect(updatedPet?.imageUrl, equals('https://example.com/image.jpg'));
     });
   });
 }

@@ -105,6 +105,7 @@ class DatabaseService extends _$DatabaseService {
     String? microchipNumber,
     String? microchipCompany,
     String? microchipNotes,
+    String? imageUrl,
   ) {
     return into(pets).insertReturningOrNull(
       PetsCompanion.insert(
@@ -131,6 +132,7 @@ class DatabaseService extends _$DatabaseService {
         microchipNotes: Value(microchipNotes),
         microchipNumber: Value(microchipNumber),
         microchipCompany: Value(microchipCompany),
+        imageUrl: Value(imageUrl),
       ),
     );
   }
@@ -157,6 +159,7 @@ class DatabaseService extends _$DatabaseService {
     String? microchipNumber,
     String? microchipCompany,
     String? microchipNotes,
+    String? imageUrl,
   ) {
     return (update(pets)..where((p) => p.petId.equals(id))).write(
       PetsCompanion.insert(
@@ -183,6 +186,7 @@ class DatabaseService extends _$DatabaseService {
         microchipNotes: Value(microchipNotes),
         microchipNumber: Value(microchipNumber),
         microchipCompany: Value(microchipCompany),
+        imageUrl: Value(imageUrl),
       ),
     );
   }
@@ -891,6 +895,7 @@ class DatabaseService extends _$DatabaseService {
       'microchip number',
       'microchip company',
       'microchip notes',
+      null,
     );
 
     await createPet(
@@ -912,6 +917,7 @@ class DatabaseService extends _$DatabaseService {
       'microchip number',
       'microchip company',
       'microchip notes',
+      null,
     );
 
     await createPet(
@@ -929,6 +935,7 @@ class DatabaseService extends _$DatabaseService {
       null,
       PetStatus.deceased,
       false,
+      null,
       null,
       null,
       null,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/views/widgets/pet_sex_dropdown.dart';
@@ -6,6 +8,7 @@ import 'package:petjournal/app/species/views/widgets/species_dropdown.dart';
 import 'package:petjournal/data/lookups/species_lookup.dart';
 import 'package:petjournal/extensions/material_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:petjournal/helpers/image_service.dart';
 import 'package:petjournal/widgets/date_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/route_config.dart';
@@ -71,6 +74,8 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
   SpeciesModel? _selectedSpecies; // Nullable until selected
   bool _isMicrochipped = false;
   DateTime? _microchipDate;
+  String? _imageUrl;
+  bool _imageChanged = false;
 
   @override
   void initState() {
@@ -95,7 +100,6 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
     _status = widget.pet?.status ?? PetStatus.active;
     _selectedSpecies = SpeciesLookup().getSpecies(widget.pet?.speciesId ?? 0);
 
-    //)
     _isMicrochipped = widget.pet?.isMicrochipped ?? false;
     _microchipDate = widget.pet?.microchipDate;
     _microchipNotesController = TextEditingController(
@@ -107,6 +111,7 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
     _microchipCompanyController = TextEditingController(
       text: widget.pet?.microchipCompany ?? '',
     );
+    _imageUrl = widget.pet?.imageUrl;
   }
 
   @override
@@ -195,6 +200,45 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  CircleAvatar(
+                    radius: 75,
+                    backgroundImage: _imageUrl != null
+                        ? FileImage(File(_imageUrl!))
+                        : null,
+                    child: _imageUrl == null
+                        ? const Icon(
+                            Icons.pets,
+                            semanticLabel: 'Pet Icon',
+                            color: Colors.white,
+                            size: 75,
+                          )
+                        : null,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_imageUrl == null)
+                        TextButton.icon(
+                          onPressed: _pickImage,
+                          label: Text('Add picture'),
+                          icon: const Icon(Icons.camera_alt),
+                        ),
+                      if (_imageUrl != null)
+                        TextButton.icon(
+                          onPressed: _pickImage,
+                          label: Text('Change'),
+                          icon: const Icon(Icons.edit),
+                        ),
+                      if (_imageUrl != null)
+                        TextButton.icon(
+                          label: Text('Remove'),
+                          icon: const Icon(Icons.delete),
+                          onPressed: _flagImageForRemoving,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
                   _buildSectionHeader('Basic Information'),
                   TextFormField(
                     key: EditPetScreen.petNameKey,
@@ -526,6 +570,19 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
   }
 
   Future<int?> _saveData() async {
+    // If the image has been changed, save the image to the app directory
+    String? fullImageUrl;
+    if (_imageChanged) {
+      if (_imageUrl == null) {
+        await _removeImage();
+        fullImageUrl = null;
+      } else {
+        fullImageUrl = await _saveImage();
+      }
+    } else {
+      fullImageUrl = _imageUrl;
+    }
+
     // Construct the Pet object
     final PetModel petData = PetModel(
       petId: widget.pet?.petId,
@@ -562,6 +619,7 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
           _isMicrochipped && _microchipCompanyController.text.isNotEmpty
           ? _microchipCompanyController.text
           : null,
+      imageUrl: fullImageUrl,
     );
 
     final controller = ref.read(allPetsControllerProvider.notifier);
@@ -665,5 +723,37 @@ class _EditPetScreenState extends ConsumerState<EditPetScreen> {
         context.go(RouteDefs.home);
       }
     }
+  }
+
+  Future<void> _pickImage() async {
+    final imageService = ImageService();
+    final image = await imageService.pickImage();
+    if (image != null) {
+      setState(() {
+        _imageUrl = image.path;
+        _imageChanged = true;
+        _unsavedChanges = true;
+      });
+    }
+  }
+
+  Future<void> _flagImageForRemoving() async {
+    setState(() {
+      _imageUrl = null;
+      _imageChanged = true;
+      _unsavedChanges = true;
+    });
+  }
+
+  Future<void> _removeImage() async {
+    if (widget.pet == null || widget.pet!.imageUrl == null) return;
+
+    final imageService = ImageService();
+    await imageService.deleteImage(widget.pet!.imageUrl!);
+  }
+
+  Future<String> _saveImage() async {
+    final imageService = ImageService();
+    return await imageService.saveImage(_imageUrl!);
   }
 }
