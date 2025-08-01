@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
@@ -40,7 +41,7 @@ void main() {
       null,
       null,
       null,
-      null
+      null,
     );
 
     pet2 = await database.createPet(
@@ -63,7 +64,7 @@ void main() {
       null,
       null,
       null,
-      null
+      null,
     );
   });
 
@@ -188,7 +189,7 @@ void main() {
           entryText: 'Test Entry 1',
           tags: [],
         ))!;
-        final journalEntry2 = (await database.createJournalEntryForPet(
+        (await database.createJournalEntryForPet(
           petIdList: [pet2!.petId],
           entryText: 'Test Entry 2',
           tags: [],
@@ -208,6 +209,42 @@ void main() {
           journalEntry1.journalEntryId,
         );
         expect(records[0].journalEntry.entryText, equals('Test Entry 1'));
+      },
+    );
+
+    test(
+      'getAllJournalEntryDetailsForPet should return one header with linked details',
+      () async {
+        // ARRANGE
+        final journalEntry1 = (await database.createJournalEntryForPet(
+          petIdList: [pet1!.petId],
+          entryText: 'Test Entry 1',
+          tags: [],
+          linkedRecordId: pet1!.petId,
+          linkedRecordTitle: pet1!.name,
+          linkedRecordType: LinkedRecordType.pet,
+        ))!;
+
+        // ACT
+        final records = await database
+            .getAllJournalEntryDetailsForPet(pet1!.petId)
+            .first;
+
+        // ASSERT
+        expect(records, match.isNotNull);
+        expect(records.length, equals(1));
+        expect(records[0].pets.length, equals(1));
+        expect(
+          records[0].journalEntry.journalEntryId,
+          journalEntry1.journalEntryId,
+        );
+        expect(records[0].journalEntry.entryText, equals('Test Entry 1'));
+        expect(records[0].journalEntry.linkedRecordId, equals(pet1!.petId));
+        expect(records[0].journalEntry.linkedRecordTitle, equals(pet1!.name));
+        expect(
+          records[0].journalEntry.linkedRecordType,
+          equals(LinkedRecordType.pet),
+        );
       },
     );
   });

@@ -13,6 +13,8 @@ class Settings extends Table {
       boolean().withDefault(const Constant(false))();
   TextColumn get lastUsedVersion => text().nullable().withLength(max: 10)();
   IntColumn get defaultWeightUnit => integer().nullable()();
+  BoolColumn get createLinkedJournalEntries =>
+      boolean().withDefault(const Constant(true))();
 
   @override
   Set<Column> get primaryKey => {settingsId};

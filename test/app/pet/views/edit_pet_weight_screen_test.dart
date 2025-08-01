@@ -5,6 +5,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/views/edit_pet_weight_screen.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -69,6 +70,18 @@ void main() {
     );
 
     when(mockDb.getPet(any)).thenAnswer((_) async => testPet);
+    when(mockDb.watchSettings()).thenAnswer(
+      (_) => Stream.value(
+        Setting(
+          settingsId: defaults.defaultSettingsId,
+          acceptedTermsAndConditions: true,
+          optIntoAnalyticsWarning: true,
+          onBoardingComplete: true,
+          defaultWeightUnit: WeightUnits.metric.dataValue,
+          createLinkedJournalEntries: false,
+        ),
+      ),
+    );
   });
 
   group('EditPetWeightScreen', () {

@@ -2989,12 +2989,50 @@ class $JournalEntriesTable extends JournalEntries
         type: DriftSqlType.dateTime,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _linkedRecordIdMeta = const VerificationMeta(
+    'linkedRecordId',
+  );
+  @override
+  late final GeneratedColumn<int> linkedRecordId = GeneratedColumn<int>(
+    'linked_record_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LinkedRecordType?, String>
+  linkedRecordType =
+      GeneratedColumn<String>(
+        'linked_record_type',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<LinkedRecordType?>(
+        $JournalEntriesTable.$converterlinkedRecordTypen,
+      );
+  static const VerificationMeta _linkedRecordTitleMeta = const VerificationMeta(
+    'linkedRecordTitle',
+  );
+  @override
+  late final GeneratedColumn<String> linkedRecordTitle =
+      GeneratedColumn<String>(
+        'linked_record_title',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     journalEntryId,
     entryText,
     createdDateTime,
     lastUpdatedDateTime,
+    linkedRecordId,
+    linkedRecordType,
+    linkedRecordTitle,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3043,6 +3081,24 @@ class $JournalEntriesTable extends JournalEntries
         ),
       );
     }
+    if (data.containsKey('linked_record_id')) {
+      context.handle(
+        _linkedRecordIdMeta,
+        linkedRecordId.isAcceptableOrUnknown(
+          data['linked_record_id']!,
+          _linkedRecordIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('linked_record_title')) {
+      context.handle(
+        _linkedRecordTitleMeta,
+        linkedRecordTitle.isAcceptableOrUnknown(
+          data['linked_record_title']!,
+          _linkedRecordTitleMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3068,6 +3124,21 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_updated_date_time'],
       ),
+      linkedRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}linked_record_id'],
+      ),
+      linkedRecordType: $JournalEntriesTable.$converterlinkedRecordTypen
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}linked_record_type'],
+            ),
+          ),
+      linkedRecordTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}linked_record_title'],
+      ),
     );
   }
 
@@ -3075,6 +3146,15 @@ class $JournalEntriesTable extends JournalEntries
   $JournalEntriesTable createAlias(String alias) {
     return $JournalEntriesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<LinkedRecordType, String, String>
+  $converterlinkedRecordType = const EnumNameConverter<LinkedRecordType>(
+    LinkedRecordType.values,
+  );
+  static JsonTypeConverter2<LinkedRecordType?, String?, String?>
+  $converterlinkedRecordTypen = JsonTypeConverter2.asNullable(
+    $converterlinkedRecordType,
+  );
 }
 
 class JournalEntry extends DataClass implements Insertable<JournalEntry> {
@@ -3082,11 +3162,17 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final String entryText;
   final DateTime createdDateTime;
   final DateTime? lastUpdatedDateTime;
+  final int? linkedRecordId;
+  final LinkedRecordType? linkedRecordType;
+  final String? linkedRecordTitle;
   const JournalEntry({
     required this.journalEntryId,
     required this.entryText,
     required this.createdDateTime,
     this.lastUpdatedDateTime,
+    this.linkedRecordId,
+    this.linkedRecordType,
+    this.linkedRecordTitle,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3096,6 +3182,19 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     map['created_date_time'] = Variable<DateTime>(createdDateTime);
     if (!nullToAbsent || lastUpdatedDateTime != null) {
       map['last_updated_date_time'] = Variable<DateTime>(lastUpdatedDateTime);
+    }
+    if (!nullToAbsent || linkedRecordId != null) {
+      map['linked_record_id'] = Variable<int>(linkedRecordId);
+    }
+    if (!nullToAbsent || linkedRecordType != null) {
+      map['linked_record_type'] = Variable<String>(
+        $JournalEntriesTable.$converterlinkedRecordTypen.toSql(
+          linkedRecordType,
+        ),
+      );
+    }
+    if (!nullToAbsent || linkedRecordTitle != null) {
+      map['linked_record_title'] = Variable<String>(linkedRecordTitle);
     }
     return map;
   }
@@ -3108,6 +3207,15 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       lastUpdatedDateTime: lastUpdatedDateTime == null && nullToAbsent
           ? const Value.absent()
           : Value(lastUpdatedDateTime),
+      linkedRecordId: linkedRecordId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedRecordId),
+      linkedRecordType: linkedRecordType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedRecordType),
+      linkedRecordTitle: linkedRecordTitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedRecordTitle),
     );
   }
 
@@ -3123,6 +3231,12 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       lastUpdatedDateTime: serializer.fromJson<DateTime?>(
         json['lastUpdatedDateTime'],
       ),
+      linkedRecordId: serializer.fromJson<int?>(json['linkedRecordId']),
+      linkedRecordType: $JournalEntriesTable.$converterlinkedRecordTypen
+          .fromJson(serializer.fromJson<String?>(json['linkedRecordType'])),
+      linkedRecordTitle: serializer.fromJson<String?>(
+        json['linkedRecordTitle'],
+      ),
     );
   }
   @override
@@ -3133,6 +3247,13 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       'entryText': serializer.toJson<String>(entryText),
       'createdDateTime': serializer.toJson<DateTime>(createdDateTime),
       'lastUpdatedDateTime': serializer.toJson<DateTime?>(lastUpdatedDateTime),
+      'linkedRecordId': serializer.toJson<int?>(linkedRecordId),
+      'linkedRecordType': serializer.toJson<String?>(
+        $JournalEntriesTable.$converterlinkedRecordTypen.toJson(
+          linkedRecordType,
+        ),
+      ),
+      'linkedRecordTitle': serializer.toJson<String?>(linkedRecordTitle),
     };
   }
 
@@ -3141,6 +3262,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     String? entryText,
     DateTime? createdDateTime,
     Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
+    Value<int?> linkedRecordId = const Value.absent(),
+    Value<LinkedRecordType?> linkedRecordType = const Value.absent(),
+    Value<String?> linkedRecordTitle = const Value.absent(),
   }) => JournalEntry(
     journalEntryId: journalEntryId ?? this.journalEntryId,
     entryText: entryText ?? this.entryText,
@@ -3148,6 +3272,15 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     lastUpdatedDateTime: lastUpdatedDateTime.present
         ? lastUpdatedDateTime.value
         : this.lastUpdatedDateTime,
+    linkedRecordId: linkedRecordId.present
+        ? linkedRecordId.value
+        : this.linkedRecordId,
+    linkedRecordType: linkedRecordType.present
+        ? linkedRecordType.value
+        : this.linkedRecordType,
+    linkedRecordTitle: linkedRecordTitle.present
+        ? linkedRecordTitle.value
+        : this.linkedRecordTitle,
   );
   JournalEntry copyWithCompanion(JournalEntriesCompanion data) {
     return JournalEntry(
@@ -3161,6 +3294,15 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       lastUpdatedDateTime: data.lastUpdatedDateTime.present
           ? data.lastUpdatedDateTime.value
           : this.lastUpdatedDateTime,
+      linkedRecordId: data.linkedRecordId.present
+          ? data.linkedRecordId.value
+          : this.linkedRecordId,
+      linkedRecordType: data.linkedRecordType.present
+          ? data.linkedRecordType.value
+          : this.linkedRecordType,
+      linkedRecordTitle: data.linkedRecordTitle.present
+          ? data.linkedRecordTitle.value
+          : this.linkedRecordTitle,
     );
   }
 
@@ -3170,7 +3312,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           ..write('journalEntryId: $journalEntryId, ')
           ..write('entryText: $entryText, ')
           ..write('createdDateTime: $createdDateTime, ')
-          ..write('lastUpdatedDateTime: $lastUpdatedDateTime')
+          ..write('lastUpdatedDateTime: $lastUpdatedDateTime, ')
+          ..write('linkedRecordId: $linkedRecordId, ')
+          ..write('linkedRecordType: $linkedRecordType, ')
+          ..write('linkedRecordTitle: $linkedRecordTitle')
           ..write(')'))
         .toString();
   }
@@ -3181,6 +3326,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     entryText,
     createdDateTime,
     lastUpdatedDateTime,
+    linkedRecordId,
+    linkedRecordType,
+    linkedRecordTitle,
   );
   @override
   bool operator ==(Object other) =>
@@ -3189,7 +3337,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           other.journalEntryId == this.journalEntryId &&
           other.entryText == this.entryText &&
           other.createdDateTime == this.createdDateTime &&
-          other.lastUpdatedDateTime == this.lastUpdatedDateTime);
+          other.lastUpdatedDateTime == this.lastUpdatedDateTime &&
+          other.linkedRecordId == this.linkedRecordId &&
+          other.linkedRecordType == this.linkedRecordType &&
+          other.linkedRecordTitle == this.linkedRecordTitle);
 }
 
 class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
@@ -3197,23 +3348,35 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<String> entryText;
   final Value<DateTime> createdDateTime;
   final Value<DateTime?> lastUpdatedDateTime;
+  final Value<int?> linkedRecordId;
+  final Value<LinkedRecordType?> linkedRecordType;
+  final Value<String?> linkedRecordTitle;
   const JournalEntriesCompanion({
     this.journalEntryId = const Value.absent(),
     this.entryText = const Value.absent(),
     this.createdDateTime = const Value.absent(),
     this.lastUpdatedDateTime = const Value.absent(),
+    this.linkedRecordId = const Value.absent(),
+    this.linkedRecordType = const Value.absent(),
+    this.linkedRecordTitle = const Value.absent(),
   });
   JournalEntriesCompanion.insert({
     this.journalEntryId = const Value.absent(),
     required String entryText,
     this.createdDateTime = const Value.absent(),
     this.lastUpdatedDateTime = const Value.absent(),
+    this.linkedRecordId = const Value.absent(),
+    this.linkedRecordType = const Value.absent(),
+    this.linkedRecordTitle = const Value.absent(),
   }) : entryText = Value(entryText);
   static Insertable<JournalEntry> custom({
     Expression<int>? journalEntryId,
     Expression<String>? entryText,
     Expression<DateTime>? createdDateTime,
     Expression<DateTime>? lastUpdatedDateTime,
+    Expression<int>? linkedRecordId,
+    Expression<String>? linkedRecordType,
+    Expression<String>? linkedRecordTitle,
   }) {
     return RawValuesInsertable({
       if (journalEntryId != null) 'journal_entry_id': journalEntryId,
@@ -3221,6 +3384,9 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       if (createdDateTime != null) 'created_date_time': createdDateTime,
       if (lastUpdatedDateTime != null)
         'last_updated_date_time': lastUpdatedDateTime,
+      if (linkedRecordId != null) 'linked_record_id': linkedRecordId,
+      if (linkedRecordType != null) 'linked_record_type': linkedRecordType,
+      if (linkedRecordTitle != null) 'linked_record_title': linkedRecordTitle,
     });
   }
 
@@ -3229,12 +3395,18 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Value<String>? entryText,
     Value<DateTime>? createdDateTime,
     Value<DateTime?>? lastUpdatedDateTime,
+    Value<int?>? linkedRecordId,
+    Value<LinkedRecordType?>? linkedRecordType,
+    Value<String?>? linkedRecordTitle,
   }) {
     return JournalEntriesCompanion(
       journalEntryId: journalEntryId ?? this.journalEntryId,
       entryText: entryText ?? this.entryText,
       createdDateTime: createdDateTime ?? this.createdDateTime,
       lastUpdatedDateTime: lastUpdatedDateTime ?? this.lastUpdatedDateTime,
+      linkedRecordId: linkedRecordId ?? this.linkedRecordId,
+      linkedRecordType: linkedRecordType ?? this.linkedRecordType,
+      linkedRecordTitle: linkedRecordTitle ?? this.linkedRecordTitle,
     );
   }
 
@@ -3255,6 +3427,19 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
         lastUpdatedDateTime.value,
       );
     }
+    if (linkedRecordId.present) {
+      map['linked_record_id'] = Variable<int>(linkedRecordId.value);
+    }
+    if (linkedRecordType.present) {
+      map['linked_record_type'] = Variable<String>(
+        $JournalEntriesTable.$converterlinkedRecordTypen.toSql(
+          linkedRecordType.value,
+        ),
+      );
+    }
+    if (linkedRecordTitle.present) {
+      map['linked_record_title'] = Variable<String>(linkedRecordTitle.value);
+    }
     return map;
   }
 
@@ -3264,7 +3449,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
           ..write('journalEntryId: $journalEntryId, ')
           ..write('entryText: $entryText, ')
           ..write('createdDateTime: $createdDateTime, ')
-          ..write('lastUpdatedDateTime: $lastUpdatedDateTime')
+          ..write('lastUpdatedDateTime: $lastUpdatedDateTime, ')
+          ..write('linkedRecordId: $linkedRecordId, ')
+          ..write('linkedRecordType: $linkedRecordType, ')
+          ..write('linkedRecordTitle: $linkedRecordTitle')
           ..write(')'))
         .toString();
   }
@@ -3858,6 +4046,21 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _createLinkedJournalEntriesMeta =
+      const VerificationMeta('createLinkedJournalEntries');
+  @override
+  late final GeneratedColumn<bool> createLinkedJournalEntries =
+      GeneratedColumn<bool>(
+        'create_linked_journal_entries',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("create_linked_journal_entries" IN (0, 1))',
+        ),
+        defaultValue: const Constant(true),
+      );
   @override
   List<GeneratedColumn> get $columns => [
     settingsId,
@@ -3866,6 +4069,7 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
     optIntoAnalyticsWarning,
     lastUsedVersion,
     defaultWeightUnit,
+    createLinkedJournalEntries,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3930,6 +4134,15 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
         ),
       );
     }
+    if (data.containsKey('create_linked_journal_entries')) {
+      context.handle(
+        _createLinkedJournalEntriesMeta,
+        createLinkedJournalEntries.isAcceptableOrUnknown(
+          data['create_linked_journal_entries']!,
+          _createLinkedJournalEntriesMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3963,6 +4176,10 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
         DriftSqlType.int,
         data['${effectivePrefix}default_weight_unit'],
       ),
+      createLinkedJournalEntries: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}create_linked_journal_entries'],
+      )!,
     );
   }
 
@@ -3979,6 +4196,7 @@ class Setting extends DataClass implements Insertable<Setting> {
   final bool optIntoAnalyticsWarning;
   final String? lastUsedVersion;
   final int? defaultWeightUnit;
+  final bool createLinkedJournalEntries;
   const Setting({
     required this.settingsId,
     required this.acceptedTermsAndConditions,
@@ -3986,6 +4204,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     required this.optIntoAnalyticsWarning,
     this.lastUsedVersion,
     this.defaultWeightUnit,
+    required this.createLinkedJournalEntries,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4002,6 +4221,9 @@ class Setting extends DataClass implements Insertable<Setting> {
     if (!nullToAbsent || defaultWeightUnit != null) {
       map['default_weight_unit'] = Variable<int>(defaultWeightUnit);
     }
+    map['create_linked_journal_entries'] = Variable<bool>(
+      createLinkedJournalEntries,
+    );
     return map;
   }
 
@@ -4017,6 +4239,7 @@ class Setting extends DataClass implements Insertable<Setting> {
       defaultWeightUnit: defaultWeightUnit == null && nullToAbsent
           ? const Value.absent()
           : Value(defaultWeightUnit),
+      createLinkedJournalEntries: Value(createLinkedJournalEntries),
     );
   }
 
@@ -4036,6 +4259,9 @@ class Setting extends DataClass implements Insertable<Setting> {
       ),
       lastUsedVersion: serializer.fromJson<String?>(json['lastUsedVersion']),
       defaultWeightUnit: serializer.fromJson<int?>(json['defaultWeightUnit']),
+      createLinkedJournalEntries: serializer.fromJson<bool>(
+        json['createLinkedJournalEntries'],
+      ),
     );
   }
   @override
@@ -4052,6 +4278,9 @@ class Setting extends DataClass implements Insertable<Setting> {
       ),
       'lastUsedVersion': serializer.toJson<String?>(lastUsedVersion),
       'defaultWeightUnit': serializer.toJson<int?>(defaultWeightUnit),
+      'createLinkedJournalEntries': serializer.toJson<bool>(
+        createLinkedJournalEntries,
+      ),
     };
   }
 
@@ -4062,6 +4291,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     bool? optIntoAnalyticsWarning,
     Value<String?> lastUsedVersion = const Value.absent(),
     Value<int?> defaultWeightUnit = const Value.absent(),
+    bool? createLinkedJournalEntries,
   }) => Setting(
     settingsId: settingsId ?? this.settingsId,
     acceptedTermsAndConditions:
@@ -4075,6 +4305,8 @@ class Setting extends DataClass implements Insertable<Setting> {
     defaultWeightUnit: defaultWeightUnit.present
         ? defaultWeightUnit.value
         : this.defaultWeightUnit,
+    createLinkedJournalEntries:
+        createLinkedJournalEntries ?? this.createLinkedJournalEntries,
   );
   Setting copyWithCompanion(SettingsCompanion data) {
     return Setting(
@@ -4096,6 +4328,9 @@ class Setting extends DataClass implements Insertable<Setting> {
       defaultWeightUnit: data.defaultWeightUnit.present
           ? data.defaultWeightUnit.value
           : this.defaultWeightUnit,
+      createLinkedJournalEntries: data.createLinkedJournalEntries.present
+          ? data.createLinkedJournalEntries.value
+          : this.createLinkedJournalEntries,
     );
   }
 
@@ -4107,7 +4342,8 @@ class Setting extends DataClass implements Insertable<Setting> {
           ..write('onBoardingComplete: $onBoardingComplete, ')
           ..write('optIntoAnalyticsWarning: $optIntoAnalyticsWarning, ')
           ..write('lastUsedVersion: $lastUsedVersion, ')
-          ..write('defaultWeightUnit: $defaultWeightUnit')
+          ..write('defaultWeightUnit: $defaultWeightUnit, ')
+          ..write('createLinkedJournalEntries: $createLinkedJournalEntries')
           ..write(')'))
         .toString();
   }
@@ -4120,6 +4356,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     optIntoAnalyticsWarning,
     lastUsedVersion,
     defaultWeightUnit,
+    createLinkedJournalEntries,
   );
   @override
   bool operator ==(Object other) =>
@@ -4130,7 +4367,8 @@ class Setting extends DataClass implements Insertable<Setting> {
           other.onBoardingComplete == this.onBoardingComplete &&
           other.optIntoAnalyticsWarning == this.optIntoAnalyticsWarning &&
           other.lastUsedVersion == this.lastUsedVersion &&
-          other.defaultWeightUnit == this.defaultWeightUnit);
+          other.defaultWeightUnit == this.defaultWeightUnit &&
+          other.createLinkedJournalEntries == this.createLinkedJournalEntries);
 }
 
 class SettingsCompanion extends UpdateCompanion<Setting> {
@@ -4140,6 +4378,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
   final Value<bool> optIntoAnalyticsWarning;
   final Value<String?> lastUsedVersion;
   final Value<int?> defaultWeightUnit;
+  final Value<bool> createLinkedJournalEntries;
   const SettingsCompanion({
     this.settingsId = const Value.absent(),
     this.acceptedTermsAndConditions = const Value.absent(),
@@ -4147,6 +4386,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     this.optIntoAnalyticsWarning = const Value.absent(),
     this.lastUsedVersion = const Value.absent(),
     this.defaultWeightUnit = const Value.absent(),
+    this.createLinkedJournalEntries = const Value.absent(),
   });
   SettingsCompanion.insert({
     this.settingsId = const Value.absent(),
@@ -4155,6 +4395,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     this.optIntoAnalyticsWarning = const Value.absent(),
     this.lastUsedVersion = const Value.absent(),
     this.defaultWeightUnit = const Value.absent(),
+    this.createLinkedJournalEntries = const Value.absent(),
   });
   static Insertable<Setting> custom({
     Expression<int>? settingsId,
@@ -4163,6 +4404,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     Expression<bool>? optIntoAnalyticsWarning,
     Expression<String>? lastUsedVersion,
     Expression<int>? defaultWeightUnit,
+    Expression<bool>? createLinkedJournalEntries,
   }) {
     return RawValuesInsertable({
       if (settingsId != null) 'settings_id': settingsId,
@@ -4174,6 +4416,8 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
         'opt_into_analytics_warning': optIntoAnalyticsWarning,
       if (lastUsedVersion != null) 'last_used_version': lastUsedVersion,
       if (defaultWeightUnit != null) 'default_weight_unit': defaultWeightUnit,
+      if (createLinkedJournalEntries != null)
+        'create_linked_journal_entries': createLinkedJournalEntries,
     });
   }
 
@@ -4184,6 +4428,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     Value<bool>? optIntoAnalyticsWarning,
     Value<String?>? lastUsedVersion,
     Value<int?>? defaultWeightUnit,
+    Value<bool>? createLinkedJournalEntries,
   }) {
     return SettingsCompanion(
       settingsId: settingsId ?? this.settingsId,
@@ -4194,6 +4439,8 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
           optIntoAnalyticsWarning ?? this.optIntoAnalyticsWarning,
       lastUsedVersion: lastUsedVersion ?? this.lastUsedVersion,
       defaultWeightUnit: defaultWeightUnit ?? this.defaultWeightUnit,
+      createLinkedJournalEntries:
+          createLinkedJournalEntries ?? this.createLinkedJournalEntries,
     );
   }
 
@@ -4222,6 +4469,11 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     if (defaultWeightUnit.present) {
       map['default_weight_unit'] = Variable<int>(defaultWeightUnit.value);
     }
+    if (createLinkedJournalEntries.present) {
+      map['create_linked_journal_entries'] = Variable<bool>(
+        createLinkedJournalEntries.value,
+      );
+    }
     return map;
   }
 
@@ -4233,7 +4485,8 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
           ..write('onBoardingComplete: $onBoardingComplete, ')
           ..write('optIntoAnalyticsWarning: $optIntoAnalyticsWarning, ')
           ..write('lastUsedVersion: $lastUsedVersion, ')
-          ..write('defaultWeightUnit: $defaultWeightUnit')
+          ..write('defaultWeightUnit: $defaultWeightUnit, ')
+          ..write('createLinkedJournalEntries: $createLinkedJournalEntries')
           ..write(')'))
         .toString();
   }
@@ -6716,6 +6969,9 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
       required String entryText,
       Value<DateTime> createdDateTime,
       Value<DateTime?> lastUpdatedDateTime,
+      Value<int?> linkedRecordId,
+      Value<LinkedRecordType?> linkedRecordType,
+      Value<String?> linkedRecordTitle,
     });
 typedef $$JournalEntriesTableUpdateCompanionBuilder =
     JournalEntriesCompanion Function({
@@ -6723,6 +6979,9 @@ typedef $$JournalEntriesTableUpdateCompanionBuilder =
       Value<String> entryText,
       Value<DateTime> createdDateTime,
       Value<DateTime?> lastUpdatedDateTime,
+      Value<int?> linkedRecordId,
+      Value<LinkedRecordType?> linkedRecordType,
+      Value<String?> linkedRecordTitle,
     });
 
 final class $$JournalEntriesTableReferences
@@ -6819,6 +7078,22 @@ class $$JournalEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get linkedRecordId => $composableBuilder(
+    column: $table.linkedRecordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LinkedRecordType?, LinkedRecordType, String>
+  get linkedRecordType => $composableBuilder(
+    column: $table.linkedRecordType,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get linkedRecordTitle => $composableBuilder(
+    column: $table.linkedRecordTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> journalEntryTagsRefs(
     Expression<bool> Function($$JournalEntryTagsTableFilterComposer f) f,
   ) {
@@ -6898,6 +7173,21 @@ class $$JournalEntriesTableOrderingComposer
     column: $table.lastUpdatedDateTime,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get linkedRecordId => $composableBuilder(
+    column: $table.linkedRecordId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get linkedRecordType => $composableBuilder(
+    column: $table.linkedRecordType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get linkedRecordTitle => $composableBuilder(
+    column: $table.linkedRecordTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$JournalEntriesTableAnnotationComposer
@@ -6924,6 +7214,22 @@ class $$JournalEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastUpdatedDateTime => $composableBuilder(
     column: $table.lastUpdatedDateTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get linkedRecordId => $composableBuilder(
+    column: $table.linkedRecordId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<LinkedRecordType?, String>
+  get linkedRecordType => $composableBuilder(
+    column: $table.linkedRecordType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get linkedRecordTitle => $composableBuilder(
+    column: $table.linkedRecordTitle,
     builder: (column) => column,
   );
 
@@ -7016,11 +7322,18 @@ class $$JournalEntriesTableTableManager
                 Value<String> entryText = const Value.absent(),
                 Value<DateTime> createdDateTime = const Value.absent(),
                 Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
+                Value<int?> linkedRecordId = const Value.absent(),
+                Value<LinkedRecordType?> linkedRecordType =
+                    const Value.absent(),
+                Value<String?> linkedRecordTitle = const Value.absent(),
               }) => JournalEntriesCompanion(
                 journalEntryId: journalEntryId,
                 entryText: entryText,
                 createdDateTime: createdDateTime,
                 lastUpdatedDateTime: lastUpdatedDateTime,
+                linkedRecordId: linkedRecordId,
+                linkedRecordType: linkedRecordType,
+                linkedRecordTitle: linkedRecordTitle,
               ),
           createCompanionCallback:
               ({
@@ -7028,11 +7341,18 @@ class $$JournalEntriesTableTableManager
                 required String entryText,
                 Value<DateTime> createdDateTime = const Value.absent(),
                 Value<DateTime?> lastUpdatedDateTime = const Value.absent(),
+                Value<int?> linkedRecordId = const Value.absent(),
+                Value<LinkedRecordType?> linkedRecordType =
+                    const Value.absent(),
+                Value<String?> linkedRecordTitle = const Value.absent(),
               }) => JournalEntriesCompanion.insert(
                 journalEntryId: journalEntryId,
                 entryText: entryText,
                 createdDateTime: createdDateTime,
                 lastUpdatedDateTime: lastUpdatedDateTime,
+                linkedRecordId: linkedRecordId,
+                linkedRecordType: linkedRecordType,
+                linkedRecordTitle: linkedRecordTitle,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -7791,6 +8111,7 @@ typedef $$SettingsTableCreateCompanionBuilder =
       Value<bool> optIntoAnalyticsWarning,
       Value<String?> lastUsedVersion,
       Value<int?> defaultWeightUnit,
+      Value<bool> createLinkedJournalEntries,
     });
 typedef $$SettingsTableUpdateCompanionBuilder =
     SettingsCompanion Function({
@@ -7800,6 +8121,7 @@ typedef $$SettingsTableUpdateCompanionBuilder =
       Value<bool> optIntoAnalyticsWarning,
       Value<String?> lastUsedVersion,
       Value<int?> defaultWeightUnit,
+      Value<bool> createLinkedJournalEntries,
     });
 
 class $$SettingsTableFilterComposer
@@ -7838,6 +8160,11 @@ class $$SettingsTableFilterComposer
 
   ColumnFilters<int> get defaultWeightUnit => $composableBuilder(
     column: $table.defaultWeightUnit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get createLinkedJournalEntries => $composableBuilder(
+    column: $table.createLinkedJournalEntries,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -7880,6 +8207,11 @@ class $$SettingsTableOrderingComposer
     column: $table.defaultWeightUnit,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get createLinkedJournalEntries => $composableBuilder(
+    column: $table.createLinkedJournalEntries,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SettingsTableAnnotationComposer
@@ -7920,6 +8252,11 @@ class $$SettingsTableAnnotationComposer
     column: $table.defaultWeightUnit,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get createLinkedJournalEntries => $composableBuilder(
+    column: $table.createLinkedJournalEntries,
+    builder: (column) => column,
+  );
 }
 
 class $$SettingsTableTableManager
@@ -7956,6 +8293,7 @@ class $$SettingsTableTableManager
                 Value<bool> optIntoAnalyticsWarning = const Value.absent(),
                 Value<String?> lastUsedVersion = const Value.absent(),
                 Value<int?> defaultWeightUnit = const Value.absent(),
+                Value<bool> createLinkedJournalEntries = const Value.absent(),
               }) => SettingsCompanion(
                 settingsId: settingsId,
                 acceptedTermsAndConditions: acceptedTermsAndConditions,
@@ -7963,6 +8301,7 @@ class $$SettingsTableTableManager
                 optIntoAnalyticsWarning: optIntoAnalyticsWarning,
                 lastUsedVersion: lastUsedVersion,
                 defaultWeightUnit: defaultWeightUnit,
+                createLinkedJournalEntries: createLinkedJournalEntries,
               ),
           createCompanionCallback:
               ({
@@ -7972,6 +8311,7 @@ class $$SettingsTableTableManager
                 Value<bool> optIntoAnalyticsWarning = const Value.absent(),
                 Value<String?> lastUsedVersion = const Value.absent(),
                 Value<int?> defaultWeightUnit = const Value.absent(),
+                Value<bool> createLinkedJournalEntries = const Value.absent(),
               }) => SettingsCompanion.insert(
                 settingsId: settingsId,
                 acceptedTermsAndConditions: acceptedTermsAndConditions,
@@ -7979,6 +8319,7 @@ class $$SettingsTableTableManager
                 optIntoAnalyticsWarning: optIntoAnalyticsWarning,
                 lastUsedVersion: lastUsedVersion,
                 defaultWeightUnit: defaultWeightUnit,
+                createLinkedJournalEntries: createLinkedJournalEntries,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

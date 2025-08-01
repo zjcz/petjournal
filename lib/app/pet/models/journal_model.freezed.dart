@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JournalModel implements DiagnosticableTreeMixin {
 
- int? get journalEntryId; String get entryText; DateTime? get createdDateTime; DateTime? get lastUpdatedDateTime; List<int> get petIdList; List<String> get tags;
+ int? get journalEntryId; String get entryText; DateTime? get createdDateTime; DateTime? get lastUpdatedDateTime; List<int> get petIdList; List<String> get tags; int? get linkedRecordId; LinkedRecordType? get linkedRecordType; String? get linkedRecordTitle;
 /// Create a copy of JournalModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,21 +30,21 @@ $JournalModelCopyWith<JournalModel> get copyWith => _$JournalModelCopyWithImpl<J
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'JournalModel'))
-    ..add(DiagnosticsProperty('journalEntryId', journalEntryId))..add(DiagnosticsProperty('entryText', entryText))..add(DiagnosticsProperty('createdDateTime', createdDateTime))..add(DiagnosticsProperty('lastUpdatedDateTime', lastUpdatedDateTime))..add(DiagnosticsProperty('petIdList', petIdList))..add(DiagnosticsProperty('tags', tags));
+    ..add(DiagnosticsProperty('journalEntryId', journalEntryId))..add(DiagnosticsProperty('entryText', entryText))..add(DiagnosticsProperty('createdDateTime', createdDateTime))..add(DiagnosticsProperty('lastUpdatedDateTime', lastUpdatedDateTime))..add(DiagnosticsProperty('petIdList', petIdList))..add(DiagnosticsProperty('tags', tags))..add(DiagnosticsProperty('linkedRecordId', linkedRecordId))..add(DiagnosticsProperty('linkedRecordType', linkedRecordType))..add(DiagnosticsProperty('linkedRecordTitle', linkedRecordTitle));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JournalModel&&(identical(other.journalEntryId, journalEntryId) || other.journalEntryId == journalEntryId)&&(identical(other.entryText, entryText) || other.entryText == entryText)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.lastUpdatedDateTime, lastUpdatedDateTime) || other.lastUpdatedDateTime == lastUpdatedDateTime)&&const DeepCollectionEquality().equals(other.petIdList, petIdList)&&const DeepCollectionEquality().equals(other.tags, tags));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JournalModel&&(identical(other.journalEntryId, journalEntryId) || other.journalEntryId == journalEntryId)&&(identical(other.entryText, entryText) || other.entryText == entryText)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.lastUpdatedDateTime, lastUpdatedDateTime) || other.lastUpdatedDateTime == lastUpdatedDateTime)&&const DeepCollectionEquality().equals(other.petIdList, petIdList)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.linkedRecordId, linkedRecordId) || other.linkedRecordId == linkedRecordId)&&(identical(other.linkedRecordType, linkedRecordType) || other.linkedRecordType == linkedRecordType)&&(identical(other.linkedRecordTitle, linkedRecordTitle) || other.linkedRecordTitle == linkedRecordTitle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,journalEntryId,entryText,createdDateTime,lastUpdatedDateTime,const DeepCollectionEquality().hash(petIdList),const DeepCollectionEquality().hash(tags));
+int get hashCode => Object.hash(runtimeType,journalEntryId,entryText,createdDateTime,lastUpdatedDateTime,const DeepCollectionEquality().hash(petIdList),const DeepCollectionEquality().hash(tags),linkedRecordId,linkedRecordType,linkedRecordTitle);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'JournalModel(journalEntryId: $journalEntryId, entryText: $entryText, createdDateTime: $createdDateTime, lastUpdatedDateTime: $lastUpdatedDateTime, petIdList: $petIdList, tags: $tags)';
+  return 'JournalModel(journalEntryId: $journalEntryId, entryText: $entryText, createdDateTime: $createdDateTime, lastUpdatedDateTime: $lastUpdatedDateTime, petIdList: $petIdList, tags: $tags, linkedRecordId: $linkedRecordId, linkedRecordType: $linkedRecordType, linkedRecordTitle: $linkedRecordTitle)';
 }
 
 
@@ -55,7 +55,7 @@ abstract mixin class $JournalModelCopyWith<$Res>  {
   factory $JournalModelCopyWith(JournalModel value, $Res Function(JournalModel) _then) = _$JournalModelCopyWithImpl;
 @useResult
 $Res call({
- int? journalEntryId, String entryText, DateTime? createdDateTime, DateTime? lastUpdatedDateTime, List<int> petIdList, List<String> tags
+ int? journalEntryId, String entryText, DateTime? createdDateTime, DateTime? lastUpdatedDateTime, List<int> petIdList, List<String> tags, int? linkedRecordId, LinkedRecordType? linkedRecordType, String? linkedRecordTitle
 });
 
 
@@ -72,7 +72,7 @@ class _$JournalModelCopyWithImpl<$Res>
 
 /// Create a copy of JournalModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? journalEntryId = freezed,Object? entryText = null,Object? createdDateTime = freezed,Object? lastUpdatedDateTime = freezed,Object? petIdList = null,Object? tags = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? journalEntryId = freezed,Object? entryText = null,Object? createdDateTime = freezed,Object? lastUpdatedDateTime = freezed,Object? petIdList = null,Object? tags = null,Object? linkedRecordId = freezed,Object? linkedRecordType = freezed,Object? linkedRecordTitle = freezed,}) {
   return _then(_self.copyWith(
 journalEntryId: freezed == journalEntryId ? _self.journalEntryId : journalEntryId // ignore: cast_nullable_to_non_nullable
 as int?,entryText: null == entryText ? _self.entryText : entryText // ignore: cast_nullable_to_non_nullable
@@ -80,7 +80,10 @@ as String,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : 
 as DateTime?,lastUpdatedDateTime: freezed == lastUpdatedDateTime ? _self.lastUpdatedDateTime : lastUpdatedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,petIdList: null == petIdList ? _self.petIdList : petIdList // ignore: cast_nullable_to_non_nullable
 as List<int>,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,linkedRecordId: freezed == linkedRecordId ? _self.linkedRecordId : linkedRecordId // ignore: cast_nullable_to_non_nullable
+as int?,linkedRecordType: freezed == linkedRecordType ? _self.linkedRecordType : linkedRecordType // ignore: cast_nullable_to_non_nullable
+as LinkedRecordType?,linkedRecordTitle: freezed == linkedRecordTitle ? _self.linkedRecordTitle : linkedRecordTitle // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -91,7 +94,7 @@ as List<String>,
 @JsonSerializable()
 
 class _JournalModel with DiagnosticableTreeMixin implements JournalModel {
-  const _JournalModel({this.journalEntryId, required this.entryText, this.createdDateTime, this.lastUpdatedDateTime, required final  List<int> petIdList, required final  List<String> tags}): _petIdList = petIdList,_tags = tags;
+  const _JournalModel({this.journalEntryId, required this.entryText, this.createdDateTime, this.lastUpdatedDateTime, required final  List<int> petIdList, required final  List<String> tags, this.linkedRecordId, this.linkedRecordType, this.linkedRecordTitle}): _petIdList = petIdList,_tags = tags;
   factory _JournalModel.fromJson(Map<String, dynamic> json) => _$JournalModelFromJson(json);
 
 @override final  int? journalEntryId;
@@ -112,6 +115,9 @@ class _JournalModel with DiagnosticableTreeMixin implements JournalModel {
   return EqualUnmodifiableListView(_tags);
 }
 
+@override final  int? linkedRecordId;
+@override final  LinkedRecordType? linkedRecordType;
+@override final  String? linkedRecordTitle;
 
 /// Create a copy of JournalModel
 /// with the given fields replaced by the non-null parameter values.
@@ -127,21 +133,21 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'JournalModel'))
-    ..add(DiagnosticsProperty('journalEntryId', journalEntryId))..add(DiagnosticsProperty('entryText', entryText))..add(DiagnosticsProperty('createdDateTime', createdDateTime))..add(DiagnosticsProperty('lastUpdatedDateTime', lastUpdatedDateTime))..add(DiagnosticsProperty('petIdList', petIdList))..add(DiagnosticsProperty('tags', tags));
+    ..add(DiagnosticsProperty('journalEntryId', journalEntryId))..add(DiagnosticsProperty('entryText', entryText))..add(DiagnosticsProperty('createdDateTime', createdDateTime))..add(DiagnosticsProperty('lastUpdatedDateTime', lastUpdatedDateTime))..add(DiagnosticsProperty('petIdList', petIdList))..add(DiagnosticsProperty('tags', tags))..add(DiagnosticsProperty('linkedRecordId', linkedRecordId))..add(DiagnosticsProperty('linkedRecordType', linkedRecordType))..add(DiagnosticsProperty('linkedRecordTitle', linkedRecordTitle));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JournalModel&&(identical(other.journalEntryId, journalEntryId) || other.journalEntryId == journalEntryId)&&(identical(other.entryText, entryText) || other.entryText == entryText)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.lastUpdatedDateTime, lastUpdatedDateTime) || other.lastUpdatedDateTime == lastUpdatedDateTime)&&const DeepCollectionEquality().equals(other._petIdList, _petIdList)&&const DeepCollectionEquality().equals(other._tags, _tags));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JournalModel&&(identical(other.journalEntryId, journalEntryId) || other.journalEntryId == journalEntryId)&&(identical(other.entryText, entryText) || other.entryText == entryText)&&(identical(other.createdDateTime, createdDateTime) || other.createdDateTime == createdDateTime)&&(identical(other.lastUpdatedDateTime, lastUpdatedDateTime) || other.lastUpdatedDateTime == lastUpdatedDateTime)&&const DeepCollectionEquality().equals(other._petIdList, _petIdList)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.linkedRecordId, linkedRecordId) || other.linkedRecordId == linkedRecordId)&&(identical(other.linkedRecordType, linkedRecordType) || other.linkedRecordType == linkedRecordType)&&(identical(other.linkedRecordTitle, linkedRecordTitle) || other.linkedRecordTitle == linkedRecordTitle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,journalEntryId,entryText,createdDateTime,lastUpdatedDateTime,const DeepCollectionEquality().hash(_petIdList),const DeepCollectionEquality().hash(_tags));
+int get hashCode => Object.hash(runtimeType,journalEntryId,entryText,createdDateTime,lastUpdatedDateTime,const DeepCollectionEquality().hash(_petIdList),const DeepCollectionEquality().hash(_tags),linkedRecordId,linkedRecordType,linkedRecordTitle);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'JournalModel(journalEntryId: $journalEntryId, entryText: $entryText, createdDateTime: $createdDateTime, lastUpdatedDateTime: $lastUpdatedDateTime, petIdList: $petIdList, tags: $tags)';
+  return 'JournalModel(journalEntryId: $journalEntryId, entryText: $entryText, createdDateTime: $createdDateTime, lastUpdatedDateTime: $lastUpdatedDateTime, petIdList: $petIdList, tags: $tags, linkedRecordId: $linkedRecordId, linkedRecordType: $linkedRecordType, linkedRecordTitle: $linkedRecordTitle)';
 }
 
 
@@ -152,7 +158,7 @@ abstract mixin class _$JournalModelCopyWith<$Res> implements $JournalModelCopyWi
   factory _$JournalModelCopyWith(_JournalModel value, $Res Function(_JournalModel) _then) = __$JournalModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? journalEntryId, String entryText, DateTime? createdDateTime, DateTime? lastUpdatedDateTime, List<int> petIdList, List<String> tags
+ int? journalEntryId, String entryText, DateTime? createdDateTime, DateTime? lastUpdatedDateTime, List<int> petIdList, List<String> tags, int? linkedRecordId, LinkedRecordType? linkedRecordType, String? linkedRecordTitle
 });
 
 
@@ -169,7 +175,7 @@ class __$JournalModelCopyWithImpl<$Res>
 
 /// Create a copy of JournalModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? journalEntryId = freezed,Object? entryText = null,Object? createdDateTime = freezed,Object? lastUpdatedDateTime = freezed,Object? petIdList = null,Object? tags = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? journalEntryId = freezed,Object? entryText = null,Object? createdDateTime = freezed,Object? lastUpdatedDateTime = freezed,Object? petIdList = null,Object? tags = null,Object? linkedRecordId = freezed,Object? linkedRecordType = freezed,Object? linkedRecordTitle = freezed,}) {
   return _then(_JournalModel(
 journalEntryId: freezed == journalEntryId ? _self.journalEntryId : journalEntryId // ignore: cast_nullable_to_non_nullable
 as int?,entryText: null == entryText ? _self.entryText : entryText // ignore: cast_nullable_to_non_nullable
@@ -177,7 +183,10 @@ as String,createdDateTime: freezed == createdDateTime ? _self.createdDateTime : 
 as DateTime?,lastUpdatedDateTime: freezed == lastUpdatedDateTime ? _self.lastUpdatedDateTime : lastUpdatedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,petIdList: null == petIdList ? _self._petIdList : petIdList // ignore: cast_nullable_to_non_nullable
 as List<int>,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,linkedRecordId: freezed == linkedRecordId ? _self.linkedRecordId : linkedRecordId // ignore: cast_nullable_to_non_nullable
+as int?,linkedRecordType: freezed == linkedRecordType ? _self.linkedRecordType : linkedRecordType // ignore: cast_nullable_to_non_nullable
+as LinkedRecordType?,linkedRecordTitle: freezed == linkedRecordTitle ? _self.linkedRecordTitle : linkedRecordTitle // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

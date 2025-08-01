@@ -41,10 +41,12 @@ class SettingsController extends _$SettingsController {
   Future<bool> saveUserSettings(
     WeightUnits? defaultWeightUnit,
     bool? optIntoAnalyticsWarning,
+    bool? createLinkedJournalEntries,
   ) async {
     var updateCount = await _databaseService.saveSettingsUser(
       defaultWeightUnit,
       optIntoAnalyticsWarning,
+      createLinkedJournalEntries,
     );
 
     if (updateCount == 1) {

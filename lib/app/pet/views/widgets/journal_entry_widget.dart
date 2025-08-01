@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:petjournal/app/pet/models/journal_model.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/lookups/pet_lookup.dart';
 import 'package:petjournal/helpers/date_helper.dart';
 
@@ -10,6 +11,12 @@ class JournalEntryWidget extends StatelessWidget {
   final JournalModel journalEntry;
   final Function(JournalModel) onTap;
   final int? hidePetId;
+  final Map<LinkedRecordType, Icon> linkedRecordIcons = const {
+    LinkedRecordType.pet: Icon(Icons.pets),
+    LinkedRecordType.medication: Icon(Icons.medication),
+    LinkedRecordType.weight: Icon(Icons.balance),
+    LinkedRecordType.vaccination: Icon(Icons.vaccines),
+  };
 
   const JournalEntryWidget({
     super.key,
@@ -30,6 +37,7 @@ class JournalEntryWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ?_buildLinkedRecordDetails(journalEntry),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -75,6 +83,26 @@ class JournalEntryWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget? _buildLinkedRecordDetails(JournalModel journalEntry) {
+    if (journalEntry.linkedRecordId == null) return null;
+
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child:
+              linkedRecordIcons[journalEntry.linkedRecordType] ??
+              const Icon(Icons.pets),
+        ),
+        Text(
+          journalEntry.linkedRecordTitle ?? '',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 

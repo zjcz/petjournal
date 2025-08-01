@@ -14,6 +14,7 @@ abstract class SettingsModel with _$SettingsModel {
     required bool onBoardingComplete,
     required String? lastUsedVersion,
     required WeightUnits? defaultWeightUnit,
+    required bool createLinkedJournalEntries,
   }) = _SettingsModel;
 
   factory SettingsModel.fromJson(Map<String, Object?> json) =>

@@ -42,6 +42,9 @@ void main() {
         acceptedTermsAndConditions: false,
         onBoardingComplete: false,
         optIntoAnalyticsWarning: false,
+        lastUsedVersion: null,
+        defaultWeightUnit: null,
+        createLinkedJournalEntries: true,
       ),
     );
 

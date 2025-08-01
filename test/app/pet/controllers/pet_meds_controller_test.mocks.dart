@@ -9,12 +9,13 @@ import 'package:drift/drift.dart' as _i2;
 import 'package:drift/src/runtime/executor/stream_queries.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:petjournal/constants/linked_record_type.dart' as _i10;
 import 'package:petjournal/constants/pet_sex.dart' as _i7;
 import 'package:petjournal/constants/pet_status.dart' as _i8;
 import 'package:petjournal/constants/weight_units.dart' as _i9;
 import 'package:petjournal/data/database/database_service.dart' as _i3;
 import 'package:petjournal/data/database/tables/journal_entry_details.dart'
-    as _i10;
+    as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -809,12 +810,18 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     required String? entryText,
     required List<int>? petIdList,
     required List<String>? tags,
+    _i10.LinkedRecordType? linkedRecordType,
+    int? linkedRecordId,
+    String? linkedRecordTitle,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createJournalEntryForPet, [], {
               #entryText: entryText,
               #petIdList: petIdList,
               #tags: tags,
+              #linkedRecordType: linkedRecordType,
+              #linkedRecordId: linkedRecordId,
+              #linkedRecordTitle: linkedRecordTitle,
             }),
             returnValue: _i5.Future<_i3.JournalEntry?>.value(),
           )
@@ -833,6 +840,22 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
               #entryText: entryText,
               #petIdList: petIdList,
               #tags: tags,
+            }),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
+
+  @override
+  _i5.Future<int> updateLinkedJournalEntry({
+    required int? linkedRecordId,
+    required _i10.LinkedRecordType? linkedRecordType,
+    required String? linkedRecordTitle,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateLinkedJournalEntry, [], {
+              #linkedRecordId: linkedRecordId,
+              #linkedRecordType: linkedRecordType,
+              #linkedRecordTitle: linkedRecordTitle,
             }),
             returnValue: _i5.Future<int>.value(0),
           )
@@ -863,14 +886,14 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
           as _i5.Stream<List<_i3.JournalEntry>>);
 
   @override
-  _i5.Stream<List<_i10.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
+  _i5.Stream<List<_i11.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
     int? petId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getAllJournalEntryDetailsForPet, [petId]),
-            returnValue: _i5.Stream<List<_i10.JournalEntryDetails>>.empty(),
+            returnValue: _i5.Stream<List<_i11.JournalEntryDetails>>.empty(),
           )
-          as _i5.Stream<List<_i10.JournalEntryDetails>>);
+          as _i5.Stream<List<_i11.JournalEntryDetails>>);
 
   @override
   _i5.Future<int> deleteJournalEntry(int? id) =>
@@ -1005,11 +1028,13 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<int> saveSettingsUser(
     _i9.WeightUnits? defaultWeightUnit,
     bool? optIntoAnalyticsWarning,
+    bool? createLinkedJournalEntries,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#saveSettingsUser, [
               defaultWeightUnit,
               optIntoAnalyticsWarning,
+              createLinkedJournalEntries,
             ]),
             returnValue: _i5.Future<int>.value(0),
           )

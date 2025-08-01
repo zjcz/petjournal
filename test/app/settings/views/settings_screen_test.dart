@@ -19,6 +19,7 @@ Setting createMockSettings({
   WeightUnits weightUnit = WeightUnits.metric,
   bool optIntoAnalyticsWarning = false,
   bool onBoardingComplete = true,
+  bool createLinkedJournalEntries = true,
 }) {
   return Setting(
     settingsId: 1,
@@ -27,6 +28,7 @@ Setting createMockSettings({
     optIntoAnalyticsWarning: optIntoAnalyticsWarning,
     lastUsedVersion: null,
     defaultWeightUnit: weightUnit.dataValue,
+    createLinkedJournalEntries: createLinkedJournalEntries,
   );
 }
 
@@ -108,7 +110,7 @@ void main() {
           .when(mockDb.watchSettings())
           .thenAnswer((_) => Stream.value(mockSettings));
       mock
-          .when(mockDb.saveSettingsUser(mock.any, mock.any))
+          .when(mockDb.saveSettingsUser(mock.any, mock.any, mock.any))
           .thenAnswer((_) => Future.value(1));
 
       await tester.pumpWidget(createScreen(mockDb));
@@ -126,7 +128,7 @@ void main() {
       await tester.tap(find.widgetWithText(TextButton, "Save"));
 
       mock
-          .verify(mockDb.saveSettingsUser(WeightUnits.imperial, false))
+          .verify(mockDb.saveSettingsUser(WeightUnits.imperial, false, true))
           .called(1);
     });
 
@@ -139,7 +141,7 @@ void main() {
           .when(mockDb.watchSettings())
           .thenAnswer((_) => Stream.value(mockSettings));
       mock
-          .when(mockDb.saveSettingsUser(mock.any, mock.any))
+          .when(mockDb.saveSettingsUser(mock.any, mock.any, mock.any))
           .thenAnswer((_) => Future.value(1));
 
       await tester.pumpWidget(createScreen(mockDb));
@@ -166,6 +168,49 @@ void main() {
             mockDb.saveSettingsUser(
               WeightUnits.metric,
               true, // optIntoAnalyticsWarning changed to true
+              true,
+            ),
+          )
+          .called(1);
+    });
+
+    testWidgets('toggles create linked journal entries', (tester) async {
+      final mockSettings = createMockSettings(
+        optIntoAnalyticsWarning: false,
+        weightUnit: WeightUnits.metric,
+        createLinkedJournalEntries: false,
+      );
+      mock
+          .when(mockDb.watchSettings())
+          .thenAnswer((_) => Stream.value(mockSettings));
+      mock
+          .when(mockDb.saveSettingsUser(mock.any, mock.any, mock.any))
+          .thenAnswer((_) => Future.value(1));
+
+      await tester.pumpWidget(createScreen(mockDb));
+      await tester.pumpAndSettle();
+
+      // Find and tap the analytics switch
+      final createLinkedJournalEntryFinder = find.byKey(
+        EditSettingsWidget.editSettingCreateLinkedJournalEntriesKey,
+      );
+      final scrollableFinder = find.byType(Scrollable).last;
+      await tester.scrollUntilVisible(
+        createLinkedJournalEntryFinder,
+        10,
+        scrollable: scrollableFinder,
+      );
+      await tester.tap(createLinkedJournalEntryFinder);
+      await tester.pump();
+
+      // Tap the save button
+      await tester.tap(find.widgetWithText(TextButton, "Save"));
+      mock
+          .verify(
+            mockDb.saveSettingsUser(
+              WeightUnits.metric,
+              false,
+              true, // createLinkedJournalEntries changed to true
             ),
           )
           .called(1);

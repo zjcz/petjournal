@@ -16,6 +16,7 @@ _SettingsModel _$SettingsModelFromJson(Map<String, dynamic> json) =>
         _$WeightUnitsEnumMap,
         json['defaultWeightUnit'],
       ),
+      createLinkedJournalEntries: json['createLinkedJournalEntries'] as bool,
     );
 
 Map<String, dynamic> _$SettingsModelToJson(_SettingsModel instance) =>
@@ -25,6 +26,7 @@ Map<String, dynamic> _$SettingsModelToJson(_SettingsModel instance) =>
       'onBoardingComplete': instance.onBoardingComplete,
       'lastUsedVersion': instance.lastUsedVersion,
       'defaultWeightUnit': _$WeightUnitsEnumMap[instance.defaultWeightUnit],
+      'createLinkedJournalEntries': instance.createLinkedJournalEntries,
     };
 
 const _$WeightUnitsEnumMap = {

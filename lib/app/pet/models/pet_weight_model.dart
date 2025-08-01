@@ -8,6 +8,9 @@ part 'pet_weight_model.g.dart';
 
 @freezed
 abstract class PetWeightModel with _$PetWeightModel {
+  // Added constructor. Must not have any parameter
+  const PetWeightModel._();
+
   const factory PetWeightModel({
     int? petWeightId,
     required int petId,
@@ -19,4 +22,8 @@ abstract class PetWeightModel with _$PetWeightModel {
 
   factory PetWeightModel.fromJson(Map<String, Object?> json) =>
       _$PetWeightModelFromJson(json);
+
+  String niceName() {
+    return '$weight ${weightUnit.unitName}';
+  }
 }

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/widgets/analytics_opt_in.dart';
+import 'package:petjournal/widgets/custom_switch.dart';
 import 'package:petjournal/widgets/weight_units_dropdown.dart';
 
 class EditSettingsWidget extends ConsumerStatefulWidget {
   static const editDefaultWeightUnit = Key('weightUnit');
   static const editSettingOptIntoAnalyticsKey = Key('optIntoAnalytics');
+  static const editSettingCreateLinkedJournalEntriesKey = Key(
+    'createLinkedJournalEntries',
+  );
 
   final EditSettingsData userSettings;
   final Function(EditSettingsData) onChanged;
@@ -24,13 +28,16 @@ class EditSettingsWidget extends ConsumerStatefulWidget {
 class _EditSettingsWidgetState extends ConsumerState<EditSettingsWidget> {
   WeightUnits? _weightUnits;
   bool _optIntoAnalyticsWarning = false;
+  bool _createLinkedJournalEntries = true;
 
   @override
   void initState() {
     super.initState();
-    
+
     _weightUnits = widget.userSettings.weightUnits;
     _optIntoAnalyticsWarning = widget.userSettings.optIntoAnalyticsWarning;
+    _createLinkedJournalEntries =
+        widget.userSettings.createLinkedJournalEntries;
   }
 
   @override
@@ -58,6 +65,17 @@ class _EditSettingsWidgetState extends ConsumerState<EditSettingsWidget> {
             _triggerOnChange();
           },
         ),
+        CustomSwitch(
+          key: EditSettingsWidget.editSettingCreateLinkedJournalEntriesKey,
+          switchValue: _createLinkedJournalEntries,
+          labelText: 'Create Linked Journal Entries',
+          onChanged: (newValue) {
+            setState(() {
+              _createLinkedJournalEntries = newValue;
+            });
+            _triggerOnChange();
+          },
+        ),
       ],
     );
   }
@@ -67,6 +85,7 @@ class _EditSettingsWidgetState extends ConsumerState<EditSettingsWidget> {
       EditSettingsData(
         weightUnits: _weightUnits,
         optIntoAnalyticsWarning: _optIntoAnalyticsWarning,
+        createLinkedJournalEntries: _createLinkedJournalEntries,
       ),
     );
   }
@@ -75,9 +94,11 @@ class _EditSettingsWidgetState extends ConsumerState<EditSettingsWidget> {
 class EditSettingsData {
   final WeightUnits? weightUnits;
   final bool optIntoAnalyticsWarning;
+  final bool createLinkedJournalEntries;
 
   EditSettingsData({
     required this.weightUnits,
     required this.optIntoAnalyticsWarning,
+    required this.createLinkedJournalEntries,
   });
 }

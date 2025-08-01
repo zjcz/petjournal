@@ -19,29 +19,35 @@ void main() {
       expect(model.onBoardingComplete, equals(false));
       expect(model.lastUsedVersion, match.isNull);
       expect(model.defaultWeightUnit, match.isNull);
+      expect(model.createLinkedJournalEntries, equals(true));
     });
 
-    test('mapToModel should correctly map all Setting fields to SettingsModel', () {
-      // Arrange
-      final settings = Setting(
-        settingsId: 1,
-        acceptedTermsAndConditions: true,
-        optIntoAnalyticsWarning: true,
-        onBoardingComplete: true,
-        lastUsedVersion: '1.0.0',
-        defaultWeightUnit: WeightUnits.metric.dataValue,
-      );
+    test(
+      'mapToModel should correctly map all Setting fields to SettingsModel',
+      () {
+        // Arrange
+        final settings = Setting(
+          settingsId: 1,
+          acceptedTermsAndConditions: true,
+          optIntoAnalyticsWarning: true,
+          onBoardingComplete: true,
+          lastUsedVersion: '1.0.0',
+          defaultWeightUnit: WeightUnits.metric.dataValue,
+          createLinkedJournalEntries: true,
+        );
 
-      // Act
-      final model = SettingsMapper.mapToModel(settings);
+        // Act
+        final model = SettingsMapper.mapToModel(settings);
 
-      // Assert
-      expect(model.acceptedTermsAndConditions, equals(true));
-      expect(model.optIntoAnalyticsWarning, equals(true));
-      expect(model.onBoardingComplete, equals(true));
-      expect(model.lastUsedVersion, equals('1.0.0'));
-      expect(model.defaultWeightUnit, equals(WeightUnits.metric));
-    });
+        // Assert
+        expect(model.acceptedTermsAndConditions, equals(true));
+        expect(model.optIntoAnalyticsWarning, equals(true));
+        expect(model.onBoardingComplete, equals(true));
+        expect(model.lastUsedVersion, equals('1.0.0'));
+        expect(model.defaultWeightUnit, equals(WeightUnits.metric));
+        expect(model.createLinkedJournalEntries, equals(true));
+      },
+    );
 
     test('mapToModel should handle null weight unit', () {
       // Arrange
@@ -52,6 +58,7 @@ void main() {
         onBoardingComplete: true,
         lastUsedVersion: '1.0.0',
         defaultWeightUnit: null,
+        createLinkedJournalEntries: true,
       );
 
       // Act
@@ -71,6 +78,7 @@ void main() {
           onBoardingComplete: false,
           lastUsedVersion: null,
           defaultWeightUnit: weightUnit.dataValue,
+          createLinkedJournalEntries: true,
         );
 
         final model = SettingsMapper.mapToModel(settings);
@@ -87,6 +95,7 @@ void main() {
         onBoardingComplete: false,
         lastUsedVersion: '',
         defaultWeightUnit: null,
+        createLinkedJournalEntries: true,
       );
 
       // Act

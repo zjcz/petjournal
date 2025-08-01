@@ -6,6 +6,9 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
+import 'package:petjournal/constants/linked_record_type.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_med_mapper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +41,40 @@ void main() {
     setUp(() {
       mockDatabaseService = MockDatabaseService();
     });
+
+    setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
+      when(mockDatabaseService.watchSettings()).thenAnswer(
+        (_) => Stream.value(
+          Setting(
+            settingsId: defaults.defaultSettingsId,
+            acceptedTermsAndConditions: true,
+            optIntoAnalyticsWarning: true,
+            onBoardingComplete: true,
+            defaultWeightUnit: WeightUnits.metric.dataValue,
+            createLinkedJournalEntries: createLinkedJournalEntries,
+          ),
+        ),
+      );
+
+      when(
+        mockDatabaseService.createJournalEntryForPet(
+          entryText: anyNamed('entryText'),
+          petIdList: anyNamed('petIdList'),
+          tags: anyNamed('tags'),
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value());
+
+      when(
+        mockDatabaseService.updateLinkedJournalEntry(
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value(1));
+    }
 
     group('build', () {
       test(
@@ -221,6 +258,7 @@ void main() {
             initialPetMedModel.notes,
           ),
         ).thenAnswer((_) => Future.value(initialPetMed));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -291,6 +329,7 @@ void main() {
             initialPetMedModel.notes,
           ),
         ).thenAnswer((_) => Future.value(1));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -348,6 +387,275 @@ void main() {
 
         expect(result, petMedId);
         verify(databaseService.deletePetMed(petMedId)).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('create / update linked Journal Entries', () {
+      testWidgets(
+        'Should create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetMed = PetMed(
+            petMedId: 1,
+            pet: petId,
+            name: 'Antibiotic',
+            dose: '5mg',
+            startDate: DateTime(2024, 5, 28),
+            endDate: DateTime(2024, 6, 1),
+            notes: 'Take with food',
+          );
+
+          final initialPetMedModel = PetMedModel(
+            petId: initialPetMed.pet,
+            name: initialPetMed.name,
+            dose: initialPetMed.dose,
+            startDate: initialPetMed.startDate,
+            endDate: initialPetMed.endDate,
+            notes: initialPetMed.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetMedsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetMed(
+              initialPetMedModel.petId,
+              initialPetMedModel.name,
+              initialPetMedModel.dose,
+              initialPetMedModel.startDate,
+              initialPetMedModel.endDate,
+              initialPetMedModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetMed));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petMedsControllerProvider(petId).notifier,
+          );
+          PetMedModel? savedPetMed = await provider.save(initialPetMedModel);
+
+          // ASSERT
+          verify(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: savedPetMed!.petMedId!,
+              linkedRecordType: LinkedRecordType.medication,
+              linkedRecordTitle: 'Medication ${savedPetMed.name} prescribed',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should not create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetMed = PetMed(
+            petMedId: 1,
+            pet: petId,
+            name: 'Antibiotic',
+            dose: '5mg',
+            startDate: DateTime(2024, 5, 28),
+            endDate: DateTime(2024, 6, 1),
+            notes: 'Take with food',
+          );
+
+          final initialPetMedModel = PetMedModel(
+            petId: initialPetMed.pet,
+            name: initialPetMed.name,
+            dose: initialPetMed.dose,
+            startDate: initialPetMed.startDate,
+            endDate: initialPetMed.endDate,
+            notes: initialPetMed.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetMedsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetMed(
+              initialPetMedModel.petId,
+              initialPetMedModel.name,
+              initialPetMedModel.dose,
+              initialPetMedModel.startDate,
+              initialPetMedModel.endDate,
+              initialPetMedModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetMed));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petMedsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetMedModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetMed = PetMed(
+            petMedId: 1,
+            pet: petId,
+            name: 'Antibiotic',
+            dose: '5mg',
+            startDate: DateTime(2024, 5, 28),
+            endDate: DateTime(2024, 6, 1),
+            notes: 'Take with food',
+          );
+
+          final initialPetMedModel = PetMedModel(
+            petMedId: initialPetMed.petMedId,
+            petId: initialPetMed.pet,
+            name: initialPetMed.name,
+            dose: initialPetMed.dose,
+            startDate: initialPetMed.startDate,
+            endDate: initialPetMed.endDate,
+            notes: initialPetMed.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetMedsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetMed(
+              initialPetMedModel.petMedId,
+              initialPetMedModel.name,
+              initialPetMedModel.dose,
+              initialPetMedModel.startDate,
+              initialPetMedModel.endDate,
+              initialPetMedModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petMedsControllerProvider(petId).notifier,
+          );
+          PetMedModel? savedPetMed = await provider.save(initialPetMedModel);
+
+          // ASSERT
+          verify(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: savedPetMed!.petMedId,
+              linkedRecordType: LinkedRecordType.medication,
+              linkedRecordTitle:
+                  'Medication ${savedPetMed.name} prescribed (updated)',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+      testWidgets('Should not update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = false', (
+        tester,
+      ) async {
+        int petId = 7;
+        final initialPetMed = PetMed(
+          petMedId: 1,
+          pet: petId,
+          name: 'Antibiotic',
+          dose: '5mg',
+          startDate: DateTime(2024, 5, 28),
+          endDate: DateTime(2024, 6, 1),
+          notes: 'Take with food',
+        );
+
+        final initialPetMedModel = PetMedModel(
+          petMedId: initialPetMed.petMedId,
+          petId: initialPetMed.pet,
+          name: initialPetMed.name,
+          dose: initialPetMed.dose,
+          startDate: initialPetMed.startDate,
+          endDate: initialPetMed.endDate,
+          notes: initialPetMed.notes,
+        );
+
+        when(
+          mockDatabaseService.getAllPetMedsForPet(petId),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.updatePetMed(
+            initialPetMedModel.petMedId,
+            initialPetMedModel.name,
+            initialPetMedModel.dose,
+            initialPetMedModel.startDate,
+            initialPetMedModel.endDate,
+            initialPetMedModel.notes,
+          ),
+        ).thenAnswer((_) => Future.value(1));
+        setupMockDatabaseForJournalEntry(false);
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(
+          petMedsControllerProvider(petId).notifier,
+        );
+        await provider.save(initialPetMedModel);
+
+        // ASSERT
+        verifyNever(
+          mockDatabaseService.updateLinkedJournalEntry(
+            linkedRecordId: anyNamed('linkedRecordId'),
+            linkedRecordType: anyNamed('linkedRecordType'),
+            linkedRecordTitle: anyNamed('linkedRecordTitle'),
+          ),
+        );
 
         // Workaround for FakeTimer error
         await tester.pumpWidget(Container());

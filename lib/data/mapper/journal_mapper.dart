@@ -10,6 +10,9 @@ class JournalMapper {
       entryText: journalEntryDetail.journalEntry.entryText,
       petIdList: journalEntryDetail.pets.map((pet) => pet.petId).toList(),
       tags: journalEntryDetail.tags.map((tag) => tag.tag).toList(),
+      linkedRecordId: journalEntryDetail.journalEntry.linkedRecordId,
+      linkedRecordType: journalEntryDetail.journalEntry.linkedRecordType,
+      linkedRecordTitle: journalEntryDetail.journalEntry.linkedRecordTitle,
     );
   }
 

@@ -1,4 +1,6 @@
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/app/settings/controllers/settings_controller.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/mapper/pet_med_mapper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:petjournal/data/database/database_service.dart';
@@ -10,6 +12,7 @@ class PetMedsController extends _$PetMedsController {
   late final DatabaseService _databaseService =
       // ignore: avoid_manual_providers_as_generated_provider_dependency
       ref.read(DatabaseService.provider);
+  late final _settingsFuture = ref.watch(settingsControllerProvider.future);
 
   @override
   Stream<List<PetMedModel>?> build(int petId) {
@@ -29,7 +32,11 @@ class PetMedsController extends _$PetMedsController {
         petMed.notes,
       );
 
-      return newPetMed == null ? null : PetMedMapper.mapToModel(newPetMed);
+      // create linked journal entry if required
+      if (newPetMed == null) return null;
+      final newPetMedModel = PetMedMapper.mapToModel(newPetMed);
+      await _createLinkedJournalEntry(newPetMedModel);
+      return newPetMedModel;
     } else {
       await _databaseService.updatePetMed(
         petMed.petMedId!,
@@ -39,11 +46,40 @@ class PetMedsController extends _$PetMedsController {
         petMed.endDate,
         petMed.notes,
       );
+
+      await _createLinkedJournalEntry(petMed, createNew: false);
+
       return petMed;
     }
   }
 
   Future<int> deletePetMed(int id) {
     return _databaseService.deletePetMed(id);
+  }
+
+  /// If required, create / update the linked journal entry
+  Future<void> _createLinkedJournalEntry(
+    PetMedModel petMed, {
+    bool createNew = true,
+  }) async {
+    final settings = await _settingsFuture;
+    if (settings.createLinkedJournalEntries) {
+      if (createNew) {
+        await _databaseService.createJournalEntryForPet(
+          entryText: petMed.notes ?? '',
+          petIdList: [petMed.petId],
+          tags: [],
+          linkedRecordId: petMed.petMedId,
+          linkedRecordType: LinkedRecordType.medication,
+          linkedRecordTitle: 'Medication ${petMed.name} prescribed',
+        );
+      } else {
+        await _databaseService.updateLinkedJournalEntry(
+          linkedRecordId: petMed.petMedId!,
+          linkedRecordType: LinkedRecordType.medication,
+          linkedRecordTitle: 'Medication ${petMed.name} prescribed (updated)',
+        );
+      }
+    }
   }
 }
