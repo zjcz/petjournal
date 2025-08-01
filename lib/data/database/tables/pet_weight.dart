@@ -11,7 +11,7 @@ class PetWeights extends Table {
       integer().references(Pets, #petId, onDelete: KeyAction.cascade)();
   DateTimeColumn get date => dateTime()();
   RealColumn get weight => real()();
-  IntColumn get weightUnit =>
-      integer().withDefault(Constant(WeightUnits.metric.dataValue))();
+  TextColumn get weightUnit =>
+      textEnum<WeightUnits>().withDefault(Constant(WeightUnits.metric.name))();
   TextColumn get notes => text().nullable()();
 }

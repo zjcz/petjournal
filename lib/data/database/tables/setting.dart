@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:petjournal/constants/weight_units.dart';
 
 // Table definition for Settings table
 // Need to run 'dart run build_runner build' after making changes to this file
@@ -12,7 +13,8 @@ class Settings extends Table {
   BoolColumn get optIntoAnalyticsWarning =>
       boolean().withDefault(const Constant(false))();
   TextColumn get lastUsedVersion => text().nullable().withLength(max: 10)();
-  IntColumn get defaultWeightUnit => integer().nullable()();
+  TextColumn get defaultWeightUnit =>
+      textEnum<WeightUnits>().withDefault(Constant(WeightUnits.metric.name))();
   BoolColumn get createLinkedJournalEntries =>
       boolean().withDefault(const Constant(true))();
 

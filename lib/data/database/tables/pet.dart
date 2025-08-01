@@ -17,8 +17,8 @@ class Pets extends Table {
       )();
   TextColumn get breed => text().withLength(max: 100)();
   TextColumn get colour => text().withLength(max: 100)();
-  IntColumn get sex =>
-      integer().withDefault(Constant(PetSex.unknown.dataValue))();
+  TextColumn get sex =>
+      textEnum<PetSex>().withDefault(Constant(PetSex.unknown.name))();      
   DateTimeColumn get dob => dateTime().nullable()();
   BoolColumn get dobEstimate => boolean().withDefault(const Constant(false))();
   TextColumn get diet => text().nullable()();
@@ -28,8 +28,8 @@ class Pets extends Table {
   BoolColumn get isNeutered => boolean().withDefault(const Constant(false))();
   DateTimeColumn get neuterDate => dateTime().nullable()();
 
-  IntColumn get status =>
-      integer().withDefault(Constant(PetStatus.active.dataValue))();
+  TextColumn get status =>
+      textEnum<PetStatus>().withDefault(Constant(PetStatus.active.name))();      
   DateTimeColumn get statusDate => dateTime().withDefault(currentDateAndTime)();
 
   BoolColumn get isMicrochipped =>

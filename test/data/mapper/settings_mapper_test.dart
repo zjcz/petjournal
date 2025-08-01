@@ -1,3 +1,4 @@
+import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:test/test.dart';
 import 'package:matcher/matcher.dart' as match;
 import 'package:petjournal/constants/weight_units.dart';
@@ -18,7 +19,7 @@ void main() {
       expect(model.optIntoAnalyticsWarning, equals(false));
       expect(model.onBoardingComplete, equals(false));
       expect(model.lastUsedVersion, match.isNull);
-      expect(model.defaultWeightUnit, match.isNull);
+      expect(model.defaultWeightUnit, defaults.getDefaultWeightUnit());
       expect(model.createLinkedJournalEntries, equals(true));
     });
 
@@ -32,7 +33,7 @@ void main() {
           optIntoAnalyticsWarning: true,
           onBoardingComplete: true,
           lastUsedVersion: '1.0.0',
-          defaultWeightUnit: WeightUnits.metric.dataValue,
+          defaultWeightUnit: WeightUnits.metric,
           createLinkedJournalEntries: true,
         );
 
@@ -49,25 +50,6 @@ void main() {
       },
     );
 
-    test('mapToModel should handle null weight unit', () {
-      // Arrange
-      final settings = Setting(
-        settingsId: 1,
-        acceptedTermsAndConditions: true,
-        optIntoAnalyticsWarning: true,
-        onBoardingComplete: true,
-        lastUsedVersion: '1.0.0',
-        defaultWeightUnit: null,
-        createLinkedJournalEntries: true,
-      );
-
-      // Act
-      final model = SettingsMapper.mapToModel(settings);
-
-      // Assert
-      expect(model.defaultWeightUnit, match.isNull);
-    });
-
     test('mapToModel should correctly map all weight unit values', () {
       // Arrange & Act & Assert
       for (final weightUnit in WeightUnits.values) {
@@ -77,7 +59,7 @@ void main() {
           optIntoAnalyticsWarning: false,
           onBoardingComplete: false,
           lastUsedVersion: null,
-          defaultWeightUnit: weightUnit.dataValue,
+          defaultWeightUnit: weightUnit,
           createLinkedJournalEntries: true,
         );
 
@@ -94,7 +76,7 @@ void main() {
         optIntoAnalyticsWarning: false,
         onBoardingComplete: false,
         lastUsedVersion: '',
-        defaultWeightUnit: null,
+        defaultWeightUnit: WeightUnits.metric,
         createLinkedJournalEntries: true,
       );
 

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/constants/defaults.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -21,6 +22,7 @@ void main() {
       'createDefaultSettings should create settings with default values',
       () async {
         // Arrange
+        final defaultWeightUnit = defaults.getDefaultWeightUnit();
         await database.createDefaultSettings();
 
         // Act
@@ -33,7 +35,8 @@ void main() {
         expect(settings?.onBoardingComplete, equals(false));
         expect(settings?.optIntoAnalyticsWarning, equals(false));
         expect(settings?.lastUsedVersion, match.isNull);
-        expect(settings?.defaultWeightUnit, match.isNull);
+        expect(settings?.defaultWeightUnit, defaultWeightUnit);
+        expect(settings?.createLinkedJournalEntries, equals(true));
       },
     );
 
@@ -51,6 +54,7 @@ void main() {
 
     test('watchSettings should emit settings changes', () async {
       // Arrange
+      final defaultWeightUnit = defaults.getDefaultWeightUnit();
       await database.createDefaultSettings();
 
       // Act & Assert
@@ -83,7 +87,7 @@ void main() {
               .having(
                 (s) => s.defaultWeightUnit,
                 'defaultWeightUnit',
-                match.isNull,
+                equals(defaultWeightUnit),
               ),
         ),
       );
@@ -117,20 +121,21 @@ void main() {
       final updateCount = await database.saveSettingsUser(
         WeightUnits.metric,
         null,
-        null
+        null,
       );
 
       // Assert
       expect(updateCount, equals(1));
 
       final settings = await database.getSettings();
-      expect(settings?.defaultWeightUnit, equals(WeightUnits.metric.dataValue));
+      expect(settings?.defaultWeightUnit, equals(WeightUnits.metric));
       expect(settings?.optIntoAnalyticsWarning, isFalse);
       expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
     test('saveSettingsUser should update analytics opt in', () async {
       // Arrange
+      final defaultWeightUnit = defaults.getDefaultWeightUnit();
       await database.createDefaultSettings();
 
       // Act
@@ -140,13 +145,14 @@ void main() {
       expect(updateCount, equals(1));
 
       final settings = await database.getSettings();
-      expect(settings?.defaultWeightUnit, match.isNull);
+      expect(settings?.defaultWeightUnit, equals(defaultWeightUnit));
       expect(settings?.optIntoAnalyticsWarning, isTrue);
       expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
     test('saveSettingsUser should update create journal entry', () async {
       // Arrange
+      final defaultWeightUnit = defaults.getDefaultWeightUnit();
       await database.createDefaultSettings();
 
       // Act
@@ -156,40 +162,25 @@ void main() {
       expect(updateCount, equals(1));
 
       final settings = await database.getSettings();
-      expect(settings?.defaultWeightUnit, match.isNull);
+      expect(settings?.defaultWeightUnit, equals(defaultWeightUnit));
       expect(settings?.optIntoAnalyticsWarning, match.isFalse);
       expect(settings?.createLinkedJournalEntries, isFalse);
     });
 
-    test('saveSettingsUser default weight should allow null', () async {
-      // Arrange
-      await database.createDefaultSettings();
-
-      // Act
-      var updateCount = await database.saveSettingsUser(null, null, null);
-
-      // Assert
-      expect(updateCount, equals(1));
-
-      final settings = await database.getSettings();
-      expect(settings?.defaultWeightUnit, match.isNull);
-      expect(settings?.optIntoAnalyticsWarning, match.isFalse);
-      expect(settings?.createLinkedJournalEntries, isTrue);
-    });
-
     test('resetSettingsUser should set settings to null', () async {
       // Arrange
+      final defaultWeightUnit = defaults.getDefaultWeightUnit();
       await database.createDefaultSettings();
 
       // Act
-      await database.saveSettingsUser(WeightUnits.metric, true, false);
+      await database.saveSettingsUser(WeightUnits.imperial, true, false);
       var updateCount = await database.resetSettingsUser();
 
       // Assert
       expect(updateCount, equals(1));
 
       final settings = await database.getSettings();
-      expect(settings?.defaultWeightUnit, match.isNull);
+      expect(settings?.defaultWeightUnit, equals(defaultWeightUnit));
       expect(settings?.optIntoAnalyticsWarning, match.isFalse);
       expect(settings?.createLinkedJournalEntries, isTrue);
     });

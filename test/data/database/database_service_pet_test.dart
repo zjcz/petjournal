@@ -66,7 +66,7 @@ void main() {
       expect(pet?.name, equals(testName));
       expect(pet?.breed, equals(testBreed));
       expect(pet?.colour, equals(testColour));
-      expect(pet?.sex, equals(testSex.dataValue));
+      expect(pet?.sex, equals(testSex));
       expect(pet?.dob, equals(testDob));
       expect(pet?.dobEstimate, equals(dobEstimate));
       expect(pet?.diet, equals(testDiet));
@@ -74,7 +74,7 @@ void main() {
       expect(pet?.history, equals(testHistory));
       expect(pet?.isNeutered, equals(testIsNeutered));
       expect(pet?.neuterDate, equals(testNeuterDate));
-      expect(pet?.status, equals(PetStatus.active.dataValue));
+      expect(pet?.status, equals(PetStatus.active));
       expect(pet?.statusDate, match.isNotNull);
       expect(pet?.isMicrochipped, equals(testIsMicrochipped));
       expect(pet?.microchipDate, equals(testMicrochipDate));
@@ -111,7 +111,7 @@ void main() {
       expect(pet?.name, equals('Rex'));
       expect(pet?.breed, equals('Mixed'));
       expect(pet?.colour, equals('Brown'));
-      expect(pet?.sex, equals(PetSex.male.dataValue));
+      expect(pet?.sex, equals(PetSex.male));
       expect(pet?.dob, match.isNull);
       expect(pet?.dobEstimate, equals(false));
       expect(pet?.diet, isEmpty);
@@ -119,7 +119,7 @@ void main() {
       expect(pet?.history, isEmpty);
       expect(pet?.isNeutered, equals(false));
       expect(pet?.neuterDate, match.isNull);
-      expect(pet?.status, equals(PetStatus.active.dataValue));
+      expect(pet?.status, equals(PetStatus.active));
       expect(pet?.statusDate, match.isNotNull);
       expect(pet?.isMicrochipped, equals(false));
       expect(pet?.microchipDate, match.isNull);
@@ -293,7 +293,7 @@ void main() {
       expect(updatedPet?.history, equals('New History'));
       expect(updatedPet?.isNeutered, equals(true));
       expect(updatedPet?.neuterDate, equals(neuterDate));
-      expect(updatedPet?.status, equals(PetStatus.deceased.dataValue));
+      expect(updatedPet?.status, equals(PetStatus.deceased));
       expect(updatedPet?.statusDate, equals(updateDate));
       expect(updatedPet?.isMicrochipped, equals(true));
       expect(updatedPet?.microchipDate, equals(microchipDate));

@@ -47,7 +47,7 @@ void main() {
             acceptedTermsAndConditions: true,
             optIntoAnalyticsWarning: true,
             onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric.dataValue,
+            defaultWeightUnit: WeightUnits.metric,
             createLinkedJournalEntries: true,
           );
 
@@ -84,12 +84,14 @@ void main() {
         'Should emit mapped settings When database returns empty data',
         (tester) async {
           // ARRANGE
+          final defaultWeightUnit = defaults.getDefaultWeightUnit();
+
           final emptySettings = Setting(
             settingsId: defaults.defaultSettingsId,
             acceptedTermsAndConditions: false,
             optIntoAnalyticsWarning: false,
             onBoardingComplete: false,
-            defaultWeightUnit: null,
+            defaultWeightUnit: defaultWeightUnit,
             createLinkedJournalEntries: true,
           );
 
@@ -112,7 +114,7 @@ void main() {
           expect(settings.acceptedTermsAndConditions, false);
           expect(settings.optIntoAnalyticsWarning, false);
           expect(settings.onBoardingComplete, false);
-          expect(settings.defaultWeightUnit, null);
+          expect(settings.defaultWeightUnit, defaultWeightUnit);
           expect(settings.createLinkedJournalEntries, true);
           verify(mockDatabaseService.watchSettings()).called(1);
 

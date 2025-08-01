@@ -12,7 +12,7 @@ _SettingsModel _$SettingsModelFromJson(Map<String, dynamic> json) =>
       optIntoAnalyticsWarning: json['optIntoAnalyticsWarning'] as bool,
       onBoardingComplete: json['onBoardingComplete'] as bool,
       lastUsedVersion: json['lastUsedVersion'] as String?,
-      defaultWeightUnit: $enumDecodeNullable(
+      defaultWeightUnit: $enumDecode(
         _$WeightUnitsEnumMap,
         json['defaultWeightUnit'],
       ),
@@ -25,7 +25,7 @@ Map<String, dynamic> _$SettingsModelToJson(_SettingsModel instance) =>
       'optIntoAnalyticsWarning': instance.optIntoAnalyticsWarning,
       'onBoardingComplete': instance.onBoardingComplete,
       'lastUsedVersion': instance.lastUsedVersion,
-      'defaultWeightUnit': _$WeightUnitsEnumMap[instance.defaultWeightUnit],
+      'defaultWeightUnit': _$WeightUnitsEnumMap[instance.defaultWeightUnit]!,
       'createLinkedJournalEntries': instance.createLinkedJournalEntries,
     };
 

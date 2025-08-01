@@ -19,7 +19,7 @@ void main() {
             pet: 2,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: WeightUnits.imperial.dataValue,
+            weightUnit: WeightUnits.imperial,
             notes: 'Healthy',
           );
 
@@ -43,7 +43,7 @@ void main() {
           pet: 20,
           date: DateTime(2023, 1, 1),
           weight: 5.0,
-          weightUnit: WeightUnits.metric.dataValue,
+          weightUnit: WeightUnits.metric,
           notes: 'Metric',
         );
 
@@ -63,7 +63,7 @@ void main() {
             pet: 4,
             date: DateTime(2022, 2, 2),
             weight: 7.7,
-            weightUnit: WeightUnits.metric.dataValue,
+            weightUnit: WeightUnits.metric,
             notes: null,
           );
 
@@ -72,27 +72,6 @@ void main() {
 
           // Assert
           expect(result.notes, match.isNull);
-        },
-      );
-
-      test(
-        'mapToModel should map unknown weightUnit to WeightUnits.unknown',
-        () {
-          // Arrange
-          final petWeight = PetWeight(
-            petWeightId: 5,
-            pet: 6,
-            date: DateTime(2021, 3, 3),
-            weight: 8.8,
-            weightUnit: 999, // invalid value
-            notes: 'Unknown',
-          );
-
-          // Act & Assert
-          expect(
-            () => PetWeightMapper.mapToModel(petWeight),
-            throwsA(match.isA<Exception>()),
-          );
         },
       );
     });
@@ -121,7 +100,7 @@ void main() {
               pet: 2,
               date: DateTime(2024, 5, 28),
               weight: 12.5,
-              weightUnit: WeightUnits.imperial.dataValue,
+              weightUnit: WeightUnits.imperial,
               notes: 'Healthy',
             ),
             PetWeight(
@@ -129,7 +108,7 @@ void main() {
               pet: 4,
               date: DateTime(2022, 2, 2),
               weight: 7.7,
-              weightUnit: WeightUnits.metric.dataValue,
+              weightUnit: WeightUnits.metric,
               notes: null,
             ),
           ];

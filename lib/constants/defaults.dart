@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:petjournal/constants/weight_units.dart';
 
 const int defaultSettingsId = 1;
+
+WeightUnits getDefaultWeightUnit() {
+  return WeightUnits.metric;
+}
 
 class AppDefaults {
   static const double padding = 16.0;

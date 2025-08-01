@@ -50,7 +50,7 @@ void main() {
             acceptedTermsAndConditions: true,
             optIntoAnalyticsWarning: true,
             onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric.dataValue,
+            defaultWeightUnit: WeightUnits.metric,
             createLinkedJournalEntries: createLinkedJournalEntries,
           ),
         ),
@@ -88,7 +88,7 @@ void main() {
               pet: petId,
               date: DateTime(2024, 5, 28),
               weight: 12.5,
-              weightUnit: 1,
+              weightUnit: WeightUnits.metric,
               notes: 'Healthy',
             ),
           ];
@@ -174,7 +174,7 @@ void main() {
               pet: petId,
               date: DateTime(2024, 5, 28),
               weight: 12.5,
-              weightUnit: 1,
+              weightUnit: WeightUnits.metric,
               notes: 'Healthy',
             ),
           ];
@@ -184,7 +184,7 @@ void main() {
               pet: petId,
               date: DateTime(2024, 6, 1),
               weight: 13.0,
-              weightUnit: 1,
+              weightUnit: WeightUnits.metric,
               notes: 'Gained weight',
             ),
           ];
@@ -234,7 +234,7 @@ void main() {
           pet: petId,
           date: DateTime(2024, 5, 28),
           weight: 12.5,
-          weightUnit: 1,
+          weightUnit: WeightUnits.metric,
           notes: 'Test Weight',
         );
 
@@ -242,7 +242,7 @@ void main() {
           petId: initialPetWeight.pet,
           date: initialPetWeight.date,
           weight: initialPetWeight.weight,
-          weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+          weightUnit: initialPetWeight.weightUnit,
           notes: initialPetWeight.notes,
         );
 
@@ -302,7 +302,7 @@ void main() {
           pet: petId,
           date: DateTime(2024, 5, 28),
           weight: 12.5,
-          weightUnit: 1,
+          weightUnit: WeightUnits.metric,
           notes: 'Test Weight',
         );
 
@@ -311,7 +311,7 @@ void main() {
           petId: initialPetWeight.pet,
           date: initialPetWeight.date,
           weight: initialPetWeight.weight,
-          weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+          weightUnit: initialPetWeight.weightUnit,
           notes: initialPetWeight.notes,
         );
 
@@ -403,7 +403,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Test Weight',
           );
 
@@ -411,7 +411,7 @@ void main() {
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
             weight: initialPetWeight.weight,
-            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            weightUnit: initialPetWeight.weightUnit,
             notes: initialPetWeight.notes,
           );
 
@@ -470,7 +470,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Test Weight',
           );
 
@@ -478,7 +478,7 @@ void main() {
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
             weight: initialPetWeight.weight,
-            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            weightUnit: initialPetWeight.weightUnit,
             notes: initialPetWeight.notes,
           );
 
@@ -535,7 +535,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Test Weight',
           );
 
@@ -544,7 +544,7 @@ void main() {
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
             weight: initialPetWeight.weight,
-            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            weightUnit: initialPetWeight.weightUnit,
             notes: initialPetWeight.notes,
           );
 
@@ -600,7 +600,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Test Weight',
           );
 
@@ -609,7 +609,7 @@ void main() {
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
             weight: initialPetWeight.weight,
-            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            weightUnit: initialPetWeight.weightUnit,
             notes: initialPetWeight.notes,
           );
 

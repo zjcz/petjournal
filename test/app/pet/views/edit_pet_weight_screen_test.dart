@@ -43,7 +43,7 @@ void main() {
       speciesId: 1,
       breed: 'Labrador',
       colour: 'Black',
-      sex: PetSex.male.dataValue,
+      sex: PetSex.male,
       dob: DateTime(2020, 1, 1),
       dobEstimate: false,
       diet: 'Kibble',
@@ -51,7 +51,7 @@ void main() {
       history: 'Adopted',
       isNeutered: true,
       neuterDate: DateTime(2021, 1, 1),
-      status: PetStatus.active.dataValue,
+      status: PetStatus.active,
       statusDate: DateTime.now(),
       isMicrochipped: true,
       microchipDate: DateTime(2020, 2, 1),
@@ -77,7 +77,7 @@ void main() {
           acceptedTermsAndConditions: true,
           optIntoAnalyticsWarning: true,
           onBoardingComplete: true,
-          defaultWeightUnit: WeightUnits.metric.dataValue,
+          defaultWeightUnit: WeightUnits.metric,
           createLinkedJournalEntries: false,
         ),
       ),
@@ -147,7 +147,7 @@ void main() {
     ) async {
       // Arrange
       when(mockDb.createPetWeight(any, any, any, any, any))
-          .thenAnswer((_) async => PetWeight(petWeightId: 1, pet: 1, date: DateTime.now(), weight: 12.3, weightUnit: WeightUnits.metric.dataValue));
+          .thenAnswer((_) async => PetWeight(petWeightId: 1, pet: 1, date: DateTime.now(), weight: 12.3, weightUnit: WeightUnits.metric));
       // Act
       await tester.pumpWidget(createScreen(mockDb));
       await tester.pumpAndSettle();

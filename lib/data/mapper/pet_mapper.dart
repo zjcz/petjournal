@@ -1,7 +1,5 @@
-import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
-import 'package:petjournal/constants/pet_sex.dart';
 
 class PetMapper {
   static PetModel mapToModel(Pet pet) {
@@ -10,7 +8,7 @@ class PetMapper {
       name: pet.name,
       breed: pet.breed,
       colour: pet.colour,
-      petSex: PetSex.fromDataValue(pet.sex),
+      petSex: pet.sex,
       dob: pet.dob,
       dobEstimate: pet.dobEstimate,
       diet: pet.diet,
@@ -18,7 +16,7 @@ class PetMapper {
       history: pet.history,
       isNeutered: pet.isNeutered,
       neuterDate: pet.neuterDate,
-      status: PetStatus.fromDataValue(pet.status),
+      status: pet.status,
       statusDate: pet.statusDate,
       speciesId: pet.speciesId,
       isMicrochipped: pet.isMicrochipped ?? false,
