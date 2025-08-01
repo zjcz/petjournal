@@ -27,7 +27,7 @@ Setting createMockSettings({
     onBoardingComplete: onBoardingComplete,
     optIntoAnalyticsWarning: optIntoAnalyticsWarning,
     lastUsedVersion: null,
-    defaultWeightUnit: weightUnit.dataValue,
+    defaultWeightUnit: weightUnit,
     createLinkedJournalEntries: createLinkedJournalEntries,
   );
 }

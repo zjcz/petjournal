@@ -322,16 +322,16 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _sexMeta = const VerificationMeta('sex');
   @override
-  late final GeneratedColumn<int> sex = GeneratedColumn<int>(
-    'sex',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: Constant(PetSex.unknown.dataValue),
-  );
+  late final GeneratedColumnWithTypeConverter<PetSex, String> sex =
+      GeneratedColumn<String>(
+        'sex',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(PetSex.unknown.name),
+      ).withConverter<PetSex>($PetsTable.$convertersex);
   static const VerificationMeta _dobMeta = const VerificationMeta('dob');
   @override
   late final GeneratedColumn<DateTime> dob = GeneratedColumn<DateTime>(
@@ -411,16 +411,16 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<int> status = GeneratedColumn<int>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: Constant(PetStatus.active.dataValue),
-  );
+  late final GeneratedColumnWithTypeConverter<PetStatus, String> status =
+      GeneratedColumn<String>(
+        'status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(PetStatus.active.name),
+      ).withConverter<PetStatus>($PetsTable.$converterstatus);
   static const VerificationMeta _statusDateMeta = const VerificationMeta(
     'statusDate',
   );
@@ -578,12 +578,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
     } else if (isInserting) {
       context.missing(_colourMeta);
     }
-    if (data.containsKey('sex')) {
-      context.handle(
-        _sexMeta,
-        sex.isAcceptableOrUnknown(data['sex']!, _sexMeta),
-      );
-    }
     if (data.containsKey('dob')) {
       context.handle(
         _dobMeta,
@@ -627,12 +621,6 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
       context.handle(
         _neuterDateMeta,
         neuterDate.isAcceptableOrUnknown(data['neuter_date']!, _neuterDateMeta),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
       );
     }
     if (data.containsKey('status_date')) {
@@ -721,10 +709,12 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.string,
         data['${effectivePrefix}colour'],
       )!,
-      sex: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}sex'],
-      )!,
+      sex: $PetsTable.$convertersex.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}sex'],
+        )!,
+      ),
       dob: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}dob'],
@@ -753,10 +743,12 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}neuter_date'],
       ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}status'],
-      )!,
+      status: $PetsTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
       statusDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}status_date'],
@@ -792,6 +784,11 @@ class $PetsTable extends Pets with TableInfo<$PetsTable, Pet> {
   $PetsTable createAlias(String alias) {
     return $PetsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<PetSex, String, String> $convertersex =
+      const EnumNameConverter<PetSex>(PetSex.values);
+  static JsonTypeConverter2<PetStatus, String, String> $converterstatus =
+      const EnumNameConverter<PetStatus>(PetStatus.values);
 }
 
 class Pet extends DataClass implements Insertable<Pet> {
@@ -800,7 +797,7 @@ class Pet extends DataClass implements Insertable<Pet> {
   final int speciesId;
   final String breed;
   final String colour;
-  final int sex;
+  final PetSex sex;
   final DateTime? dob;
   final bool dobEstimate;
   final String? diet;
@@ -808,7 +805,7 @@ class Pet extends DataClass implements Insertable<Pet> {
   final String? history;
   final bool isNeutered;
   final DateTime? neuterDate;
-  final int status;
+  final PetStatus status;
   final DateTime statusDate;
   final bool? isMicrochipped;
   final DateTime? microchipDate;
@@ -847,7 +844,9 @@ class Pet extends DataClass implements Insertable<Pet> {
     map['species_id'] = Variable<int>(speciesId);
     map['breed'] = Variable<String>(breed);
     map['colour'] = Variable<String>(colour);
-    map['sex'] = Variable<int>(sex);
+    {
+      map['sex'] = Variable<String>($PetsTable.$convertersex.toSql(sex));
+    }
     if (!nullToAbsent || dob != null) {
       map['dob'] = Variable<DateTime>(dob);
     }
@@ -865,7 +864,11 @@ class Pet extends DataClass implements Insertable<Pet> {
     if (!nullToAbsent || neuterDate != null) {
       map['neuter_date'] = Variable<DateTime>(neuterDate);
     }
-    map['status'] = Variable<int>(status);
+    {
+      map['status'] = Variable<String>(
+        $PetsTable.$converterstatus.toSql(status),
+      );
+    }
     map['status_date'] = Variable<DateTime>(statusDate);
     if (!nullToAbsent || isMicrochipped != null) {
       map['is_microchipped'] = Variable<bool>(isMicrochipped);
@@ -943,7 +946,9 @@ class Pet extends DataClass implements Insertable<Pet> {
       speciesId: serializer.fromJson<int>(json['speciesId']),
       breed: serializer.fromJson<String>(json['breed']),
       colour: serializer.fromJson<String>(json['colour']),
-      sex: serializer.fromJson<int>(json['sex']),
+      sex: $PetsTable.$convertersex.fromJson(
+        serializer.fromJson<String>(json['sex']),
+      ),
       dob: serializer.fromJson<DateTime?>(json['dob']),
       dobEstimate: serializer.fromJson<bool>(json['dobEstimate']),
       diet: serializer.fromJson<String?>(json['diet']),
@@ -951,7 +956,9 @@ class Pet extends DataClass implements Insertable<Pet> {
       history: serializer.fromJson<String?>(json['history']),
       isNeutered: serializer.fromJson<bool>(json['isNeutered']),
       neuterDate: serializer.fromJson<DateTime?>(json['neuterDate']),
-      status: serializer.fromJson<int>(json['status']),
+      status: $PetsTable.$converterstatus.fromJson(
+        serializer.fromJson<String>(json['status']),
+      ),
       statusDate: serializer.fromJson<DateTime>(json['statusDate']),
       isMicrochipped: serializer.fromJson<bool?>(json['isMicrochipped']),
       microchipDate: serializer.fromJson<DateTime?>(json['microchipDate']),
@@ -970,7 +977,7 @@ class Pet extends DataClass implements Insertable<Pet> {
       'speciesId': serializer.toJson<int>(speciesId),
       'breed': serializer.toJson<String>(breed),
       'colour': serializer.toJson<String>(colour),
-      'sex': serializer.toJson<int>(sex),
+      'sex': serializer.toJson<String>($PetsTable.$convertersex.toJson(sex)),
       'dob': serializer.toJson<DateTime?>(dob),
       'dobEstimate': serializer.toJson<bool>(dobEstimate),
       'diet': serializer.toJson<String?>(diet),
@@ -978,7 +985,9 @@ class Pet extends DataClass implements Insertable<Pet> {
       'history': serializer.toJson<String?>(history),
       'isNeutered': serializer.toJson<bool>(isNeutered),
       'neuterDate': serializer.toJson<DateTime?>(neuterDate),
-      'status': serializer.toJson<int>(status),
+      'status': serializer.toJson<String>(
+        $PetsTable.$converterstatus.toJson(status),
+      ),
       'statusDate': serializer.toJson<DateTime>(statusDate),
       'isMicrochipped': serializer.toJson<bool?>(isMicrochipped),
       'microchipDate': serializer.toJson<DateTime?>(microchipDate),
@@ -995,7 +1004,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     int? speciesId,
     String? breed,
     String? colour,
-    int? sex,
+    PetSex? sex,
     Value<DateTime?> dob = const Value.absent(),
     bool? dobEstimate,
     Value<String?> diet = const Value.absent(),
@@ -1003,7 +1012,7 @@ class Pet extends DataClass implements Insertable<Pet> {
     Value<String?> history = const Value.absent(),
     bool? isNeutered,
     Value<DateTime?> neuterDate = const Value.absent(),
-    int? status,
+    PetStatus? status,
     DateTime? statusDate,
     Value<bool?> isMicrochipped = const Value.absent(),
     Value<DateTime?> microchipDate = const Value.absent(),
@@ -1173,7 +1182,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<int> speciesId;
   final Value<String> breed;
   final Value<String> colour;
-  final Value<int> sex;
+  final Value<PetSex> sex;
   final Value<DateTime?> dob;
   final Value<bool> dobEstimate;
   final Value<String?> diet;
@@ -1181,7 +1190,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
   final Value<String?> history;
   final Value<bool> isNeutered;
   final Value<DateTime?> neuterDate;
-  final Value<int> status;
+  final Value<PetStatus> status;
   final Value<DateTime> statusDate;
   final Value<bool?> isMicrochipped;
   final Value<DateTime?> microchipDate;
@@ -1244,7 +1253,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Expression<int>? speciesId,
     Expression<String>? breed,
     Expression<String>? colour,
-    Expression<int>? sex,
+    Expression<String>? sex,
     Expression<DateTime>? dob,
     Expression<bool>? dobEstimate,
     Expression<String>? diet,
@@ -1252,7 +1261,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Expression<String>? history,
     Expression<bool>? isNeutered,
     Expression<DateTime>? neuterDate,
-    Expression<int>? status,
+    Expression<String>? status,
     Expression<DateTime>? statusDate,
     Expression<bool>? isMicrochipped,
     Expression<DateTime>? microchipDate,
@@ -1292,7 +1301,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<int>? speciesId,
     Value<String>? breed,
     Value<String>? colour,
-    Value<int>? sex,
+    Value<PetSex>? sex,
     Value<DateTime?>? dob,
     Value<bool>? dobEstimate,
     Value<String?>? diet,
@@ -1300,7 +1309,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
     Value<String?>? history,
     Value<bool>? isNeutered,
     Value<DateTime?>? neuterDate,
-    Value<int>? status,
+    Value<PetStatus>? status,
     Value<DateTime>? statusDate,
     Value<bool?>? isMicrochipped,
     Value<DateTime?>? microchipDate,
@@ -1353,7 +1362,7 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       map['colour'] = Variable<String>(colour.value);
     }
     if (sex.present) {
-      map['sex'] = Variable<int>(sex.value);
+      map['sex'] = Variable<String>($PetsTable.$convertersex.toSql(sex.value));
     }
     if (dob.present) {
       map['dob'] = Variable<DateTime>(dob.value);
@@ -1377,7 +1386,9 @@ class PetsCompanion extends UpdateCompanion<Pet> {
       map['neuter_date'] = Variable<DateTime>(neuterDate.value);
     }
     if (status.present) {
-      map['status'] = Variable<int>(status.value);
+      map['status'] = Variable<String>(
+        $PetsTable.$converterstatus.toSql(status.value),
+      );
     }
     if (statusDate.present) {
       map['status_date'] = Variable<DateTime>(statusDate.value);
@@ -2578,18 +2589,16 @@ class $PetWeightsTable extends PetWeights
     type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _weightUnitMeta = const VerificationMeta(
-    'weightUnit',
-  );
   @override
-  late final GeneratedColumn<int> weightUnit = GeneratedColumn<int>(
-    'weight_unit',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: Constant(WeightUnits.metric.dataValue),
-  );
+  late final GeneratedColumnWithTypeConverter<WeightUnits, String> weightUnit =
+      GeneratedColumn<String>(
+        'weight_unit',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(WeightUnits.metric.name),
+      ).withConverter<WeightUnits>($PetWeightsTable.$converterweightUnit);
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -2653,12 +2662,6 @@ class $PetWeightsTable extends PetWeights
     } else if (isInserting) {
       context.missing(_weightMeta);
     }
-    if (data.containsKey('weight_unit')) {
-      context.handle(
-        _weightUnitMeta,
-        weightUnit.isAcceptableOrUnknown(data['weight_unit']!, _weightUnitMeta),
-      );
-    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -2690,10 +2693,12 @@ class $PetWeightsTable extends PetWeights
         DriftSqlType.double,
         data['${effectivePrefix}weight'],
       )!,
-      weightUnit: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}weight_unit'],
-      )!,
+      weightUnit: $PetWeightsTable.$converterweightUnit.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}weight_unit'],
+        )!,
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -2705,6 +2710,9 @@ class $PetWeightsTable extends PetWeights
   $PetWeightsTable createAlias(String alias) {
     return $PetWeightsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<WeightUnits, String, String> $converterweightUnit =
+      const EnumNameConverter<WeightUnits>(WeightUnits.values);
 }
 
 class PetWeight extends DataClass implements Insertable<PetWeight> {
@@ -2712,7 +2720,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
   final int pet;
   final DateTime date;
   final double weight;
-  final int weightUnit;
+  final WeightUnits weightUnit;
   final String? notes;
   const PetWeight({
     required this.petWeightId,
@@ -2729,7 +2737,11 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
     map['pet'] = Variable<int>(pet);
     map['date'] = Variable<DateTime>(date);
     map['weight'] = Variable<double>(weight);
-    map['weight_unit'] = Variable<int>(weightUnit);
+    {
+      map['weight_unit'] = Variable<String>(
+        $PetWeightsTable.$converterweightUnit.toSql(weightUnit),
+      );
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -2759,7 +2771,9 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       pet: serializer.fromJson<int>(json['pet']),
       date: serializer.fromJson<DateTime>(json['date']),
       weight: serializer.fromJson<double>(json['weight']),
-      weightUnit: serializer.fromJson<int>(json['weightUnit']),
+      weightUnit: $PetWeightsTable.$converterweightUnit.fromJson(
+        serializer.fromJson<String>(json['weightUnit']),
+      ),
       notes: serializer.fromJson<String?>(json['notes']),
     );
   }
@@ -2771,7 +2785,9 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       'pet': serializer.toJson<int>(pet),
       'date': serializer.toJson<DateTime>(date),
       'weight': serializer.toJson<double>(weight),
-      'weightUnit': serializer.toJson<int>(weightUnit),
+      'weightUnit': serializer.toJson<String>(
+        $PetWeightsTable.$converterweightUnit.toJson(weightUnit),
+      ),
       'notes': serializer.toJson<String?>(notes),
     };
   }
@@ -2781,7 +2797,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
     int? pet,
     DateTime? date,
     double? weight,
-    int? weightUnit,
+    WeightUnits? weightUnit,
     Value<String?> notes = const Value.absent(),
   }) => PetWeight(
     petWeightId: petWeightId ?? this.petWeightId,
@@ -2839,7 +2855,7 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
   final Value<int> pet;
   final Value<DateTime> date;
   final Value<double> weight;
-  final Value<int> weightUnit;
+  final Value<WeightUnits> weightUnit;
   final Value<String?> notes;
   const PetWeightsCompanion({
     this.petWeightId = const Value.absent(),
@@ -2864,7 +2880,7 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
     Expression<int>? pet,
     Expression<DateTime>? date,
     Expression<double>? weight,
-    Expression<int>? weightUnit,
+    Expression<String>? weightUnit,
     Expression<String>? notes,
   }) {
     return RawValuesInsertable({
@@ -2882,7 +2898,7 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
     Value<int>? pet,
     Value<DateTime>? date,
     Value<double>? weight,
-    Value<int>? weightUnit,
+    Value<WeightUnits>? weightUnit,
     Value<String?>? notes,
   }) {
     return PetWeightsCompanion(
@@ -2911,7 +2927,9 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
       map['weight'] = Variable<double>(weight.value);
     }
     if (weightUnit.present) {
-      map['weight_unit'] = Variable<int>(weightUnit.value);
+      map['weight_unit'] = Variable<String>(
+        $PetWeightsTable.$converterweightUnit.toSql(weightUnit.value),
+      );
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -4035,17 +4053,16 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _defaultWeightUnitMeta = const VerificationMeta(
-    'defaultWeightUnit',
-  );
   @override
-  late final GeneratedColumn<int> defaultWeightUnit = GeneratedColumn<int>(
+  late final GeneratedColumnWithTypeConverter<WeightUnits, String>
+  defaultWeightUnit = GeneratedColumn<String>(
     'default_weight_unit',
     aliasedName,
-    true,
-    type: DriftSqlType.int,
+    false,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-  );
+    defaultValue: Constant(WeightUnits.metric.name),
+  ).withConverter<WeightUnits>($SettingsTable.$converterdefaultWeightUnit);
   static const VerificationMeta _createLinkedJournalEntriesMeta =
       const VerificationMeta('createLinkedJournalEntries');
   @override
@@ -4125,15 +4142,6 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
         ),
       );
     }
-    if (data.containsKey('default_weight_unit')) {
-      context.handle(
-        _defaultWeightUnitMeta,
-        defaultWeightUnit.isAcceptableOrUnknown(
-          data['default_weight_unit']!,
-          _defaultWeightUnitMeta,
-        ),
-      );
-    }
     if (data.containsKey('create_linked_journal_entries')) {
       context.handle(
         _createLinkedJournalEntriesMeta,
@@ -4172,9 +4180,11 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
         DriftSqlType.string,
         data['${effectivePrefix}last_used_version'],
       ),
-      defaultWeightUnit: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}default_weight_unit'],
+      defaultWeightUnit: $SettingsTable.$converterdefaultWeightUnit.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}default_weight_unit'],
+        )!,
       ),
       createLinkedJournalEntries: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
@@ -4187,6 +4197,11 @@ class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
   $SettingsTable createAlias(String alias) {
     return $SettingsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<WeightUnits, String, String>
+  $converterdefaultWeightUnit = const EnumNameConverter<WeightUnits>(
+    WeightUnits.values,
+  );
 }
 
 class Setting extends DataClass implements Insertable<Setting> {
@@ -4195,7 +4210,7 @@ class Setting extends DataClass implements Insertable<Setting> {
   final bool onBoardingComplete;
   final bool optIntoAnalyticsWarning;
   final String? lastUsedVersion;
-  final int? defaultWeightUnit;
+  final WeightUnits defaultWeightUnit;
   final bool createLinkedJournalEntries;
   const Setting({
     required this.settingsId,
@@ -4203,7 +4218,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     required this.onBoardingComplete,
     required this.optIntoAnalyticsWarning,
     this.lastUsedVersion,
-    this.defaultWeightUnit,
+    required this.defaultWeightUnit,
     required this.createLinkedJournalEntries,
   });
   @override
@@ -4218,8 +4233,10 @@ class Setting extends DataClass implements Insertable<Setting> {
     if (!nullToAbsent || lastUsedVersion != null) {
       map['last_used_version'] = Variable<String>(lastUsedVersion);
     }
-    if (!nullToAbsent || defaultWeightUnit != null) {
-      map['default_weight_unit'] = Variable<int>(defaultWeightUnit);
+    {
+      map['default_weight_unit'] = Variable<String>(
+        $SettingsTable.$converterdefaultWeightUnit.toSql(defaultWeightUnit),
+      );
     }
     map['create_linked_journal_entries'] = Variable<bool>(
       createLinkedJournalEntries,
@@ -4236,9 +4253,7 @@ class Setting extends DataClass implements Insertable<Setting> {
       lastUsedVersion: lastUsedVersion == null && nullToAbsent
           ? const Value.absent()
           : Value(lastUsedVersion),
-      defaultWeightUnit: defaultWeightUnit == null && nullToAbsent
-          ? const Value.absent()
-          : Value(defaultWeightUnit),
+      defaultWeightUnit: Value(defaultWeightUnit),
       createLinkedJournalEntries: Value(createLinkedJournalEntries),
     );
   }
@@ -4258,7 +4273,9 @@ class Setting extends DataClass implements Insertable<Setting> {
         json['optIntoAnalyticsWarning'],
       ),
       lastUsedVersion: serializer.fromJson<String?>(json['lastUsedVersion']),
-      defaultWeightUnit: serializer.fromJson<int?>(json['defaultWeightUnit']),
+      defaultWeightUnit: $SettingsTable.$converterdefaultWeightUnit.fromJson(
+        serializer.fromJson<String>(json['defaultWeightUnit']),
+      ),
       createLinkedJournalEntries: serializer.fromJson<bool>(
         json['createLinkedJournalEntries'],
       ),
@@ -4277,7 +4294,9 @@ class Setting extends DataClass implements Insertable<Setting> {
         optIntoAnalyticsWarning,
       ),
       'lastUsedVersion': serializer.toJson<String?>(lastUsedVersion),
-      'defaultWeightUnit': serializer.toJson<int?>(defaultWeightUnit),
+      'defaultWeightUnit': serializer.toJson<String>(
+        $SettingsTable.$converterdefaultWeightUnit.toJson(defaultWeightUnit),
+      ),
       'createLinkedJournalEntries': serializer.toJson<bool>(
         createLinkedJournalEntries,
       ),
@@ -4290,7 +4309,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     bool? onBoardingComplete,
     bool? optIntoAnalyticsWarning,
     Value<String?> lastUsedVersion = const Value.absent(),
-    Value<int?> defaultWeightUnit = const Value.absent(),
+    WeightUnits? defaultWeightUnit,
     bool? createLinkedJournalEntries,
   }) => Setting(
     settingsId: settingsId ?? this.settingsId,
@@ -4302,9 +4321,7 @@ class Setting extends DataClass implements Insertable<Setting> {
     lastUsedVersion: lastUsedVersion.present
         ? lastUsedVersion.value
         : this.lastUsedVersion,
-    defaultWeightUnit: defaultWeightUnit.present
-        ? defaultWeightUnit.value
-        : this.defaultWeightUnit,
+    defaultWeightUnit: defaultWeightUnit ?? this.defaultWeightUnit,
     createLinkedJournalEntries:
         createLinkedJournalEntries ?? this.createLinkedJournalEntries,
   );
@@ -4377,7 +4394,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
   final Value<bool> onBoardingComplete;
   final Value<bool> optIntoAnalyticsWarning;
   final Value<String?> lastUsedVersion;
-  final Value<int?> defaultWeightUnit;
+  final Value<WeightUnits> defaultWeightUnit;
   final Value<bool> createLinkedJournalEntries;
   const SettingsCompanion({
     this.settingsId = const Value.absent(),
@@ -4403,7 +4420,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     Expression<bool>? onBoardingComplete,
     Expression<bool>? optIntoAnalyticsWarning,
     Expression<String>? lastUsedVersion,
-    Expression<int>? defaultWeightUnit,
+    Expression<String>? defaultWeightUnit,
     Expression<bool>? createLinkedJournalEntries,
   }) {
     return RawValuesInsertable({
@@ -4427,7 +4444,7 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
     Value<bool>? onBoardingComplete,
     Value<bool>? optIntoAnalyticsWarning,
     Value<String?>? lastUsedVersion,
-    Value<int?>? defaultWeightUnit,
+    Value<WeightUnits>? defaultWeightUnit,
     Value<bool>? createLinkedJournalEntries,
   }) {
     return SettingsCompanion(
@@ -4467,7 +4484,11 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
       map['last_used_version'] = Variable<String>(lastUsedVersion.value);
     }
     if (defaultWeightUnit.present) {
-      map['default_weight_unit'] = Variable<int>(defaultWeightUnit.value);
+      map['default_weight_unit'] = Variable<String>(
+        $SettingsTable.$converterdefaultWeightUnit.toSql(
+          defaultWeightUnit.value,
+        ),
+      );
     }
     if (createLinkedJournalEntries.present) {
       map['create_linked_journal_entries'] = Variable<bool>(
@@ -4841,7 +4862,7 @@ typedef $$PetsTableCreateCompanionBuilder =
       required int speciesId,
       required String breed,
       required String colour,
-      Value<int> sex,
+      Value<PetSex> sex,
       Value<DateTime?> dob,
       Value<bool> dobEstimate,
       Value<String?> diet,
@@ -4849,7 +4870,7 @@ typedef $$PetsTableCreateCompanionBuilder =
       Value<String?> history,
       Value<bool> isNeutered,
       Value<DateTime?> neuterDate,
-      Value<int> status,
+      Value<PetStatus> status,
       Value<DateTime> statusDate,
       Value<bool?> isMicrochipped,
       Value<DateTime?> microchipDate,
@@ -4865,7 +4886,7 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<int> speciesId,
       Value<String> breed,
       Value<String> colour,
-      Value<int> sex,
+      Value<PetSex> sex,
       Value<DateTime?> dob,
       Value<bool> dobEstimate,
       Value<String?> diet,
@@ -4873,7 +4894,7 @@ typedef $$PetsTableUpdateCompanionBuilder =
       Value<String?> history,
       Value<bool> isNeutered,
       Value<DateTime?> neuterDate,
-      Value<int> status,
+      Value<PetStatus> status,
       Value<DateTime> statusDate,
       Value<bool?> isMicrochipped,
       Value<DateTime?> microchipDate,
@@ -5018,10 +5039,11 @@ class $$PetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get sex => $composableBuilder(
-    column: $table.sex,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<PetSex, PetSex, String> get sex =>
+      $composableBuilder(
+        column: $table.sex,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<DateTime> get dob => $composableBuilder(
     column: $table.dob,
@@ -5058,10 +5080,11 @@ class $$PetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnWithTypeConverterFilters<PetStatus, PetStatus, String> get status =>
+      $composableBuilder(
+        column: $table.status,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<DateTime> get statusDate => $composableBuilder(
     column: $table.statusDate,
@@ -5251,7 +5274,7 @@ class $$PetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get sex => $composableBuilder(
+  ColumnOrderings<String> get sex => $composableBuilder(
     column: $table.sex,
     builder: (column) => ColumnOrderings(column),
   );
@@ -5291,7 +5314,7 @@ class $$PetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get status => $composableBuilder(
+  ColumnOrderings<String> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
@@ -5376,7 +5399,7 @@ class $$PetsTableAnnotationComposer
   GeneratedColumn<String> get colour =>
       $composableBuilder(column: $table.colour, builder: (column) => column);
 
-  GeneratedColumn<int> get sex =>
+  GeneratedColumnWithTypeConverter<PetSex, String> get sex =>
       $composableBuilder(column: $table.sex, builder: (column) => column);
 
   GeneratedColumn<DateTime> get dob =>
@@ -5406,7 +5429,7 @@ class $$PetsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get status =>
+  GeneratedColumnWithTypeConverter<PetStatus, String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<DateTime> get statusDate => $composableBuilder(
@@ -5606,7 +5629,7 @@ class $$PetsTableTableManager
                 Value<int> speciesId = const Value.absent(),
                 Value<String> breed = const Value.absent(),
                 Value<String> colour = const Value.absent(),
-                Value<int> sex = const Value.absent(),
+                Value<PetSex> sex = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
                 Value<bool> dobEstimate = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
@@ -5614,7 +5637,7 @@ class $$PetsTableTableManager
                 Value<String?> history = const Value.absent(),
                 Value<bool> isNeutered = const Value.absent(),
                 Value<DateTime?> neuterDate = const Value.absent(),
-                Value<int> status = const Value.absent(),
+                Value<PetStatus> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
                 Value<bool?> isMicrochipped = const Value.absent(),
                 Value<DateTime?> microchipDate = const Value.absent(),
@@ -5652,7 +5675,7 @@ class $$PetsTableTableManager
                 required int speciesId,
                 required String breed,
                 required String colour,
-                Value<int> sex = const Value.absent(),
+                Value<PetSex> sex = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
                 Value<bool> dobEstimate = const Value.absent(),
                 Value<String?> diet = const Value.absent(),
@@ -5660,7 +5683,7 @@ class $$PetsTableTableManager
                 Value<String?> history = const Value.absent(),
                 Value<bool> isNeutered = const Value.absent(),
                 Value<DateTime?> neuterDate = const Value.absent(),
-                Value<int> status = const Value.absent(),
+                Value<PetStatus> status = const Value.absent(),
                 Value<DateTime> statusDate = const Value.absent(),
                 Value<bool?> isMicrochipped = const Value.absent(),
                 Value<DateTime?> microchipDate = const Value.absent(),
@@ -6634,7 +6657,7 @@ typedef $$PetWeightsTableCreateCompanionBuilder =
       required int pet,
       required DateTime date,
       required double weight,
-      Value<int> weightUnit,
+      Value<WeightUnits> weightUnit,
       Value<String?> notes,
     });
 typedef $$PetWeightsTableUpdateCompanionBuilder =
@@ -6643,7 +6666,7 @@ typedef $$PetWeightsTableUpdateCompanionBuilder =
       Value<int> pet,
       Value<DateTime> date,
       Value<double> weight,
-      Value<int> weightUnit,
+      Value<WeightUnits> weightUnit,
       Value<String?> notes,
     });
 
@@ -6694,9 +6717,10 @@ class $$PetWeightsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get weightUnit => $composableBuilder(
+  ColumnWithTypeConverterFilters<WeightUnits, WeightUnits, String>
+  get weightUnit => $composableBuilder(
     column: $table.weightUnit,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get notes => $composableBuilder(
@@ -6752,7 +6776,7 @@ class $$PetWeightsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get weightUnit => $composableBuilder(
+  ColumnOrderings<String> get weightUnit => $composableBuilder(
     column: $table.weightUnit,
     builder: (column) => ColumnOrderings(column),
   );
@@ -6806,10 +6830,11 @@ class $$PetWeightsTableAnnotationComposer
   GeneratedColumn<double> get weight =>
       $composableBuilder(column: $table.weight, builder: (column) => column);
 
-  GeneratedColumn<int> get weightUnit => $composableBuilder(
-    column: $table.weightUnit,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<WeightUnits, String> get weightUnit =>
+      $composableBuilder(
+        column: $table.weightUnit,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -6870,7 +6895,7 @@ class $$PetWeightsTableTableManager
                 Value<int> pet = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<double> weight = const Value.absent(),
-                Value<int> weightUnit = const Value.absent(),
+                Value<WeightUnits> weightUnit = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => PetWeightsCompanion(
                 petWeightId: petWeightId,
@@ -6886,7 +6911,7 @@ class $$PetWeightsTableTableManager
                 required int pet,
                 required DateTime date,
                 required double weight,
-                Value<int> weightUnit = const Value.absent(),
+                Value<WeightUnits> weightUnit = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => PetWeightsCompanion.insert(
                 petWeightId: petWeightId,
@@ -8110,7 +8135,7 @@ typedef $$SettingsTableCreateCompanionBuilder =
       Value<bool> onBoardingComplete,
       Value<bool> optIntoAnalyticsWarning,
       Value<String?> lastUsedVersion,
-      Value<int?> defaultWeightUnit,
+      Value<WeightUnits> defaultWeightUnit,
       Value<bool> createLinkedJournalEntries,
     });
 typedef $$SettingsTableUpdateCompanionBuilder =
@@ -8120,7 +8145,7 @@ typedef $$SettingsTableUpdateCompanionBuilder =
       Value<bool> onBoardingComplete,
       Value<bool> optIntoAnalyticsWarning,
       Value<String?> lastUsedVersion,
-      Value<int?> defaultWeightUnit,
+      Value<WeightUnits> defaultWeightUnit,
       Value<bool> createLinkedJournalEntries,
     });
 
@@ -8158,9 +8183,10 @@ class $$SettingsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get defaultWeightUnit => $composableBuilder(
+  ColumnWithTypeConverterFilters<WeightUnits, WeightUnits, String>
+  get defaultWeightUnit => $composableBuilder(
     column: $table.defaultWeightUnit,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<bool> get createLinkedJournalEntries => $composableBuilder(
@@ -8203,7 +8229,7 @@ class $$SettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get defaultWeightUnit => $composableBuilder(
+  ColumnOrderings<String> get defaultWeightUnit => $composableBuilder(
     column: $table.defaultWeightUnit,
     builder: (column) => ColumnOrderings(column),
   );
@@ -8248,10 +8274,11 @@ class $$SettingsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get defaultWeightUnit => $composableBuilder(
-    column: $table.defaultWeightUnit,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<WeightUnits, String> get defaultWeightUnit =>
+      $composableBuilder(
+        column: $table.defaultWeightUnit,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<bool> get createLinkedJournalEntries => $composableBuilder(
     column: $table.createLinkedJournalEntries,
@@ -8292,7 +8319,7 @@ class $$SettingsTableTableManager
                 Value<bool> onBoardingComplete = const Value.absent(),
                 Value<bool> optIntoAnalyticsWarning = const Value.absent(),
                 Value<String?> lastUsedVersion = const Value.absent(),
-                Value<int?> defaultWeightUnit = const Value.absent(),
+                Value<WeightUnits> defaultWeightUnit = const Value.absent(),
                 Value<bool> createLinkedJournalEntries = const Value.absent(),
               }) => SettingsCompanion(
                 settingsId: settingsId,
@@ -8310,7 +8337,7 @@ class $$SettingsTableTableManager
                 Value<bool> onBoardingComplete = const Value.absent(),
                 Value<bool> optIntoAnalyticsWarning = const Value.absent(),
                 Value<String?> lastUsedVersion = const Value.absent(),
-                Value<int?> defaultWeightUnit = const Value.absent(),
+                Value<WeightUnits> defaultWeightUnit = const Value.absent(),
                 Value<bool> createLinkedJournalEntries = const Value.absent(),
               }) => SettingsCompanion.insert(
                 settingsId: settingsId,

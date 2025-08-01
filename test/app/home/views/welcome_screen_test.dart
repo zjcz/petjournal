@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/home/views/welcome_screen.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/analytics_opt_in.dart';
@@ -43,7 +44,7 @@ void main() {
         onBoardingComplete: false,
         optIntoAnalyticsWarning: false,
         lastUsedVersion: null,
-        defaultWeightUnit: null,
+        defaultWeightUnit: WeightUnits.metric,
         createLinkedJournalEntries: true,
       ),
     );

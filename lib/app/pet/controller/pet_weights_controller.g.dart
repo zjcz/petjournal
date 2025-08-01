@@ -7,7 +7,7 @@ part of 'pet_weights_controller.dart';
 // **************************************************************************
 
 String _$petWeightsControllerHash() =>
-    r'5ad28aa7b0e112414107bb3f61c7eea640e59973';
+    r'b36779f35a214f3d6ec4d51b683fb11bc177d7b2';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -50,7 +50,7 @@ void main() {
             acceptedTermsAndConditions: true,
             optIntoAnalyticsWarning: true,
             onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric.dataValue,
+            defaultWeightUnit: WeightUnits.metric,
             createLinkedJournalEntries: createLinkedJournalEntries,
           ),
         ),

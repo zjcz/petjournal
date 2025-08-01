@@ -13,7 +13,7 @@ abstract class SettingsModel with _$SettingsModel {
     required bool optIntoAnalyticsWarning,
     required bool onBoardingComplete,
     required String? lastUsedVersion,
-    required WeightUnits? defaultWeightUnit,
+    required WeightUnits defaultWeightUnit,
     required bool createLinkedJournalEntries,
   }) = _SettingsModel;
 

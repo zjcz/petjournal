@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SettingsModel implements DiagnosticableTreeMixin {
 
- bool get acceptedTermsAndConditions; bool get optIntoAnalyticsWarning; bool get onBoardingComplete; String? get lastUsedVersion; WeightUnits? get defaultWeightUnit; bool get createLinkedJournalEntries;
+ bool get acceptedTermsAndConditions; bool get optIntoAnalyticsWarning; bool get onBoardingComplete; String? get lastUsedVersion; WeightUnits get defaultWeightUnit; bool get createLinkedJournalEntries;
 /// Create a copy of SettingsModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -55,7 +55,7 @@ abstract mixin class $SettingsModelCopyWith<$Res>  {
   factory $SettingsModelCopyWith(SettingsModel value, $Res Function(SettingsModel) _then) = _$SettingsModelCopyWithImpl;
 @useResult
 $Res call({
- bool acceptedTermsAndConditions, bool optIntoAnalyticsWarning, bool onBoardingComplete, String? lastUsedVersion, WeightUnits? defaultWeightUnit, bool createLinkedJournalEntries
+ bool acceptedTermsAndConditions, bool optIntoAnalyticsWarning, bool onBoardingComplete, String? lastUsedVersion, WeightUnits defaultWeightUnit, bool createLinkedJournalEntries
 });
 
 
@@ -72,14 +72,14 @@ class _$SettingsModelCopyWithImpl<$Res>
 
 /// Create a copy of SettingsModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? acceptedTermsAndConditions = null,Object? optIntoAnalyticsWarning = null,Object? onBoardingComplete = null,Object? lastUsedVersion = freezed,Object? defaultWeightUnit = freezed,Object? createLinkedJournalEntries = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? acceptedTermsAndConditions = null,Object? optIntoAnalyticsWarning = null,Object? onBoardingComplete = null,Object? lastUsedVersion = freezed,Object? defaultWeightUnit = null,Object? createLinkedJournalEntries = null,}) {
   return _then(_self.copyWith(
 acceptedTermsAndConditions: null == acceptedTermsAndConditions ? _self.acceptedTermsAndConditions : acceptedTermsAndConditions // ignore: cast_nullable_to_non_nullable
 as bool,optIntoAnalyticsWarning: null == optIntoAnalyticsWarning ? _self.optIntoAnalyticsWarning : optIntoAnalyticsWarning // ignore: cast_nullable_to_non_nullable
 as bool,onBoardingComplete: null == onBoardingComplete ? _self.onBoardingComplete : onBoardingComplete // ignore: cast_nullable_to_non_nullable
 as bool,lastUsedVersion: freezed == lastUsedVersion ? _self.lastUsedVersion : lastUsedVersion // ignore: cast_nullable_to_non_nullable
-as String?,defaultWeightUnit: freezed == defaultWeightUnit ? _self.defaultWeightUnit : defaultWeightUnit // ignore: cast_nullable_to_non_nullable
-as WeightUnits?,createLinkedJournalEntries: null == createLinkedJournalEntries ? _self.createLinkedJournalEntries : createLinkedJournalEntries // ignore: cast_nullable_to_non_nullable
+as String?,defaultWeightUnit: null == defaultWeightUnit ? _self.defaultWeightUnit : defaultWeightUnit // ignore: cast_nullable_to_non_nullable
+as WeightUnits,createLinkedJournalEntries: null == createLinkedJournalEntries ? _self.createLinkedJournalEntries : createLinkedJournalEntries // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -98,7 +98,7 @@ class _SettingsModel with DiagnosticableTreeMixin implements SettingsModel {
 @override final  bool optIntoAnalyticsWarning;
 @override final  bool onBoardingComplete;
 @override final  String? lastUsedVersion;
-@override final  WeightUnits? defaultWeightUnit;
+@override final  WeightUnits defaultWeightUnit;
 @override final  bool createLinkedJournalEntries;
 
 /// Create a copy of SettingsModel
@@ -140,7 +140,7 @@ abstract mixin class _$SettingsModelCopyWith<$Res> implements $SettingsModelCopy
   factory _$SettingsModelCopyWith(_SettingsModel value, $Res Function(_SettingsModel) _then) = __$SettingsModelCopyWithImpl;
 @override @useResult
 $Res call({
- bool acceptedTermsAndConditions, bool optIntoAnalyticsWarning, bool onBoardingComplete, String? lastUsedVersion, WeightUnits? defaultWeightUnit, bool createLinkedJournalEntries
+ bool acceptedTermsAndConditions, bool optIntoAnalyticsWarning, bool onBoardingComplete, String? lastUsedVersion, WeightUnits defaultWeightUnit, bool createLinkedJournalEntries
 });
 
 
@@ -157,14 +157,14 @@ class __$SettingsModelCopyWithImpl<$Res>
 
 /// Create a copy of SettingsModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? acceptedTermsAndConditions = null,Object? optIntoAnalyticsWarning = null,Object? onBoardingComplete = null,Object? lastUsedVersion = freezed,Object? defaultWeightUnit = freezed,Object? createLinkedJournalEntries = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? acceptedTermsAndConditions = null,Object? optIntoAnalyticsWarning = null,Object? onBoardingComplete = null,Object? lastUsedVersion = freezed,Object? defaultWeightUnit = null,Object? createLinkedJournalEntries = null,}) {
   return _then(_SettingsModel(
 acceptedTermsAndConditions: null == acceptedTermsAndConditions ? _self.acceptedTermsAndConditions : acceptedTermsAndConditions // ignore: cast_nullable_to_non_nullable
 as bool,optIntoAnalyticsWarning: null == optIntoAnalyticsWarning ? _self.optIntoAnalyticsWarning : optIntoAnalyticsWarning // ignore: cast_nullable_to_non_nullable
 as bool,onBoardingComplete: null == onBoardingComplete ? _self.onBoardingComplete : onBoardingComplete // ignore: cast_nullable_to_non_nullable
 as bool,lastUsedVersion: freezed == lastUsedVersion ? _self.lastUsedVersion : lastUsedVersion // ignore: cast_nullable_to_non_nullable
-as String?,defaultWeightUnit: freezed == defaultWeightUnit ? _self.defaultWeightUnit : defaultWeightUnit // ignore: cast_nullable_to_non_nullable
-as WeightUnits?,createLinkedJournalEntries: null == createLinkedJournalEntries ? _self.createLinkedJournalEntries : createLinkedJournalEntries // ignore: cast_nullable_to_non_nullable
+as String?,defaultWeightUnit: null == defaultWeightUnit ? _self.defaultWeightUnit : defaultWeightUnit // ignore: cast_nullable_to_non_nullable
+as WeightUnits,createLinkedJournalEntries: null == createLinkedJournalEntries ? _self.createLinkedJournalEntries : createLinkedJournalEntries // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

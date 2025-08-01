@@ -8,6 +8,7 @@ import 'package:petjournal/widgets/date_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/weight_units_dropdown.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
 
 class EditPetWeightScreen extends ConsumerStatefulWidget {
   static final petWeightWeightKey = GlobalKey<FormFieldState>();
@@ -37,8 +38,9 @@ class _EditPetWeightScreenState extends ConsumerState<EditPetWeightScreen> {
 
   // --- State Variables ---
   DateTime _entryDate = DateTime.now();
-  WeightUnits _weightUnits =
-      WeightUnits.metric; //TODO load default from settings
+
+  //TODO load default from settings
+  WeightUnits _weightUnits = defaults.getDefaultWeightUnit();
 
   @override
   void initState() {

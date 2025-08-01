@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/data/database/tables/setting.dart';
 import 'package:petjournal/data/database/tables/species_type.dart';
 import 'package:petjournal/helpers/date_helper.dart';
-
+import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'tables/pet.dart';
 import 'tables/pet_med.dart';
 
@@ -114,7 +114,7 @@ class DatabaseService extends _$DatabaseService {
         speciesId: speciesId,
         breed: breed,
         colour: colour,
-        sex: Value(sex.dataValue),
+        sex: Value(sex),
         dob: dob == null ? Value.absent() : Value(DateHelper.removeTime(dob)),
         dobEstimate: Value(dobEstimate ?? false),
         diet: Value(diet),
@@ -124,7 +124,7 @@ class DatabaseService extends _$DatabaseService {
         neuterDate: neuterDate == null
             ? Value.absent()
             : Value(DateHelper.removeTime(neuterDate)),
-        status: Value(status.dataValue),
+        status: Value(status),
         statusDate: Value(DateTime.now()),
         isMicrochipped: Value(isMicrochipped ?? false),
         microchipDate: microchipDate == null
@@ -168,7 +168,7 @@ class DatabaseService extends _$DatabaseService {
         speciesId: speciesId,
         breed: breed,
         colour: colour,
-        sex: Value(sex.dataValue),
+        sex: Value(sex),
         dob: dob == null ? Value.absent() : Value(DateHelper.removeTime(dob)),
         dobEstimate: Value(dobEstimate ?? false),
         diet: Value(diet),
@@ -178,7 +178,7 @@ class DatabaseService extends _$DatabaseService {
         neuterDate: neuterDate == null
             ? Value.absent()
             : Value(DateHelper.removeTime(neuterDate)),
-        status: Value(status.dataValue),
+        status: Value(status),
         statusDate: Value(statusDate),
         isMicrochipped: Value(isMicrochipped ?? false),
         microchipDate: microchipDate == null
@@ -300,7 +300,7 @@ class DatabaseService extends _$DatabaseService {
         pet: petId,
         date: date,
         weight: weight,
-        weightUnit: Value(weightUnit.dataValue),
+        weightUnit: Value(weightUnit),
         notes: Value(notes),
       ),
     );
@@ -318,7 +318,7 @@ class DatabaseService extends _$DatabaseService {
       PetWeightsCompanion(
         date: Value(date),
         weight: Value(weight),
-        weightUnit: Value(weightUnit.dataValue),
+        weightUnit: Value(weightUnit),
         notes: Value(notes),
       ),
     );
@@ -808,7 +808,7 @@ class DatabaseService extends _$DatabaseService {
       onBoardingComplete: false,
       optIntoAnalyticsWarning: false,
       lastUsedVersion: null,
-      defaultWeightUnit: null,
+      defaultWeightUnit: defaults.getDefaultWeightUnit(),
       createLinkedJournalEntries: true,
     );
 
@@ -855,7 +855,7 @@ class DatabaseService extends _$DatabaseService {
         settings,
       )..where((s) => s.settingsId.equals(defaultSettingsId))).write(
         SettingsCompanion(
-          defaultWeightUnit: Value(defaultWeightUnit?.dataValue),
+          defaultWeightUnit: Value.absentIfNull(defaultWeightUnit),
           optIntoAnalyticsWarning: Value.absentIfNull(optIntoAnalyticsWarning),
           createLinkedJournalEntries: Value.absentIfNull(
             createLinkedJournalEntries,
@@ -868,7 +868,8 @@ class DatabaseService extends _$DatabaseService {
   }
 
   Future<int> resetSettingsUser() async {
-    return saveSettingsUser(null, false, true);
+    final defaultWeightUnit = defaults.getDefaultWeightUnit();
+    return saveSettingsUser(defaultWeightUnit, false, true);
   }
 
   Future<bool> testConnection() async {

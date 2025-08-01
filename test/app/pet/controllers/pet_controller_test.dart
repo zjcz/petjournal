@@ -72,7 +72,7 @@ void main() {
           speciesId: 1,
           breed: 'Labrador',
           colour: 'Black',
-          sex: PetSex.male.dataValue,
+          sex: PetSex.male,
           dob: null,
           dobEstimate: false,
           diet: 'Regular',
@@ -80,7 +80,7 @@ void main() {
           history: 'Adopted',
           isNeutered: true,
           neuterDate: null,
-          status: PetStatus.active.dataValue,
+          status: PetStatus.active,
           statusDate: now,
         );
 
@@ -157,7 +157,7 @@ void main() {
             speciesId: 1,
             breed: 'Labrador',
             colour: 'Black',
-            sex: PetSex.male.dataValue,
+            sex: PetSex.male,
             dob: null,
             dobEstimate: false,
             diet: 'Regular',
@@ -165,7 +165,7 @@ void main() {
             history: 'Adopted',
             isNeutered: true,
             neuterDate: null,
-            status: PetStatus.active.dataValue,
+            status: PetStatus.active,
             statusDate: now,
           );
 
@@ -175,7 +175,7 @@ void main() {
             speciesId: 2,
             breed: 'Persian',
             colour: 'White',
-            sex: PetSex.female.dataValue,
+            sex: PetSex.female,
             dob: null,
             dobEstimate: false,
             diet: 'Special',
@@ -183,7 +183,7 @@ void main() {
             history: 'Rescued',
             isNeutered: true,
             neuterDate: null,
-            status: PetStatus.active.dataValue,
+            status: PetStatus.active,
             statusDate: now,
           );
 

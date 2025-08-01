@@ -6,6 +6,7 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_weight_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -48,7 +49,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Healthy',
           ),
         ];
@@ -121,7 +122,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 5, 28),
             weight: 12.5,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Healthy',
           ),
         ];
@@ -131,7 +132,7 @@ void main() {
             pet: petId,
             date: DateTime(2024, 6, 1),
             weight: 13.0,
-            weightUnit: 1,
+            weightUnit: WeightUnits.metric,
             notes: 'Gained weight',
           ),
         ];
