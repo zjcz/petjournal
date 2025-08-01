@@ -7,6 +7,9 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_vaccinations_controller.dart';
 import 'package:petjournal/app/pet/models/pet_vaccination_model.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
+import 'package:petjournal/constants/linked_record_type.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_vaccination_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -38,6 +41,40 @@ void main() {
     setUp(() {
       mockDatabaseService = MockDatabaseService();
     });
+
+    setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
+      when(mockDatabaseService.watchSettings()).thenAnswer(
+        (_) => Stream.value(
+          Setting(
+            settingsId: defaults.defaultSettingsId,
+            acceptedTermsAndConditions: true,
+            optIntoAnalyticsWarning: true,
+            onBoardingComplete: true,
+            defaultWeightUnit: WeightUnits.metric.dataValue,
+            createLinkedJournalEntries: createLinkedJournalEntries,
+          ),
+        ),
+      );
+
+      when(
+        mockDatabaseService.createJournalEntryForPet(
+          entryText: anyNamed('entryText'),
+          petIdList: anyNamed('petIdList'),
+          tags: anyNamed('tags'),
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value());
+
+      when(
+        mockDatabaseService.updateLinkedJournalEntry(
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value(1));
+    }
 
     group('build', () {
       test(
@@ -251,6 +288,7 @@ void main() {
               initialPetVaccinationModel.administeredBy,
             ),
           ).thenAnswer((_) => Future.value(initialPetVaccination));
+          setupMockDatabaseForJournalEntry(false);
 
           final container = createContainer(
             overrides: [
@@ -339,6 +377,7 @@ void main() {
             initialPetVaccinationModel.administeredBy,
           ),
         ).thenAnswer((_) => Future.value(1));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -406,6 +445,316 @@ void main() {
           verify(
             databaseService.deletePetVaccination(petVaccinationId),
           ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+    });
+
+    group('create / update linked Journal Entries', () {
+      testWidgets(
+        'Should create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetVaccination = PetVaccination(
+            petVaccinationId: 1,
+            pet: petId,
+            name: 'Rabies',
+            administeredDate: DateTime(2024, 5, 28),
+            expiryDate: DateTime(2024, 6, 1),
+            reminderDate: DateTime(2024, 5, 1),
+            notes: 'All went well',
+            vaccineBatchNumber: 'batch 123',
+            vaccineManufacturer: 'Vaccine Manufacturer',
+            administeredBy: 'Dr. Smith',
+          );
+
+          final initialPetVaccinationModel = PetVaccinationModel(
+            petId: initialPetVaccination.pet,
+            name: initialPetVaccination.name,
+            administeredDate: initialPetVaccination.administeredDate,
+            expiryDate: initialPetVaccination.expiryDate,
+            reminderDate: initialPetVaccination.reminderDate,
+            notes: initialPetVaccination.notes,
+            vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+            vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+            administeredBy: initialPetVaccination.administeredBy,
+          );
+
+          when(
+            mockDatabaseService.getAllPetVaccinationsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetVaccination(
+              initialPetVaccinationModel.petId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetVaccination));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          PetVaccinationModel? savedPetVaccination = await provider.save(
+            initialPetVaccinationModel,
+          );
+
+          // ASSERT
+          verify(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: savedPetVaccination!.petVaccinationId!,
+              linkedRecordType: LinkedRecordType.vaccination,
+              linkedRecordTitle: 'Vaccination ${savedPetVaccination.name} administered',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should not create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetVaccination = PetVaccination(
+            petVaccinationId: 1,
+            pet: petId,
+            name: 'Rabies',
+            administeredDate: DateTime(2024, 5, 28),
+            expiryDate: DateTime(2024, 6, 1),
+            reminderDate: DateTime(2024, 5, 1),
+            notes: 'All went well',
+            vaccineBatchNumber: 'batch 123',
+            vaccineManufacturer: 'Vaccine Manufacturer',
+            administeredBy: 'Dr. Smith',
+          );
+
+          final initialPetVaccinationModel = PetVaccinationModel(
+            petId: initialPetVaccination.pet,
+            name: initialPetVaccination.name,
+            administeredDate: initialPetVaccination.administeredDate,
+            expiryDate: initialPetVaccination.expiryDate,
+            reminderDate: initialPetVaccination.reminderDate,
+            notes: initialPetVaccination.notes,
+            vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+            vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+            administeredBy: initialPetVaccination.administeredBy,
+          );
+
+          when(
+            mockDatabaseService.getAllPetVaccinationsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetVaccination(
+              initialPetVaccinationModel.petId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetVaccination));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetVaccinationModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetVaccination = PetVaccination(
+            petVaccinationId: 1,
+            pet: petId,
+            name: 'Rabies',
+            administeredDate: DateTime(2024, 5, 28),
+            expiryDate: DateTime(2024, 6, 1),
+            reminderDate: DateTime(2024, 5, 1),
+            notes: 'All went well',
+            vaccineBatchNumber: 'batch 123',
+            vaccineManufacturer: 'Vaccine Manufacturer',
+            administeredBy: 'Dr. Smith',
+          );
+
+          final initialPetVaccinationModel = PetVaccinationModel(
+            petVaccinationId: initialPetVaccination.petVaccinationId,
+            petId: initialPetVaccination.pet,
+            name: initialPetVaccination.name,
+            administeredDate: initialPetVaccination.administeredDate,
+            expiryDate: initialPetVaccination.expiryDate,
+            reminderDate: initialPetVaccination.reminderDate,
+            notes: initialPetVaccination.notes,
+            vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+            vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+            administeredBy: initialPetVaccination.administeredBy,
+          );
+
+          when(
+            mockDatabaseService.getAllPetVaccinationsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetVaccination(
+              initialPetVaccinationModel.petVaccinationId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          PetVaccinationModel? savedPetVaccination = await provider.save(
+            initialPetVaccinationModel,
+          );
+
+          // ASSERT
+          verify(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: savedPetVaccination!.petVaccinationId,
+              linkedRecordType: LinkedRecordType.vaccination,
+              linkedRecordTitle:
+                  'Vaccination ${savedPetVaccination.name} administered (updated)',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+      testWidgets(
+        'Should not update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetVaccination = PetVaccination(
+            petVaccinationId: 1,
+            pet: petId,
+            name: 'Rabies',
+            administeredDate: DateTime(2024, 5, 28),
+            expiryDate: DateTime(2024, 6, 1),
+            reminderDate: DateTime(2024, 5, 1),
+            notes: 'All went well',
+            vaccineBatchNumber: 'batch 123',
+            vaccineManufacturer: 'Vaccine Manufacturer',
+            administeredBy: 'Dr. Smith',
+          );
+
+          final initialPetVaccinationModel = PetVaccinationModel(
+            petVaccinationId: initialPetVaccination.petVaccinationId,
+            petId: initialPetVaccination.pet,
+            name: initialPetVaccination.name,
+            administeredDate: initialPetVaccination.administeredDate,
+            expiryDate: initialPetVaccination.expiryDate,
+            reminderDate: initialPetVaccination.reminderDate,
+            notes: initialPetVaccination.notes,
+            vaccineBatchNumber: initialPetVaccination.vaccineBatchNumber,
+            vaccineManufacturer: initialPetVaccination.vaccineManufacturer,
+            administeredBy: initialPetVaccination.administeredBy,
+          );
+
+          when(
+            mockDatabaseService.getAllPetVaccinationsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetVaccination(
+              initialPetVaccinationModel.petVaccinationId,
+              initialPetVaccinationModel.name,
+              initialPetVaccinationModel.administeredDate,
+              initialPetVaccinationModel.expiryDate,
+              initialPetVaccinationModel.reminderDate,
+              initialPetVaccinationModel.notes,
+              initialPetVaccinationModel.vaccineBatchNumber,
+              initialPetVaccinationModel.vaccineManufacturer,
+              initialPetVaccinationModel.administeredBy,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petVaccinationsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetVaccinationModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
 
           // Workaround for FakeTimer error
           await tester.pumpWidget(Container());

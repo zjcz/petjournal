@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 
 part 'journal_model.freezed.dart';
 part 'journal_model.g.dart';
@@ -13,6 +14,9 @@ abstract class JournalModel with _$JournalModel {
     DateTime? lastUpdatedDateTime,
     required List<int> petIdList,
     required List<String> tags,
+    int? linkedRecordId,
+    LinkedRecordType? linkedRecordType,
+    String? linkedRecordTitle,
   }) = _JournalModel;
 
   factory JournalModel.fromJson(Map<String, Object?> json) =>

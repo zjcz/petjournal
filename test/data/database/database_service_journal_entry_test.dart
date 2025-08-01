@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
@@ -56,12 +57,18 @@ void main() {
           petIdList: [pet!.petId],
           entryText: testText,
           tags: [],
+          linkedRecordId: pet.petId,
+          linkedRecordTitle: pet.name,
+          linkedRecordType: LinkedRecordType.pet,
         );
 
         expect(journalEntry, match.isNotNull);
         expect(journalEntry?.entryText, equals(testText));
         expect(journalEntry?.createdDateTime, equals(match.isNotNull));
         expect(journalEntry?.lastUpdatedDateTime, equals(match.isNull));
+        expect(journalEntry?.linkedRecordId, equals(pet.petId));
+        expect(journalEntry?.linkedRecordTitle, equals(pet.name));
+        expect(journalEntry?.linkedRecordType, equals(LinkedRecordType.pet));
 
         // Verify entry appears in getAllJournalEntriesForPet
         final entries = await database
@@ -217,6 +224,34 @@ void main() {
       expect(updated?.entryText, equals('Updated Text'));
     });
 
+    test('updateJournalEntry should not overwrite linked record', () async {
+      final pet = await database.getPet(1);
+
+      final entry = await database.createJournalEntryForPet(
+        petIdList: [pet!.petId],
+        entryText: 'Original Text',
+        tags: [],
+        linkedRecordId: pet.petId,
+        linkedRecordTitle: pet.name,
+        linkedRecordType: LinkedRecordType.pet,
+      );
+      expect(entry, match.isNotNull);
+
+      final updatedCount = await database.updateJournalEntry(
+        id: entry!.journalEntryId,
+        entryText: 'Updated Text',
+        petIdList: [pet.petId],
+        tags: [],
+      );
+
+      expect(updatedCount, equals(1));
+
+      final updated = await database.getJournalEntry(entry.journalEntryId);
+      expect(updated?.linkedRecordId, equals(pet.petId));
+      expect(updated?.linkedRecordTitle, equals(pet.name));
+      expect(updated?.linkedRecordType, equals(LinkedRecordType.pet));
+    });
+
     test('updateJournalEntry should return 0 for non-existent entry', () async {
       final updatedCount = await database.updateJournalEntry(
         id: 999,
@@ -366,6 +401,48 @@ void main() {
         expect(tagList[0].tag, equals('updated tag'));
         expect(tagList[1].tag, equals('updated tag 2'));
         expect(tagList[2].tag, equals('updated tag 3'));
+      },
+    );
+  });
+
+  group('JournalEntry Updating LinkedRecords', () {
+    test(
+      'updateLinkedJournalEntry should update linked record details',
+      () async {
+        // Get the pet ID from the pet created in setUp
+        final pet = await database.getPet(1);
+        expect(pet, match.isNotNull);
+
+        final journalEntry = await database.createJournalEntryForPet(
+          petIdList: [pet!.petId],
+          entryText: 'Test Entry',
+          tags: [],
+          linkedRecordId: 123,
+          linkedRecordType: LinkedRecordType.weight,
+          linkedRecordTitle: 'Linked Record Title',
+        );
+
+        final updatedCount = await database.updateLinkedJournalEntry(
+          linkedRecordId: 123,
+          linkedRecordType: LinkedRecordType.weight,
+          linkedRecordTitle: 'Updated Record Title',
+        );
+
+        final updatedJournalEntry = await database.getJournalEntry(
+          journalEntry!.journalEntryId,
+        );
+
+        expect(updatedCount, equals(1));
+        expect(updatedJournalEntry, match.isNotNull);
+        expect(
+          updatedJournalEntry!.linkedRecordTitle,
+          equals('Updated Record Title'),
+        );
+        expect(
+          updatedJournalEntry.linkedRecordType,
+          equals(LinkedRecordType.weight),
+        );
+        expect(updatedJournalEntry.linkedRecordId, equals(123));
       },
     );
   });

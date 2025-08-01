@@ -7,6 +7,8 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_weight_mapper.dart';
@@ -39,6 +41,40 @@ void main() {
     setUp(() {
       mockDatabaseService = MockDatabaseService();
     });
+
+    setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
+      when(mockDatabaseService.watchSettings()).thenAnswer(
+        (_) => Stream.value(
+          Setting(
+            settingsId: defaults.defaultSettingsId,
+            acceptedTermsAndConditions: true,
+            optIntoAnalyticsWarning: true,
+            onBoardingComplete: true,
+            defaultWeightUnit: WeightUnits.metric.dataValue,
+            createLinkedJournalEntries: createLinkedJournalEntries,
+          ),
+        ),
+      );
+
+      when(
+        mockDatabaseService.createJournalEntryForPet(
+          entryText: anyNamed('entryText'),
+          petIdList: anyNamed('petIdList'),
+          tags: anyNamed('tags'),
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value());
+
+      when(
+        mockDatabaseService.updateLinkedJournalEntry(
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value(1));
+    }
 
     group('build', () {
       test(
@@ -222,6 +258,7 @@ void main() {
             initialPetWeightModel.notes,
           ),
         ).thenAnswer((_) => Future.value(initialPetWeight));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -290,6 +327,7 @@ void main() {
             initialPetWeightModel.notes,
           ),
         ).thenAnswer((_) => Future.value(1));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -353,6 +391,268 @@ void main() {
         await tester.pumpWidget(Container());
         await tester.pumpAndSettle();
       });
+    });
+
+    group('create / update linked Journal Entries', () {
+      testWidgets(
+        'Should create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetWeight = PetWeight(
+            petWeightId: 1,
+            pet: petId,
+            date: DateTime(2024, 5, 28),
+            weight: 12.5,
+            weightUnit: 1,
+            notes: 'Test Weight',
+          );
+
+          final initialPetWeightModel = PetWeightModel(
+            petId: initialPetWeight.pet,
+            date: initialPetWeight.date,
+            weight: initialPetWeight.weight,
+            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            notes: initialPetWeight.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetWeight(
+              initialPetWeightModel.petId,
+              initialPetWeightModel.date,
+              initialPetWeightModel.weight,
+              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetWeight));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petWeightsControllerProvider(petId).notifier,
+          );
+          PetWeightModel? savedPetWeight = await provider.save(
+            initialPetWeightModel,
+          );
+
+          // ASSERT
+          verify(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: savedPetWeight!.petWeightId!,
+              linkedRecordType: LinkedRecordType.weight,
+              linkedRecordTitle: 'Weight ${savedPetWeight.niceName()} recorded',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should not create a linked journal entry when call createPetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetWeight = PetWeight(
+            petWeightId: 1,
+            pet: petId,
+            date: DateTime(2024, 5, 28),
+            weight: 12.5,
+            weightUnit: 1,
+            notes: 'Test Weight',
+          );
+
+          final initialPetWeightModel = PetWeightModel(
+            petId: initialPetWeight.pet,
+            date: initialPetWeight.date,
+            weight: initialPetWeight.weight,
+            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            notes: initialPetWeight.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPetWeight(
+              initialPetWeightModel.petId,
+              initialPetWeightModel.date,
+              initialPetWeightModel.weight,
+              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(initialPetWeight));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petWeightsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetWeightModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = true',
+        (tester) async {
+          int petId = 7;
+          final initialPetWeight = PetWeight(
+            petWeightId: 1,
+            pet: petId,
+            date: DateTime(2024, 5, 28),
+            weight: 12.5,
+            weightUnit: 1,
+            notes: 'Test Weight',
+          );
+
+          final initialPetWeightModel = PetWeightModel(
+            petWeightId: initialPetWeight.petWeightId,
+            petId: initialPetWeight.pet,
+            date: initialPetWeight.date,
+            weight: initialPetWeight.weight,
+            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            notes: initialPetWeight.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetWeight(
+              initialPetWeightModel.petWeightId,
+              initialPetWeightModel.date,
+              initialPetWeightModel.weight,
+              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(true);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petWeightsControllerProvider(petId).notifier,
+          );
+          PetWeightModel? savedPetWeight = await provider.save(
+            initialPetWeightModel,
+          );
+
+          // ASSERT
+          verify(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: savedPetWeight!.petWeightId,
+              linkedRecordType: LinkedRecordType.weight,
+              linkedRecordTitle:
+                  'Weight ${savedPetWeight.niceName()} recorded (updated)',
+            ),
+          ).called(1);
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+      testWidgets(
+        'Should not update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetWeight = PetWeight(
+            petWeightId: 1,
+            pet: petId,
+            date: DateTime(2024, 5, 28),
+            weight: 12.5,
+            weightUnit: 1,
+            notes: 'Test Weight',
+          );
+
+          final initialPetWeightModel = PetWeightModel(
+            petWeightId: initialPetWeight.petWeightId,
+            petId: initialPetWeight.pet,
+            date: initialPetWeight.date,
+            weight: initialPetWeight.weight,
+            weightUnit: WeightUnits.fromDataValue(initialPetWeight.weightUnit),
+            notes: initialPetWeight.notes,
+          );
+
+          when(
+            mockDatabaseService.getAllPetWeightsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetWeight(
+              initialPetWeightModel.petWeightId,
+              initialPetWeightModel.date,
+              initialPetWeightModel.weight,
+              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(
+            petWeightsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetWeightModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
     });
   });
 }

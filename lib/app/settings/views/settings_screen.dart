@@ -87,6 +87,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         weightUnits: settings.defaultWeightUnit,
                         optIntoAnalyticsWarning:
                             settings.optIntoAnalyticsWarning,
+                        createLinkedJournalEntries:
+                            settings.createLinkedJournalEntries,
                       );
                       return EditSettingsWidget(
                         userSettings: _userSettings!,
@@ -143,7 +145,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     await ref
         .read(settingsControllerProvider.notifier)
-        .saveUserSettings(_userSettings?.weightUnits, _userSettings?.optIntoAnalyticsWarning);
+        .saveUserSettings(
+          _userSettings?.weightUnits,
+          _userSettings?.optIntoAnalyticsWarning,
+          _userSettings?.createLinkedJournalEntries,
+        );
 
     // // enable / disable analytics
     // getIt<AnalyticsHelper>()
@@ -217,12 +223,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         await databaseService.clearAllData();
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error removing data: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error removing data: $e')));
         return;
       }
-      
+
       // Show success message
       if (!mounted) return;
 

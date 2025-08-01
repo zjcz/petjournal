@@ -7,7 +7,7 @@ part of 'pet_vaccinations_controller.dart';
 // **************************************************************************
 
 String _$petVaccinationsControllerHash() =>
-    r'a56e563fbb6fab63e0a91d220529bf710b31ded4';
+    r'dac04f610e9a722b7eb1d6d974f5e5dada90f4bf';
 
 /// Copied from Dart SDK
 class _SystemHash {

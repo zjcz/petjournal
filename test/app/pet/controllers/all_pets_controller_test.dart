@@ -5,8 +5,11 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
+import 'package:petjournal/constants/defaults.dart' as defaults;
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
+import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 
 import 'all_pets_controller_test.mocks.dart';
@@ -37,6 +40,32 @@ void main() {
     setUp(() {
       mockDatabaseService = MockDatabaseService();
     });
+
+    setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
+      when(mockDatabaseService.watchSettings()).thenAnswer(
+        (_) => Stream.value(
+          Setting(
+            settingsId: defaults.defaultSettingsId,
+            acceptedTermsAndConditions: true,
+            optIntoAnalyticsWarning: true,
+            onBoardingComplete: true,
+            defaultWeightUnit: WeightUnits.metric.dataValue,
+            createLinkedJournalEntries: createLinkedJournalEntries,
+          ),
+        ),
+      );
+
+      when(
+        mockDatabaseService.createJournalEntryForPet(
+          entryText: anyNamed('entryText'),
+          petIdList: anyNamed('petIdList'),
+          tags: anyNamed('tags'),
+          linkedRecordId: anyNamed('linkedRecordId'),
+          linkedRecordType: anyNamed('linkedRecordType'),
+          linkedRecordTitle: anyNamed('linkedRecordTitle'),
+        ),
+      ).thenAnswer((_) => Future.value());
+    }
 
     group('build', () {
       testWidgets('Should emit empty list When no pets exist', (tester) async {
@@ -320,6 +349,7 @@ void main() {
             initialPetModel.imageUrl,
           ),
         ).thenAnswer((_) => Future.value(initialPet));
+        setupMockDatabaseForJournalEntry(false);
 
         final container = createContainer(
           overrides: [
@@ -502,6 +532,203 @@ void main() {
         await tester.pumpWidget(Container());
         await tester.pumpAndSettle();
       });
+    });
+
+    group('create / update linked Journal Entries', () {
+      testWidgets('Should create a linked journal entry when call createPet with setting createLinkedJournalEntries = true', (
+        tester,
+      ) async {
+        final initialPet = Pet(
+          petId: 1,
+          name: 'Max',
+          speciesId: 1,
+          breed: 'Labrador',
+          colour: 'Black',
+          sex: PetSex.male.dataValue,
+          dob: null,
+          dobEstimate: false,
+          diet: 'Regular',
+          notes: 'Good boy',
+          history: 'Adopted',
+          isNeutered: true,
+          neuterDate: null,
+          status: PetStatus.active.dataValue,
+          statusDate: DateTime.now(),
+          imageUrl: '/files/images/pet_pic.png',
+        );
+
+        final initialPetModel = PetModel(
+          petId: null,
+          name: initialPet.name,
+          speciesId: initialPet.speciesId,
+          breed: initialPet.breed,
+          colour: initialPet.colour,
+          petSex: PetSex.fromDataValue(initialPet.sex),
+          dob: initialPet.dob,
+          dobEstimate: initialPet.dobEstimate,
+          diet: initialPet.diet,
+          notes: initialPet.notes,
+          history: initialPet.history,
+          isNeutered: initialPet.isNeutered,
+          neuterDate: initialPet.neuterDate,
+          status: PetStatus.fromDataValue(initialPet.status),
+          statusDate: initialPet.statusDate,
+          isMicrochipped: false,
+          imageUrl: initialPet.imageUrl,
+        );
+
+        when(
+          mockDatabaseService.getAllPets(),
+        ).thenAnswer((_) => Stream.empty());
+        when(
+          mockDatabaseService.createPet(
+            initialPetModel.name,
+            initialPetModel.speciesId,
+            initialPetModel.breed,
+            initialPetModel.colour,
+            initialPetModel.petSex,
+            initialPetModel.dob,
+            initialPetModel.dobEstimate,
+            initialPetModel.diet,
+            initialPetModel.notes,
+            initialPetModel.history,
+            initialPetModel.isNeutered,
+            initialPetModel.neuterDate,
+            initialPetModel.status,
+            initialPetModel.isMicrochipped,
+            initialPetModel.microchipDate,
+            initialPetModel.microchipNumber,
+            initialPetModel.microchipCompany,
+            initialPetModel.microchipNotes,
+            initialPetModel.imageUrl,
+          ),
+        ).thenAnswer((_) => Future.value(initialPet));
+        setupMockDatabaseForJournalEntry(true);
+
+        final container = createContainer(
+          overrides: [
+            DatabaseService.provider.overrideWithValue(mockDatabaseService),
+          ],
+        );
+
+        // ACT
+        final provider = container.read(allPetsControllerProvider.notifier);
+        PetModel? savedPet = await provider.save(initialPetModel);
+
+        // ASSERT
+        verify(
+          mockDatabaseService.createJournalEntryForPet(
+            entryText: anyNamed('entryText'),
+            petIdList: anyNamed('petIdList'),
+            tags: anyNamed('tags'),
+            linkedRecordId: savedPet!.petId,
+            linkedRecordType: LinkedRecordType.pet,
+            linkedRecordTitle: 'Pet ${savedPet.name} created',
+          ),
+        ).called(1);
+
+        // Workaround for FakeTimer error
+        await tester.pumpWidget(Container());
+        await tester.pumpAndSettle();
+      });
+
+      testWidgets(
+        'Should not create a linked journal entry when call createPet with setting createLinkedJournalEntries = false',
+        (tester) async {
+          final initialPet = Pet(
+            petId: 1,
+            name: 'Max',
+            speciesId: 1,
+            breed: 'Labrador',
+            colour: 'Black',
+            sex: PetSex.male.dataValue,
+            dob: null,
+            dobEstimate: false,
+            diet: 'Regular',
+            notes: 'Good boy',
+            history: 'Adopted',
+            isNeutered: true,
+            neuterDate: null,
+            status: PetStatus.active.dataValue,
+            statusDate: DateTime.now(),
+            imageUrl: '/files/images/pet_pic.png',
+          );
+
+          final initialPetModel = PetModel(
+            petId: null,
+            name: initialPet.name,
+            speciesId: initialPet.speciesId,
+            breed: initialPet.breed,
+            colour: initialPet.colour,
+            petSex: PetSex.fromDataValue(initialPet.sex),
+            dob: initialPet.dob,
+            dobEstimate: initialPet.dobEstimate,
+            diet: initialPet.diet,
+            notes: initialPet.notes,
+            history: initialPet.history,
+            isNeutered: initialPet.isNeutered,
+            neuterDate: initialPet.neuterDate,
+            status: PetStatus.fromDataValue(initialPet.status),
+            statusDate: initialPet.statusDate,
+            isMicrochipped: false,
+            imageUrl: initialPet.imageUrl,
+          );
+
+          when(
+            mockDatabaseService.getAllPets(),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.createPet(
+              initialPetModel.name,
+              initialPetModel.speciesId,
+              initialPetModel.breed,
+              initialPetModel.colour,
+              initialPetModel.petSex,
+              initialPetModel.dob,
+              initialPetModel.dobEstimate,
+              initialPetModel.diet,
+              initialPetModel.notes,
+              initialPetModel.history,
+              initialPetModel.isNeutered,
+              initialPetModel.neuterDate,
+              initialPetModel.status,
+              initialPetModel.isMicrochipped,
+              initialPetModel.microchipDate,
+              initialPetModel.microchipNumber,
+              initialPetModel.microchipCompany,
+              initialPetModel.microchipNotes,
+              initialPetModel.imageUrl,
+            ),
+          ).thenAnswer((_) => Future.value(initialPet));
+          setupMockDatabaseForJournalEntry(false);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final provider = container.read(allPetsControllerProvider.notifier);
+          await provider.save(initialPetModel);
+
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.createJournalEntryForPet(
+              entryText: anyNamed('entryText'),
+              petIdList: anyNamed('petIdList'),
+              tags: anyNamed('tags'),
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
+
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
     });
   });
 }

@@ -117,6 +117,7 @@ void main() {
       final updateCount = await database.saveSettingsUser(
         WeightUnits.metric,
         null,
+        null
       );
 
       // Assert
@@ -125,6 +126,7 @@ void main() {
       final settings = await database.getSettings();
       expect(settings?.defaultWeightUnit, equals(WeightUnits.metric.dataValue));
       expect(settings?.optIntoAnalyticsWarning, isFalse);
+      expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
     test('saveSettingsUser should update analytics opt in', () async {
@@ -132,7 +134,7 @@ void main() {
       await database.createDefaultSettings();
 
       // Act
-      final updateCount = await database.saveSettingsUser(null, true);
+      final updateCount = await database.saveSettingsUser(null, true, null);
 
       // Assert
       expect(updateCount, equals(1));
@@ -140,14 +142,15 @@ void main() {
       final settings = await database.getSettings();
       expect(settings?.defaultWeightUnit, match.isNull);
       expect(settings?.optIntoAnalyticsWarning, isTrue);
+      expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
-    test('saveSettingsUser default weight should allow null', () async {
+    test('saveSettingsUser should update create journal entry', () async {
       // Arrange
       await database.createDefaultSettings();
 
       // Act
-      var updateCount = await database.saveSettingsUser(null, null);
+      final updateCount = await database.saveSettingsUser(null, null, false);
 
       // Assert
       expect(updateCount, equals(1));
@@ -155,6 +158,23 @@ void main() {
       final settings = await database.getSettings();
       expect(settings?.defaultWeightUnit, match.isNull);
       expect(settings?.optIntoAnalyticsWarning, match.isFalse);
+      expect(settings?.createLinkedJournalEntries, isFalse);
+    });
+
+    test('saveSettingsUser default weight should allow null', () async {
+      // Arrange
+      await database.createDefaultSettings();
+
+      // Act
+      var updateCount = await database.saveSettingsUser(null, null, null);
+
+      // Assert
+      expect(updateCount, equals(1));
+
+      final settings = await database.getSettings();
+      expect(settings?.defaultWeightUnit, match.isNull);
+      expect(settings?.optIntoAnalyticsWarning, match.isFalse);
+      expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
     test('resetSettingsUser should set settings to null', () async {
@@ -162,7 +182,7 @@ void main() {
       await database.createDefaultSettings();
 
       // Act
-      await database.saveSettingsUser(WeightUnits.metric, true);
+      await database.saveSettingsUser(WeightUnits.metric, true, false);
       var updateCount = await database.resetSettingsUser();
 
       // Assert
@@ -171,6 +191,7 @@ void main() {
       final settings = await database.getSettings();
       expect(settings?.defaultWeightUnit, match.isNull);
       expect(settings?.optIntoAnalyticsWarning, match.isFalse);
+      expect(settings?.createLinkedJournalEntries, isTrue);
     });
 
     test('createDefaultSettings should replace existing settings', () async {

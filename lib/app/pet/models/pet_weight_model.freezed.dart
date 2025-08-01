@@ -90,8 +90,8 @@ as String?,
 /// @nodoc
 @JsonSerializable()
 
-class _PetWeightModel with DiagnosticableTreeMixin implements PetWeightModel {
-  const _PetWeightModel({this.petWeightId, required this.petId, required this.date, required this.weight, required this.weightUnit, this.notes});
+class _PetWeightModel extends PetWeightModel with DiagnosticableTreeMixin {
+  const _PetWeightModel({this.petWeightId, required this.petId, required this.date, required this.weight, required this.weightUnit, this.notes}): super._();
   factory _PetWeightModel.fromJson(Map<String, dynamic> json) => _$PetWeightModelFromJson(json);
 
 @override final  int? petWeightId;

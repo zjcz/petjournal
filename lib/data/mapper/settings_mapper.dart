@@ -11,6 +11,7 @@ class SettingsMapper {
         onBoardingComplete: false,
         lastUsedVersion: null,
         defaultWeightUnit: null,
+        createLinkedJournalEntries: true,
       );
     }
 
@@ -20,10 +21,10 @@ class SettingsMapper {
       optIntoAnalyticsWarning: settings.optIntoAnalyticsWarning,
       onBoardingComplete: settings.onBoardingComplete,
       lastUsedVersion: settings.lastUsedVersion,
-      defaultWeightUnit:
-          settings.defaultWeightUnit == null
-              ? null
-              : WeightUnits.fromDataValue(settings.defaultWeightUnit!),
+      defaultWeightUnit: settings.defaultWeightUnit == null
+          ? null
+          : WeightUnits.fromDataValue(settings.defaultWeightUnit!),
+      createLinkedJournalEntries: settings.createLinkedJournalEntries,
     );
   }
 }

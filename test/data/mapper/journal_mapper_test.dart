@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petjournal/app/pet/models/journal_model.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/database/tables/journal_entry_details.dart';
 import 'package:petjournal/data/mapper/journal_mapper.dart';
@@ -11,6 +12,54 @@ void main() {
     group('mapToModel', () {
       test(
         'mapToModel should return correct JournalModel when journalEntryDetails is valid',
+        () {
+          // Arrange
+          final jed = JournalEntryDetails(
+            journalEntry: JournalEntry(
+              journalEntryId: 1,
+              createdDateTime: DateTime(2025, 1, 1, 12, 30, 45),
+              lastUpdatedDateTime: DateTime(2025, 1, 2, 21, 25, 59),
+              entryText: 'New Entry',
+              linkedRecordId: 123,
+              linkedRecordType: LinkedRecordType.pet,
+              linkedRecordTitle: 'Linked Record Title',
+            ),
+            tags: [
+              JournalEntryTag(
+                journalEntryTagId: 1,
+                journalEntryId: 1,
+                tag: 'Tag1',
+              ),
+              JournalEntryTag(
+                journalEntryTagId: 2,
+                journalEntryId: 1,
+                tag: 'Tag2',
+              ),
+            ],
+            pets: [
+              PetJournalEntry(journalEntryId: 1, petId: 1),
+              PetJournalEntry(journalEntryId: 1, petId: 2),
+            ],
+          );
+
+          // Act
+          final result = JournalMapper.mapToModel(jed);
+
+          // Assert
+          expect(result.journalEntryId, 1);
+          expect(result.createdDateTime, DateTime(2025, 1, 1, 12, 30, 45));
+          expect(result.lastUpdatedDateTime, DateTime(2025, 1, 2, 21, 25, 59));
+          expect(result.entryText, 'New Entry');
+          expect(result.petIdList, [1, 2]);
+          expect(result.tags, ['Tag1', 'Tag2']);
+          expect(result.linkedRecordId, 123);
+          expect(result.linkedRecordType, LinkedRecordType.pet);
+          expect(result.linkedRecordTitle, 'Linked Record Title');
+        },
+      );
+
+      test(
+        'mapToModel should return correct JournalModel when journalEntryDetails is valid and optional params missing',
         () {
           // Arrange
           final jed = JournalEntryDetails(
@@ -48,6 +97,9 @@ void main() {
           expect(result.entryText, 'New Entry');
           expect(result.petIdList, [1, 2]);
           expect(result.tags, ['Tag1', 'Tag2']);
+          expect(result.linkedRecordId, null);
+          expect(result.linkedRecordType, null);
+          expect(result.linkedRecordTitle, null);
         },
       );
 
@@ -183,6 +235,9 @@ void main() {
                   journalEntryId: 1,
                   createdDateTime: DateTime(2025, 1, 1),
                   entryText: 'New Entry 1',
+                  linkedRecordId: 123,
+                  linkedRecordType: LinkedRecordType.vaccination,
+                  linkedRecordTitle: 'Linked Record Title',
                 ),
                 tags: [
                   JournalEntryTag(
@@ -227,6 +282,12 @@ void main() {
             expect(result[1].entryText, 'New Entry 2');
             expect(result[0].tags, ['Tag1', 'Tag2']);
             expect(result[1].tags, ['Tag3']);
+            expect(result[0].linkedRecordId, 123);
+            expect(result[0].linkedRecordType, LinkedRecordType.vaccination);
+            expect(result[0].linkedRecordTitle, 'Linked Record Title');
+            expect(result[1].linkedRecordId, null);
+            expect(result[1].linkedRecordType, null);
+            expect(result[1].linkedRecordTitle, null);
           },
         );
       });

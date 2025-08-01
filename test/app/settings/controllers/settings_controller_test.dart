@@ -48,6 +48,7 @@ void main() {
             optIntoAnalyticsWarning: true,
             onBoardingComplete: true,
             defaultWeightUnit: WeightUnits.metric.dataValue,
+            createLinkedJournalEntries: true,
           );
 
           when(
@@ -70,6 +71,7 @@ void main() {
           expect(settings.optIntoAnalyticsWarning, true);
           expect(settings.onBoardingComplete, true);
           expect(settings.defaultWeightUnit, WeightUnits.metric);
+          expect(settings.createLinkedJournalEntries, true);
           verify(mockDatabaseService.watchSettings()).called(1);
 
           // Workaround for FakeTimer error
@@ -87,6 +89,8 @@ void main() {
             acceptedTermsAndConditions: false,
             optIntoAnalyticsWarning: false,
             onBoardingComplete: false,
+            defaultWeightUnit: null,
+            createLinkedJournalEntries: true,
           );
 
           when(
@@ -109,6 +113,7 @@ void main() {
           expect(settings.optIntoAnalyticsWarning, false);
           expect(settings.onBoardingComplete, false);
           expect(settings.defaultWeightUnit, null);
+          expect(settings.createLinkedJournalEntries, true);
           verify(mockDatabaseService.watchSettings()).called(1);
 
           await tester.pumpWidget(Container());
@@ -240,7 +245,7 @@ void main() {
         (tester) async {
           // ARRANGE
           when(
-            mockDatabaseService.saveSettingsUser(any, any),
+            mockDatabaseService.saveSettingsUser(any, any, any),
           ).thenAnswer((_) async => 1);
 
           final container = createContainer(
@@ -252,12 +257,16 @@ void main() {
           // ACT
           final success = await container
               .read(settingsControllerProvider.notifier)
-              .saveUserSettings(WeightUnits.metric, null);
+              .saveUserSettings(WeightUnits.metric, null, null);
 
           // ASSERT
           expect(success, true);
           verify(
-            mockDatabaseService.saveSettingsUser(WeightUnits.metric, null),
+            mockDatabaseService.saveSettingsUser(
+              WeightUnits.metric,
+              null,
+              null,
+            ),
           ).called(1);
 
           await tester.pumpWidget(Container());
@@ -270,7 +279,7 @@ void main() {
         (tester) async {
           // ARRANGE
           when(
-            mockDatabaseService.saveSettingsUser(any, any),
+            mockDatabaseService.saveSettingsUser(any, any, any),
           ).thenAnswer((_) async => 1);
 
           final container = createContainer(
@@ -282,11 +291,13 @@ void main() {
           // ACT
           final success = await container
               .read(settingsControllerProvider.notifier)
-              .saveUserSettings(null, true);
+              .saveUserSettings(null, true, null);
 
           // ASSERT
           expect(success, true);
-          verify(mockDatabaseService.saveSettingsUser(null, true)).called(1);
+          verify(
+            mockDatabaseService.saveSettingsUser(null, true, null),
+          ).called(1);
 
           await tester.pumpWidget(Container());
           await tester.pumpAndSettle();
@@ -294,11 +305,11 @@ void main() {
       );
 
       testWidgets(
-        'Should return true When database successfully saves weight units and analytics opt in',
+        'Should return true When database successfully saves create journal entry',
         (tester) async {
           // ARRANGE
           when(
-            mockDatabaseService.saveSettingsUser(any, any),
+            mockDatabaseService.saveSettingsUser(any, any, any),
           ).thenAnswer((_) async => 1);
 
           final container = createContainer(
@@ -310,12 +321,46 @@ void main() {
           // ACT
           final success = await container
               .read(settingsControllerProvider.notifier)
-              .saveUserSettings(WeightUnits.metric, true);
+              .saveUserSettings(null, null, false);
 
           // ASSERT
           expect(success, true);
           verify(
-            mockDatabaseService.saveSettingsUser(WeightUnits.metric, true),
+            mockDatabaseService.saveSettingsUser(null, null, false),
+          ).called(1);
+
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
+
+      testWidgets(
+        'Should return true When database successfully saves all settings',
+        (tester) async {
+          // ARRANGE
+          when(
+            mockDatabaseService.saveSettingsUser(any, any, any),
+          ).thenAnswer((_) async => 1);
+
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
+
+          // ACT
+          final success = await container
+              .read(settingsControllerProvider.notifier)
+              .saveUserSettings(WeightUnits.metric, true, false);
+
+          // ASSERT
+          expect(success, true);
+          verify(
+            mockDatabaseService.saveSettingsUser(
+              WeightUnits.metric,
+              true,
+              false,
+            ),
           ).called(1);
 
           await tester.pumpWidget(Container());
@@ -328,7 +373,7 @@ void main() {
         (tester) async {
           // ARRANGE
           when(
-            mockDatabaseService.saveSettingsUser(any, any),
+            mockDatabaseService.saveSettingsUser(any, any, any),
           ).thenAnswer((_) async => 0);
 
           final container = createContainer(
@@ -340,12 +385,16 @@ void main() {
           // ACT
           final success = await container
               .read(settingsControllerProvider.notifier)
-              .saveUserSettings(WeightUnits.imperial, true);
+              .saveUserSettings(WeightUnits.imperial, true, true);
 
           // ASSERT
           expect(success, false);
           verify(
-            mockDatabaseService.saveSettingsUser(WeightUnits.imperial, true),
+            mockDatabaseService.saveSettingsUser(
+              WeightUnits.imperial,
+              true,
+              true,
+            ),
           ).called(1);
 
           await tester.pumpWidget(Container());
@@ -353,12 +402,10 @@ void main() {
         },
       );
 
-      testWidgets('Should handle null weight units and analytics opt in', (
-        tester,
-      ) async {
+      testWidgets('Should handle null values', (tester) async {
         // ARRANGE
         when(
-          mockDatabaseService.saveSettingsUser(null, null),
+          mockDatabaseService.saveSettingsUser(null, null, null),
         ).thenAnswer((_) async => 1);
 
         final container = createContainer(
@@ -370,11 +417,13 @@ void main() {
         // ACT
         final success = await container
             .read(settingsControllerProvider.notifier)
-            .saveUserSettings(null, null);
+            .saveUserSettings(null, null, null);
 
         // ASSERT
         expect(success, true);
-        verify(mockDatabaseService.saveSettingsUser(null, null)).called(1);
+        verify(
+          mockDatabaseService.saveSettingsUser(null, null, null),
+        ).called(1);
 
         await tester.pumpWidget(Container());
         await tester.pumpAndSettle();

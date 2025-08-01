@@ -5,6 +5,7 @@ import 'package:petjournal/constants/defaults.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
+import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/database/tables/journal_entry.dart';
 import 'package:petjournal/data/database/tables/journal_entry_details.dart';
 import 'package:petjournal/data/database/tables/journal_entry_tag.dart';
@@ -433,6 +434,9 @@ class DatabaseService extends _$DatabaseService {
     required String entryText,
     required List<int> petIdList,
     required List<String> tags,
+    LinkedRecordType? linkedRecordType,
+    int? linkedRecordId,
+    String? linkedRecordTitle,
   }) async {
     if (petIdList.isEmpty) {
       throw Exception('No pets provided');
@@ -442,7 +446,12 @@ class DatabaseService extends _$DatabaseService {
       try {
         // Create the journal entry
         final journalEntry = await into(journalEntries).insertReturningOrNull(
-          JournalEntriesCompanion.insert(entryText: entryText),
+          JournalEntriesCompanion.insert(
+            entryText: entryText,
+            linkedRecordType: Value.absentIfNull(linkedRecordType),
+            linkedRecordId: Value.absentIfNull(linkedRecordId),
+            linkedRecordTitle: Value.absentIfNull(linkedRecordTitle),
+          ),
         );
 
         // If the journal entry creation failed, return null
@@ -484,6 +493,8 @@ class DatabaseService extends _$DatabaseService {
   }
 
   /// Update an existing journal entry record
+  /// Note: linked record details are not updated as assume once set a
+  /// journal entry cannot be moved to a different linked record
   Future<int> updateJournalEntry({
     required int id,
     required String entryText,
@@ -542,6 +553,32 @@ class DatabaseService extends _$DatabaseService {
       });
     } catch (e) {
       throw Exception('Error updating journal entry: $e');
+    }
+  }
+
+  /// Update an linked journal entry record
+  /// Note: linked record details are not updated as assume once set a
+  /// journal entry cannot be moved to a different linked record
+  Future<int> updateLinkedJournalEntry({
+    required int linkedRecordId,
+    required LinkedRecordType linkedRecordType,
+    required String linkedRecordTitle,
+  }) async {
+    try {
+      return await (update(journalEntries)..where(
+            (entry) => Expression.and([
+              entry.linkedRecordId.equals(linkedRecordId),
+              entry.linkedRecordType.equals(linkedRecordType.name),
+            ]),
+          ))
+          .write(
+            JournalEntriesCompanion(
+              linkedRecordTitle: Value(linkedRecordTitle),
+              lastUpdatedDateTime: Value(DateTime.now()),
+            ),
+          );
+    } catch (e) {
+      throw Exception('Error updating linked journal entry: $e');
     }
   }
 
@@ -772,6 +809,7 @@ class DatabaseService extends _$DatabaseService {
       optIntoAnalyticsWarning: false,
       lastUsedVersion: null,
       defaultWeightUnit: null,
+      createLinkedJournalEntries: true,
     );
 
     try {
@@ -810,6 +848,7 @@ class DatabaseService extends _$DatabaseService {
   Future<int> saveSettingsUser(
     WeightUnits? defaultWeightUnit,
     bool? optIntoAnalyticsWarning,
+    bool? createLinkedJournalEntries,
   ) async {
     try {
       return await (update(
@@ -818,6 +857,9 @@ class DatabaseService extends _$DatabaseService {
         SettingsCompanion(
           defaultWeightUnit: Value(defaultWeightUnit?.dataValue),
           optIntoAnalyticsWarning: Value.absentIfNull(optIntoAnalyticsWarning),
+          createLinkedJournalEntries: Value.absentIfNull(
+            createLinkedJournalEntries,
+          ),
         ),
       );
     } catch (e) {
@@ -826,7 +868,7 @@ class DatabaseService extends _$DatabaseService {
   }
 
   Future<int> resetSettingsUser() async {
-    return saveSettingsUser(null, false);
+    return saveSettingsUser(null, false, true);
   }
 
   Future<bool> testConnection() async {

@@ -20,6 +20,12 @@ _JournalModel _$JournalModelFromJson(Map<String, dynamic> json) =>
           .map((e) => (e as num).toInt())
           .toList(),
       tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
+      linkedRecordId: (json['linkedRecordId'] as num?)?.toInt(),
+      linkedRecordType: $enumDecodeNullable(
+        _$LinkedRecordTypeEnumMap,
+        json['linkedRecordType'],
+      ),
+      linkedRecordTitle: json['linkedRecordTitle'] as String?,
     );
 
 Map<String, dynamic> _$JournalModelToJson(_JournalModel instance) =>
@@ -30,4 +36,14 @@ Map<String, dynamic> _$JournalModelToJson(_JournalModel instance) =>
       'lastUpdatedDateTime': instance.lastUpdatedDateTime?.toIso8601String(),
       'petIdList': instance.petIdList,
       'tags': instance.tags,
+      'linkedRecordId': instance.linkedRecordId,
+      'linkedRecordType': _$LinkedRecordTypeEnumMap[instance.linkedRecordType],
+      'linkedRecordTitle': instance.linkedRecordTitle,
     };
+
+const _$LinkedRecordTypeEnumMap = {
+  LinkedRecordType.pet: 'pet',
+  LinkedRecordType.medication: 'medication',
+  LinkedRecordType.weight: 'weight',
+  LinkedRecordType.vaccination: 'vaccination',
+};
