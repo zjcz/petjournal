@@ -1,5 +1,4 @@
 import 'package:petjournal/app/pet/models/pet_model.dart';
-import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/data/mapper/pet_mapper.dart';
 import 'package:petjournal/helpers/settings_helper.dart';

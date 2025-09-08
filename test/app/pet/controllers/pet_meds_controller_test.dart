@@ -7,7 +7,6 @@ import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:petjournal/app/settings/models/settings_model.dart';
-import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
