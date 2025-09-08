@@ -6,10 +6,12 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/app/settings/models/settings_model.dart';
 import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 import 'package:petjournal/data/mapper/pet_med_mapper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -43,16 +45,14 @@ void main() {
     });
 
     setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
-      when(mockDatabaseService.watchSettings()).thenAnswer(
-        (_) => Stream.value(
-          Setting(
-            settingsId: defaults.defaultSettingsId,
-            acceptedTermsAndConditions: true,
-            optIntoAnalyticsWarning: true,
-            onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric,
-            createLinkedJournalEntries: createLinkedJournalEntries,
-          ),
+      SettingsLookup().refreshSettings(
+        SettingsModel(
+          lastUsedVersion: '1.0.0',
+          acceptedTermsAndConditions: true,
+          optIntoAnalyticsWarning: true,
+          onBoardingComplete: true,
+          defaultWeightUnit: WeightUnits.metric,
+          createLinkedJournalEntries: createLinkedJournalEntries,
         ),
       );
 
@@ -597,70 +597,71 @@ void main() {
           await tester.pumpAndSettle();
         },
       );
-      testWidgets('Should not update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = false', (
-        tester,
-      ) async {
-        int petId = 7;
-        final initialPetMed = PetMed(
-          petMedId: 1,
-          pet: petId,
-          name: 'Antibiotic',
-          dose: '5mg',
-          startDate: DateTime(2024, 5, 28),
-          endDate: DateTime(2024, 6, 1),
-          notes: 'Take with food',
-        );
+      testWidgets(
+        'Should not update a linked journal entry when call updatePetMed with setting createLinkedJournalEntries = false',
+        (tester) async {
+          int petId = 7;
+          final initialPetMed = PetMed(
+            petMedId: 1,
+            pet: petId,
+            name: 'Antibiotic',
+            dose: '5mg',
+            startDate: DateTime(2024, 5, 28),
+            endDate: DateTime(2024, 6, 1),
+            notes: 'Take with food',
+          );
 
-        final initialPetMedModel = PetMedModel(
-          petMedId: initialPetMed.petMedId,
-          petId: initialPetMed.pet,
-          name: initialPetMed.name,
-          dose: initialPetMed.dose,
-          startDate: initialPetMed.startDate,
-          endDate: initialPetMed.endDate,
-          notes: initialPetMed.notes,
-        );
+          final initialPetMedModel = PetMedModel(
+            petMedId: initialPetMed.petMedId,
+            petId: initialPetMed.pet,
+            name: initialPetMed.name,
+            dose: initialPetMed.dose,
+            startDate: initialPetMed.startDate,
+            endDate: initialPetMed.endDate,
+            notes: initialPetMed.notes,
+          );
 
-        when(
-          mockDatabaseService.getAllPetMedsForPet(petId),
-        ).thenAnswer((_) => Stream.empty());
-        when(
-          mockDatabaseService.updatePetMed(
-            initialPetMedModel.petMedId,
-            initialPetMedModel.name,
-            initialPetMedModel.dose,
-            initialPetMedModel.startDate,
-            initialPetMedModel.endDate,
-            initialPetMedModel.notes,
-          ),
-        ).thenAnswer((_) => Future.value(1));
-        setupMockDatabaseForJournalEntry(false);
+          when(
+            mockDatabaseService.getAllPetMedsForPet(petId),
+          ).thenAnswer((_) => Stream.empty());
+          when(
+            mockDatabaseService.updatePetMed(
+              initialPetMedModel.petMedId,
+              initialPetMedModel.name,
+              initialPetMedModel.dose,
+              initialPetMedModel.startDate,
+              initialPetMedModel.endDate,
+              initialPetMedModel.notes,
+            ),
+          ).thenAnswer((_) => Future.value(1));
+          setupMockDatabaseForJournalEntry(false);
 
-        final container = createContainer(
-          overrides: [
-            DatabaseService.provider.overrideWithValue(mockDatabaseService),
-          ],
-        );
+          final container = createContainer(
+            overrides: [
+              DatabaseService.provider.overrideWithValue(mockDatabaseService),
+            ],
+          );
 
-        // ACT
-        final provider = container.read(
-          petMedsControllerProvider(petId).notifier,
-        );
-        await provider.save(initialPetMedModel);
+          // ACT
+          final provider = container.read(
+            petMedsControllerProvider(petId).notifier,
+          );
+          await provider.save(initialPetMedModel);
 
-        // ASSERT
-        verifyNever(
-          mockDatabaseService.updateLinkedJournalEntry(
-            linkedRecordId: anyNamed('linkedRecordId'),
-            linkedRecordType: anyNamed('linkedRecordType'),
-            linkedRecordTitle: anyNamed('linkedRecordTitle'),
-          ),
-        );
+          // ASSERT
+          verifyNever(
+            mockDatabaseService.updateLinkedJournalEntry(
+              linkedRecordId: anyNamed('linkedRecordId'),
+              linkedRecordType: anyNamed('linkedRecordType'),
+              linkedRecordTitle: anyNamed('linkedRecordTitle'),
+            ),
+          );
 
-        // Workaround for FakeTimer error
-        await tester.pumpWidget(Container());
-        await tester.pumpAndSettle();
-      });
+          // Workaround for FakeTimer error
+          await tester.pumpWidget(Container());
+          await tester.pumpAndSettle();
+        },
+      );
     });
   });
 }

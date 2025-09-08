@@ -11,8 +11,7 @@ _PetWeightModel _$PetWeightModelFromJson(Map<String, dynamic> json) =>
       petWeightId: (json['petWeightId'] as num?)?.toInt(),
       petId: (json['petId'] as num).toInt(),
       date: DateTime.parse(json['date'] as String),
-      weight: (json['weight'] as num).toDouble(),
-      weightUnit: $enumDecode(_$WeightUnitsEnumMap, json['weightUnit']),
+      weightKg: (json['weightKg'] as num).toDouble(),
       notes: json['notes'] as String?,
     );
 
@@ -21,12 +20,6 @@ Map<String, dynamic> _$PetWeightModelToJson(_PetWeightModel instance) =>
       'petWeightId': instance.petWeightId,
       'petId': instance.petId,
       'date': instance.date.toIso8601String(),
-      'weight': instance.weight,
-      'weightUnit': _$WeightUnitsEnumMap[instance.weightUnit]!,
+      'weightKg': instance.weightKg,
       'notes': instance.notes,
     };
-
-const _$WeightUnitsEnumMap = {
-  WeightUnits.metric: 'metric',
-  WeightUnits.imperial: 'imperial',
-};

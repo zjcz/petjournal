@@ -5,12 +5,14 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/views/edit_pet_med_screen.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/app/settings/models/settings_model.dart';
 import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 
 import 'edit_pet_med_screen_test.mocks.dart';
 
@@ -71,16 +73,15 @@ void main() {
     );
 
     when(mockDb.getPet(any)).thenAnswer((_) async => testPet);
-    when(mockDb.watchSettings()).thenAnswer(
-      (_) => Stream.value(
-        Setting(
-          settingsId: defaults.defaultSettingsId,
-          acceptedTermsAndConditions: true,
-          optIntoAnalyticsWarning: true,
-          onBoardingComplete: true,
-          defaultWeightUnit: WeightUnits.metric,
-          createLinkedJournalEntries: false,
-        ),
+    
+    SettingsLookup().refreshSettings(
+      SettingsModel(
+        lastUsedVersion: '1.0.0',
+        acceptedTermsAndConditions: true,
+        optIntoAnalyticsWarning: true,
+        onBoardingComplete: true,
+        defaultWeightUnit: WeightUnits.metric,
+        createLinkedJournalEntries: false,
       ),
     );
   });

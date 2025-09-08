@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/data/lookups/pet_lookup.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 import 'package:petjournal/data/lookups/species_lookup.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,11 +16,13 @@ Future<void> appStartup(Ref ref) async {
     ref.invalidate(settingsControllerProvider);
     ref.invalidate(populatePetLookupProvider);
     ref.invalidate(populateSpeciesLookupProvider);
+    ref.invalidate(populateSettingsLookupProvider);
   });
   // all asynchronous app initialization code should belong here:
   await ref.watch(settingsControllerProvider.future);
   await ref.watch(populatePetLookupProvider.future);
   await ref.watch(populateSpeciesLookupProvider.future);
+  await ref.watch(populateSettingsLookupProvider.future);
 }
 
 /// Widget class to manage asynchronous app initialization

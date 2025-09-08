@@ -6,7 +6,7 @@ part of 'pet_meds_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$petMedsControllerHash() => r'1403cf6dd90a2be4f6562003fe7778954a1c15f3';
+String _$petMedsControllerHash() => r'07e4ff57d8d6b11214310cd2afeb56c3bd756385';
 
 /// Copied from Dart SDK
 class _SystemHash {

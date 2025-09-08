@@ -2580,25 +2580,17 @@ class $PetWeightsTable extends PetWeights
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _weightMeta = const VerificationMeta('weight');
+  static const VerificationMeta _weightKgMeta = const VerificationMeta(
+    'weightKg',
+  );
   @override
-  late final GeneratedColumn<double> weight = GeneratedColumn<double>(
-    'weight',
+  late final GeneratedColumn<double> weightKg = GeneratedColumn<double>(
+    'weight_kg',
     aliasedName,
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
-  @override
-  late final GeneratedColumnWithTypeConverter<WeightUnits, String> weightUnit =
-      GeneratedColumn<String>(
-        'weight_unit',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        defaultValue: Constant(WeightUnits.metric.name),
-      ).withConverter<WeightUnits>($PetWeightsTable.$converterweightUnit);
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -2613,8 +2605,7 @@ class $PetWeightsTable extends PetWeights
     petWeightId,
     pet,
     date,
-    weight,
-    weightUnit,
+    weightKg,
     notes,
   ];
   @override
@@ -2654,13 +2645,13 @@ class $PetWeightsTable extends PetWeights
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
-    if (data.containsKey('weight')) {
+    if (data.containsKey('weight_kg')) {
       context.handle(
-        _weightMeta,
-        weight.isAcceptableOrUnknown(data['weight']!, _weightMeta),
+        _weightKgMeta,
+        weightKg.isAcceptableOrUnknown(data['weight_kg']!, _weightKgMeta),
       );
     } else if (isInserting) {
-      context.missing(_weightMeta);
+      context.missing(_weightKgMeta);
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -2689,16 +2680,10 @@ class $PetWeightsTable extends PetWeights
         DriftSqlType.dateTime,
         data['${effectivePrefix}date'],
       )!,
-      weight: attachedDatabase.typeMapping.read(
+      weightKg: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}weight'],
+        data['${effectivePrefix}weight_kg'],
       )!,
-      weightUnit: $PetWeightsTable.$converterweightUnit.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}weight_unit'],
-        )!,
-      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -2710,24 +2695,19 @@ class $PetWeightsTable extends PetWeights
   $PetWeightsTable createAlias(String alias) {
     return $PetWeightsTable(attachedDatabase, alias);
   }
-
-  static JsonTypeConverter2<WeightUnits, String, String> $converterweightUnit =
-      const EnumNameConverter<WeightUnits>(WeightUnits.values);
 }
 
 class PetWeight extends DataClass implements Insertable<PetWeight> {
   final int petWeightId;
   final int pet;
   final DateTime date;
-  final double weight;
-  final WeightUnits weightUnit;
+  final double weightKg;
   final String? notes;
   const PetWeight({
     required this.petWeightId,
     required this.pet,
     required this.date,
-    required this.weight,
-    required this.weightUnit,
+    required this.weightKg,
     this.notes,
   });
   @override
@@ -2736,12 +2716,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
     map['pet_weight_id'] = Variable<int>(petWeightId);
     map['pet'] = Variable<int>(pet);
     map['date'] = Variable<DateTime>(date);
-    map['weight'] = Variable<double>(weight);
-    {
-      map['weight_unit'] = Variable<String>(
-        $PetWeightsTable.$converterweightUnit.toSql(weightUnit),
-      );
-    }
+    map['weight_kg'] = Variable<double>(weightKg);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -2753,8 +2728,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       petWeightId: Value(petWeightId),
       pet: Value(pet),
       date: Value(date),
-      weight: Value(weight),
-      weightUnit: Value(weightUnit),
+      weightKg: Value(weightKg),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -2770,10 +2744,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       petWeightId: serializer.fromJson<int>(json['petWeightId']),
       pet: serializer.fromJson<int>(json['pet']),
       date: serializer.fromJson<DateTime>(json['date']),
-      weight: serializer.fromJson<double>(json['weight']),
-      weightUnit: $PetWeightsTable.$converterweightUnit.fromJson(
-        serializer.fromJson<String>(json['weightUnit']),
-      ),
+      weightKg: serializer.fromJson<double>(json['weightKg']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
   }
@@ -2784,10 +2755,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
       'petWeightId': serializer.toJson<int>(petWeightId),
       'pet': serializer.toJson<int>(pet),
       'date': serializer.toJson<DateTime>(date),
-      'weight': serializer.toJson<double>(weight),
-      'weightUnit': serializer.toJson<String>(
-        $PetWeightsTable.$converterweightUnit.toJson(weightUnit),
-      ),
+      'weightKg': serializer.toJson<double>(weightKg),
       'notes': serializer.toJson<String?>(notes),
     };
   }
@@ -2796,15 +2764,13 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
     int? petWeightId,
     int? pet,
     DateTime? date,
-    double? weight,
-    WeightUnits? weightUnit,
+    double? weightKg,
     Value<String?> notes = const Value.absent(),
   }) => PetWeight(
     petWeightId: petWeightId ?? this.petWeightId,
     pet: pet ?? this.pet,
     date: date ?? this.date,
-    weight: weight ?? this.weight,
-    weightUnit: weightUnit ?? this.weightUnit,
+    weightKg: weightKg ?? this.weightKg,
     notes: notes.present ? notes.value : this.notes,
   );
   PetWeight copyWithCompanion(PetWeightsCompanion data) {
@@ -2814,10 +2780,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
           : this.petWeightId,
       pet: data.pet.present ? data.pet.value : this.pet,
       date: data.date.present ? data.date.value : this.date,
-      weight: data.weight.present ? data.weight.value : this.weight,
-      weightUnit: data.weightUnit.present
-          ? data.weightUnit.value
-          : this.weightUnit,
+      weightKg: data.weightKg.present ? data.weightKg.value : this.weightKg,
       notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
@@ -2828,16 +2791,14 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
           ..write('petWeightId: $petWeightId, ')
           ..write('pet: $pet, ')
           ..write('date: $date, ')
-          ..write('weight: $weight, ')
-          ..write('weightUnit: $weightUnit, ')
+          ..write('weightKg: $weightKg, ')
           ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(petWeightId, pet, date, weight, weightUnit, notes);
+  int get hashCode => Object.hash(petWeightId, pet, date, weightKg, notes);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2845,8 +2806,7 @@ class PetWeight extends DataClass implements Insertable<PetWeight> {
           other.petWeightId == this.petWeightId &&
           other.pet == this.pet &&
           other.date == this.date &&
-          other.weight == this.weight &&
-          other.weightUnit == this.weightUnit &&
+          other.weightKg == this.weightKg &&
           other.notes == this.notes);
 }
 
@@ -2854,41 +2814,36 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
   final Value<int> petWeightId;
   final Value<int> pet;
   final Value<DateTime> date;
-  final Value<double> weight;
-  final Value<WeightUnits> weightUnit;
+  final Value<double> weightKg;
   final Value<String?> notes;
   const PetWeightsCompanion({
     this.petWeightId = const Value.absent(),
     this.pet = const Value.absent(),
     this.date = const Value.absent(),
-    this.weight = const Value.absent(),
-    this.weightUnit = const Value.absent(),
+    this.weightKg = const Value.absent(),
     this.notes = const Value.absent(),
   });
   PetWeightsCompanion.insert({
     this.petWeightId = const Value.absent(),
     required int pet,
     required DateTime date,
-    required double weight,
-    this.weightUnit = const Value.absent(),
+    required double weightKg,
     this.notes = const Value.absent(),
   }) : pet = Value(pet),
        date = Value(date),
-       weight = Value(weight);
+       weightKg = Value(weightKg);
   static Insertable<PetWeight> custom({
     Expression<int>? petWeightId,
     Expression<int>? pet,
     Expression<DateTime>? date,
-    Expression<double>? weight,
-    Expression<String>? weightUnit,
+    Expression<double>? weightKg,
     Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (petWeightId != null) 'pet_weight_id': petWeightId,
       if (pet != null) 'pet': pet,
       if (date != null) 'date': date,
-      if (weight != null) 'weight': weight,
-      if (weightUnit != null) 'weight_unit': weightUnit,
+      if (weightKg != null) 'weight_kg': weightKg,
       if (notes != null) 'notes': notes,
     });
   }
@@ -2897,16 +2852,14 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
     Value<int>? petWeightId,
     Value<int>? pet,
     Value<DateTime>? date,
-    Value<double>? weight,
-    Value<WeightUnits>? weightUnit,
+    Value<double>? weightKg,
     Value<String?>? notes,
   }) {
     return PetWeightsCompanion(
       petWeightId: petWeightId ?? this.petWeightId,
       pet: pet ?? this.pet,
       date: date ?? this.date,
-      weight: weight ?? this.weight,
-      weightUnit: weightUnit ?? this.weightUnit,
+      weightKg: weightKg ?? this.weightKg,
       notes: notes ?? this.notes,
     );
   }
@@ -2923,13 +2876,8 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
-    if (weight.present) {
-      map['weight'] = Variable<double>(weight.value);
-    }
-    if (weightUnit.present) {
-      map['weight_unit'] = Variable<String>(
-        $PetWeightsTable.$converterweightUnit.toSql(weightUnit.value),
-      );
+    if (weightKg.present) {
+      map['weight_kg'] = Variable<double>(weightKg.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -2943,8 +2891,7 @@ class PetWeightsCompanion extends UpdateCompanion<PetWeight> {
           ..write('petWeightId: $petWeightId, ')
           ..write('pet: $pet, ')
           ..write('date: $date, ')
-          ..write('weight: $weight, ')
-          ..write('weightUnit: $weightUnit, ')
+          ..write('weightKg: $weightKg, ')
           ..write('notes: $notes')
           ..write(')'))
         .toString();
@@ -6656,8 +6603,7 @@ typedef $$PetWeightsTableCreateCompanionBuilder =
       Value<int> petWeightId,
       required int pet,
       required DateTime date,
-      required double weight,
-      Value<WeightUnits> weightUnit,
+      required double weightKg,
       Value<String?> notes,
     });
 typedef $$PetWeightsTableUpdateCompanionBuilder =
@@ -6665,8 +6611,7 @@ typedef $$PetWeightsTableUpdateCompanionBuilder =
       Value<int> petWeightId,
       Value<int> pet,
       Value<DateTime> date,
-      Value<double> weight,
-      Value<WeightUnits> weightUnit,
+      Value<double> weightKg,
       Value<String?> notes,
     });
 
@@ -6712,15 +6657,9 @@ class $$PetWeightsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get weight => $composableBuilder(
-    column: $table.weight,
+  ColumnFilters<double> get weightKg => $composableBuilder(
+    column: $table.weightKg,
     builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnWithTypeConverterFilters<WeightUnits, WeightUnits, String>
-  get weightUnit => $composableBuilder(
-    column: $table.weightUnit,
-    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get notes => $composableBuilder(
@@ -6771,13 +6710,8 @@ class $$PetWeightsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get weight => $composableBuilder(
-    column: $table.weight,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get weightUnit => $composableBuilder(
-    column: $table.weightUnit,
+  ColumnOrderings<double> get weightKg => $composableBuilder(
+    column: $table.weightKg,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -6827,14 +6761,8 @@ class $$PetWeightsTableAnnotationComposer
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
 
-  GeneratedColumn<double> get weight =>
-      $composableBuilder(column: $table.weight, builder: (column) => column);
-
-  GeneratedColumnWithTypeConverter<WeightUnits, String> get weightUnit =>
-      $composableBuilder(
-        column: $table.weightUnit,
-        builder: (column) => column,
-      );
+  GeneratedColumn<double> get weightKg =>
+      $composableBuilder(column: $table.weightKg, builder: (column) => column);
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -6894,15 +6822,13 @@ class $$PetWeightsTableTableManager
                 Value<int> petWeightId = const Value.absent(),
                 Value<int> pet = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
-                Value<double> weight = const Value.absent(),
-                Value<WeightUnits> weightUnit = const Value.absent(),
+                Value<double> weightKg = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => PetWeightsCompanion(
                 petWeightId: petWeightId,
                 pet: pet,
                 date: date,
-                weight: weight,
-                weightUnit: weightUnit,
+                weightKg: weightKg,
                 notes: notes,
               ),
           createCompanionCallback:
@@ -6910,15 +6836,13 @@ class $$PetWeightsTableTableManager
                 Value<int> petWeightId = const Value.absent(),
                 required int pet,
                 required DateTime date,
-                required double weight,
-                Value<WeightUnits> weightUnit = const Value.absent(),
+                required double weightKg,
                 Value<String?> notes = const Value.absent(),
               }) => PetWeightsCompanion.insert(
                 petWeightId: petWeightId,
                 pet: pet,
                 date: date,
-                weight: weight,
-                weightUnit: weightUnit,
+                weightKg: weightKg,
                 notes: notes,
               ),
           withReferenceMapper: (p0) => p0

@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
-import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_weight_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -18,8 +17,7 @@ void main() {
             petWeightId: 1,
             pet: 2,
             date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: WeightUnits.imperial,
+            weightKg: 12.5,
             notes: 'Healthy',
           );
 
@@ -30,29 +28,10 @@ void main() {
           expect(result.petWeightId, 1);
           expect(result.petId, 2);
           expect(result.date, DateTime(2024, 5, 28));
-          expect(result.weight, 12.5);
-          expect(result.weightUnit, WeightUnits.imperial);
+          expect(result.weightKg, 12.5);
           expect(result.notes, 'Healthy');
         },
       );
-
-      test('mapToModel should map WeightUnits.metric correctly', () {
-        // Arrange
-        final petWeight = PetWeight(
-          petWeightId: 10,
-          pet: 20,
-          date: DateTime(2023, 1, 1),
-          weight: 5.0,
-          weightUnit: WeightUnits.metric,
-          notes: 'Metric',
-        );
-
-        // Act
-        final result = PetWeightMapper.mapToModel(petWeight);
-
-        // Assert
-        expect(result.weightUnit, WeightUnits.metric);
-      });
 
       test(
         'mapToModel should set notes to null when PetWeight notes is null',
@@ -62,8 +41,7 @@ void main() {
             petWeightId: 3,
             pet: 4,
             date: DateTime(2022, 2, 2),
-            weight: 7.7,
-            weightUnit: WeightUnits.metric,
+            weightKg: 7.7,
             notes: null,
           );
 
@@ -99,16 +77,14 @@ void main() {
               petWeightId: 1,
               pet: 2,
               date: DateTime(2024, 5, 28),
-              weight: 12.5,
-              weightUnit: WeightUnits.imperial,
+              weightKg: 12.5,
               notes: 'Healthy',
             ),
             PetWeight(
               petWeightId: 3,
               pet: 4,
               date: DateTime(2022, 2, 2),
-              weight: 7.7,
-              weightUnit: WeightUnits.metric,
+              weightKg: 7.7,
               notes: null,
             ),
           ];
@@ -120,8 +96,6 @@ void main() {
           expect(result.length, 2);
           expect(result[0].petWeightId, 1);
           expect(result[1].petWeightId, 3);
-          expect(result[0].weightUnit, WeightUnits.imperial);
-          expect(result[1].weightUnit, WeightUnits.metric);
         },
       );
     });

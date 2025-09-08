@@ -1,14 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
-import 'package:petjournal/constants/weight_units.dart';
+import 'package:petjournal/app/pet/views/widgets/pet_weight_entry_widget.dart';
 import 'package:petjournal/extensions/material_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/widgets/date_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/route_config.dart';
-import 'package:petjournal/widgets/weight_units_dropdown.dart';
-import 'package:petjournal/constants/defaults.dart' as defaults;
 
 class EditPetWeightScreen extends ConsumerStatefulWidget {
   static final petWeightWeightKey = GlobalKey<FormFieldState>();
@@ -33,36 +31,29 @@ class _EditPetWeightScreenState extends ConsumerState<EditPetWeightScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // --- Text Controllers ---
-  late TextEditingController _weightController;
   late TextEditingController _notesController;
 
   // --- State Variables ---
   DateTime _entryDate = DateTime.now();
-
-  //TODO load default from settings
-  WeightUnits _weightUnits = defaults.getDefaultWeightUnit();
+  double? _weightKg;
 
   @override
   void initState() {
     super.initState();
 
     // Initialize with existing pet data if available, otherwise defaults
-    _weightController = TextEditingController(
-      text: widget.petWeight?.weight.toString(),
-    );
+    _weightKg = widget.petWeight?.weightKg;
     _notesController = TextEditingController(
       text: widget.petWeight?.notes ?? '',
     );
 
     if (widget.petWeight != null) {
       _entryDate = widget.petWeight!.date;
-      _weightUnits = widget.petWeight!.weightUnit;
     }
   }
 
   @override
   void dispose() {
-    _weightController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -139,27 +130,17 @@ class _EditPetWeightScreenState extends ConsumerState<EditPetWeightScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  TextFormField(
+                  PetWeightEntryWidget(
                     key: EditPetWeightScreen.petWeightWeightKey,
-                    controller: _weightController,
-                    decoration: const InputDecoration(labelText: 'Weight*'),
-                    validator: (value) => value == null || value.isEmpty
+                    weightKg: _weightKg,
+                    errorText: 'Weight is required',
+                    labelText: 'Weight*',
+                    onValidate: (value) => value == null || value <= 0
                         ? 'Weight is required'
                         : null,
-                    onChanged: (_) {
+                    onChanged: (value) {
                       setState(() {
-                        _unsavedChanges = true;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  WeightUnitsDropdown(
-                    key: EditPetWeightScreen.petWeightUnitKey,
-                    value: _weightUnits,
-                    labelText: 'Weight Unit*',
-                    onChanged: (WeightUnits? newValue) {
-                      setState(() {
-                        _weightUnits = newValue ?? _weightUnits;
+                        _weightKg = value;
                         _unsavedChanges = true;
                       });
                     },
@@ -232,8 +213,7 @@ class _EditPetWeightScreenState extends ConsumerState<EditPetWeightScreen> {
     final PetWeightModel weightData = PetWeightModel(
       petWeightId: widget.petWeight?.petWeightId,
       petId: widget.petId,
-      weight: double.tryParse(_weightController.text) ?? 0.0,
-      weightUnit: _weightUnits,
+      weightKg: _weightKg ?? 0.0,
       date: _entryDate,
       notes: _notesController.text.isEmpty ? null : _notesController.text,
     );

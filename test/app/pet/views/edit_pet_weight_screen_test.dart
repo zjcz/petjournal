@@ -5,16 +5,31 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/views/edit_pet_weight_screen.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
-import 'package:petjournal/constants/defaults.dart' as defaults;
+import 'package:petjournal/app/settings/models/settings_model.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 
 import 'edit_pet_weight_screen_test.mocks.dart';
 
+/// Currently only testing screen in Metric mode, tests for weight widget
+/// will test imperial values.  Possibly something to add in here too
 @GenerateMocks([DatabaseService, GoRouter])
+Setting createMockSettings({WeightUnits weightUnit = WeightUnits.metric}) {
+  return Setting(
+    settingsId: 1,
+    acceptedTermsAndConditions: true,
+    onBoardingComplete: true,
+    optIntoAnalyticsWarning: false,
+    lastUsedVersion: null,
+    defaultWeightUnit: weightUnit,
+    createLinkedJournalEntries: true,
+  );
+}
+
 void main() {
   late MockDatabaseService mockDb;
   late MockGoRouter mockGoRouter;
@@ -64,29 +79,34 @@ void main() {
       petWeightId: 1,
       petId: 1,
       date: DateTime(2022, 1, 1),
-      weight: 10.5,
-      weightUnit: WeightUnits.metric,
+      weightKg: 10.5,
       notes: 'Healthy weight',
     );
 
     when(mockDb.getPet(any)).thenAnswer((_) async => testPet);
-    when(mockDb.watchSettings()).thenAnswer(
-      (_) => Stream.value(
-        Setting(
-          settingsId: defaults.defaultSettingsId,
-          acceptedTermsAndConditions: true,
-          optIntoAnalyticsWarning: true,
-          onBoardingComplete: true,
-          defaultWeightUnit: WeightUnits.metric,
-          createLinkedJournalEntries: false,
-        ),
+
+    SettingsLookup().refreshSettings(
+      SettingsModel(
+        lastUsedVersion: '1.0.0',
+        acceptedTermsAndConditions: true,
+        optIntoAnalyticsWarning: true,
+        onBoardingComplete: true,
+        defaultWeightUnit: WeightUnits.metric,
+        createLinkedJournalEntries: false,
       ),
     );
   });
 
   group('EditPetWeightScreen', () {
-    testWidgets('renders all required fields for new pet weight', (tester) async {
-      // Arrange + Act
+    testWidgets('renders all required fields for new pet weight', (
+      tester,
+    ) async {
+      // Arrange
+      when(
+        mockDb.watchSettings(),
+      ).thenAnswer((_) => Stream.value(createMockSettings()));
+
+      // Act
       await tester.pumpWidget(createScreen(mockDb));
       await tester.pumpAndSettle();
       // Assert
@@ -101,10 +121,19 @@ void main() {
       tester,
     ) async {
       // Arrange
+      when(
+        mockDb.watchSettings(),
+      ).thenAnswer((_) => Stream.value(createMockSettings()));
+
       await tester.pumpWidget(createScreen(mockDb));
       await tester.pumpAndSettle();
+
       // Act
-      await tester.enterText(find.byKey(EditPetWeightScreen.petWeightWeightKey), '');
+      await tester.enterText(
+        find.byKey(EditPetWeightScreen.petWeightWeightKey),
+        '',
+      );
+
       await tester.pumpAndSettle();
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
@@ -116,56 +145,79 @@ void main() {
       );
     });
 
-    testWidgets('saves pet weight for existing pet weight and navigates back on valid input', (
-      tester,
-    ) async {
-      // Arrange
-      when(mockDb.updatePetWeight(any, any, any, any, any))
-          .thenAnswer((_) async => 1);
-      // Act
-      await tester.pumpWidget(createScreen(mockDb, petWeight: testPetWeight));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'saves pet weight for existing pet weight and navigates back on valid input',
+      (tester) async {
+        // Arrange
+        when(
+          mockDb.watchSettings(),
+        ).thenAnswer((_) => Stream.value(createMockSettings()));
 
-      await tester.tap(find.byKey(EditPetWeightScreen.petWeightDateKey));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
+        when(
+          mockDb.updatePetWeight(any, any, any, any),
+        ).thenAnswer((_) async => 1);
+        // Act
+        await tester.pumpWidget(createScreen(mockDb, petWeight: testPetWeight));
+        await tester.pumpAndSettle();
 
-      await tester.enterText(find.byKey(EditPetWeightScreen.petWeightWeightKey), '12.3');
-      await tester.pumpAndSettle();
+        await tester.tap(find.byKey(EditPetWeightScreen.petWeightDateKey));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-      // Assert
-      verify(mockDb.updatePetWeight(any, any, any, any, any)).called(1);
-      verifyNever(mockDb.createPetWeight(any, any, any, any, any));
-      verify(mockGoRouter.go(any)).called(1);
-    });
+        await tester.enterText(
+          find.byKey(EditPetWeightScreen.petWeightWeightKey),
+          '12.3',
+        );
+        await tester.pumpAndSettle();
 
-    testWidgets('saves pet weight for new pet weight and navigates back on valid input', (
-      tester,
-    ) async {
-      // Arrange
-      when(mockDb.createPetWeight(any, any, any, any, any))
-          .thenAnswer((_) async => PetWeight(petWeightId: 1, pet: 1, date: DateTime.now(), weight: 12.3, weightUnit: WeightUnits.metric));
-      // Act
-      await tester.pumpWidget(createScreen(mockDb));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+        // Assert
+        verify(mockDb.updatePetWeight(any, any, any, any)).called(1);
+        verifyNever(mockDb.createPetWeight(any, any, any, any));
+        verify(mockGoRouter.go(any)).called(1);
+      },
+    );
 
-      await tester.tap(find.byKey(EditPetWeightScreen.petWeightDateKey));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'saves pet weight for new pet weight and navigates back on valid input',
+      (tester) async {
+        // Arrange
+        when(
+          mockDb.watchSettings(),
+        ).thenAnswer((_) => Stream.value(createMockSettings()));
 
-      await tester.enterText(find.byKey(EditPetWeightScreen.petWeightWeightKey), '12.3');
-      await tester.pumpAndSettle();
+        when(mockDb.createPetWeight(any, any, any, any)).thenAnswer(
+          (_) async => PetWeight(
+            petWeightId: 1,
+            pet: 1,
+            date: DateTime.now(),
+            weightKg: 12.3,
+          ),
+        );
+        // Act
+        await tester.pumpWidget(createScreen(mockDb));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-      // Assert
-      verify(mockDb.createPetWeight(any, any, any, any, any)).called(1);
-      verify(mockGoRouter.go(any)).called(1);
-    });
+        await tester.tap(find.byKey(EditPetWeightScreen.petWeightDateKey));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.byKey(EditPetWeightScreen.petWeightWeightKey),
+          '12.3',
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+        // Assert
+        verify(mockDb.createPetWeight(any, any, any, any)).called(1);
+        verify(mockGoRouter.go(any)).called(1);
+      },
+    );
 
     testWidgets('shows delete button and deletes pet weight when confirmed', (
       tester,
@@ -190,7 +242,6 @@ void main() {
       verify(mockGoRouter.go(any)).called(1);
     });
 
-
     testWidgets('does not show delete button for add new pet weight', (
       tester,
     ) async {
@@ -205,10 +256,17 @@ void main() {
       tester,
     ) async {
       // Arrange
+      when(
+        mockDb.watchSettings(),
+      ).thenAnswer((_) => Stream.value(createMockSettings()));
+
       await tester.pumpWidget(createScreen(mockDb));
       await tester.pumpAndSettle();
       // Act
-      await tester.enterText(find.byKey(EditPetWeightScreen.petWeightWeightKey), '11.0');
+      await tester.enterText(
+        find.byKey(EditPetWeightScreen.petWeightWeightKey),
+        '11.0',
+      );
       await tester.pumpAndSettle();
       final dynamic widgetsAppState = tester.state(find.byType(WidgetsApp));
       await widgetsAppState.didPopRoute();
