@@ -6,7 +6,6 @@ import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/controller/all_pets_controller.dart';
 import 'package:petjournal/app/pet/models/pet_model.dart';
 import 'package:petjournal/app/settings/models/settings_model.dart';
-import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
