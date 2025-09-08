@@ -7,8 +7,7 @@ class PetWeightMapper {
       petWeightId: petWeight.petWeightId,
       petId: petWeight.pet,
       date: petWeight.date,
-      weight: petWeight.weight,
-      weightUnit: petWeight.weightUnit,
+      weightKg: petWeight.weightKg,
       notes: petWeight.notes,
     );
   }

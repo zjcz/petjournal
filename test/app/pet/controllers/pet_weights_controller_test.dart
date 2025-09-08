@@ -7,10 +7,12 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_weights_controller.dart';
 import 'package:petjournal/app/pet/models/pet_weight_model.dart';
+import 'package:petjournal/app/settings/models/settings_model.dart';
 import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 import 'package:petjournal/data/mapper/pet_weight_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
 
@@ -43,16 +45,14 @@ void main() {
     });
 
     setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
-      when(mockDatabaseService.watchSettings()).thenAnswer(
-        (_) => Stream.value(
-          Setting(
-            settingsId: defaults.defaultSettingsId,
-            acceptedTermsAndConditions: true,
-            optIntoAnalyticsWarning: true,
-            onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric,
-            createLinkedJournalEntries: createLinkedJournalEntries,
-          ),
+      SettingsLookup().refreshSettings(
+        SettingsModel(
+          lastUsedVersion: '1.0.0',
+          acceptedTermsAndConditions: true,
+          optIntoAnalyticsWarning: true,
+          onBoardingComplete: true,
+          defaultWeightUnit: WeightUnits.metric,
+          createLinkedJournalEntries: createLinkedJournalEntries,
         ),
       );
 
@@ -87,8 +87,7 @@ void main() {
               petWeightId: 1,
               pet: petId,
               date: DateTime(2024, 5, 28),
-              weight: 12.5,
-              weightUnit: WeightUnits.metric,
+              weightKg: 12.5,
               notes: 'Healthy',
             ),
           ];
@@ -173,8 +172,7 @@ void main() {
               petWeightId: 1,
               pet: petId,
               date: DateTime(2024, 5, 28),
-              weight: 12.5,
-              weightUnit: WeightUnits.metric,
+              weightKg: 12.5,
               notes: 'Healthy',
             ),
           ];
@@ -183,8 +181,7 @@ void main() {
               petWeightId: 2,
               pet: petId,
               date: DateTime(2024, 6, 1),
-              weight: 13.0,
-              weightUnit: WeightUnits.metric,
+              weightKg: 13.0,
               notes: 'Gained weight',
             ),
           ];
@@ -233,16 +230,14 @@ void main() {
           petWeightId: 1,
           pet: petId,
           date: DateTime(2024, 5, 28),
-          weight: 12.5,
-          weightUnit: WeightUnits.metric,
+          weightKg: 12.5,
           notes: 'Test Weight',
         );
 
         final initialPetWeightModel = PetWeightModel(
           petId: initialPetWeight.pet,
           date: initialPetWeight.date,
-          weight: initialPetWeight.weight,
-          weightUnit: initialPetWeight.weightUnit,
+          weightKg: initialPetWeight.weightKg,
           notes: initialPetWeight.notes,
         );
 
@@ -253,8 +248,7 @@ void main() {
           mockDatabaseService.createPetWeight(
             initialPetWeightModel.petId,
             initialPetWeightModel.date,
-            initialPetWeightModel.weight,
-            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.weightKg,
             initialPetWeightModel.notes,
           ),
         ).thenAnswer((_) => Future.value(initialPetWeight));
@@ -282,8 +276,7 @@ void main() {
           mockDatabaseService.createPetWeight(
             initialPetWeightModel.petId,
             initialPetWeightModel.date,
-            initialPetWeightModel.weight,
-            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.weightKg,
             initialPetWeightModel.notes,
           ),
         ).called(1);
@@ -301,8 +294,7 @@ void main() {
           petWeightId: 1,
           pet: petId,
           date: DateTime(2024, 5, 28),
-          weight: 12.5,
-          weightUnit: WeightUnits.metric,
+          weightKg: 12.5,
           notes: 'Test Weight',
         );
 
@@ -310,8 +302,7 @@ void main() {
           petWeightId: initialPetWeight.petWeightId,
           petId: initialPetWeight.pet,
           date: initialPetWeight.date,
-          weight: initialPetWeight.weight,
-          weightUnit: initialPetWeight.weightUnit,
+          weightKg: initialPetWeight.weightKg,
           notes: initialPetWeight.notes,
         );
 
@@ -322,8 +313,7 @@ void main() {
           mockDatabaseService.updatePetWeight(
             initialPetWeightModel.petWeightId,
             initialPetWeightModel.date,
-            initialPetWeightModel.weight,
-            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.weightKg,
             initialPetWeightModel.notes,
           ),
         ).thenAnswer((_) => Future.value(1));
@@ -351,8 +341,7 @@ void main() {
           mockDatabaseService.updatePetWeight(
             initialPetWeightModel.petWeightId,
             initialPetWeightModel.date,
-            initialPetWeightModel.weight,
-            initialPetWeightModel.weightUnit,
+            initialPetWeightModel.weightKg,
             initialPetWeightModel.notes,
           ),
         ).called(1);
@@ -402,16 +391,14 @@ void main() {
             petWeightId: 1,
             pet: petId,
             date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: WeightUnits.metric,
+            weightKg: 12.5,
             notes: 'Test Weight',
           );
 
           final initialPetWeightModel = PetWeightModel(
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
-            weight: initialPetWeight.weight,
-            weightUnit: initialPetWeight.weightUnit,
+            weightKg: initialPetWeight.weightKg,
             notes: initialPetWeight.notes,
           );
 
@@ -422,8 +409,7 @@ void main() {
             mockDatabaseService.createPetWeight(
               initialPetWeightModel.petId,
               initialPetWeightModel.date,
-              initialPetWeightModel.weight,
-              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.weightKg,
               initialPetWeightModel.notes,
             ),
           ).thenAnswer((_) => Future.value(initialPetWeight));
@@ -451,7 +437,8 @@ void main() {
               tags: anyNamed('tags'),
               linkedRecordId: savedPetWeight!.petWeightId!,
               linkedRecordType: LinkedRecordType.weight,
-              linkedRecordTitle: 'Weight ${savedPetWeight.niceName()} recorded',
+              linkedRecordTitle:
+                  'Weight ${savedPetWeight.niceName(true)} recorded',
             ),
           ).called(1);
 
@@ -469,16 +456,14 @@ void main() {
             petWeightId: 1,
             pet: petId,
             date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: WeightUnits.metric,
+            weightKg: 12.5,
             notes: 'Test Weight',
           );
 
           final initialPetWeightModel = PetWeightModel(
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
-            weight: initialPetWeight.weight,
-            weightUnit: initialPetWeight.weightUnit,
+            weightKg: initialPetWeight.weightKg,
             notes: initialPetWeight.notes,
           );
 
@@ -489,8 +474,7 @@ void main() {
             mockDatabaseService.createPetWeight(
               initialPetWeightModel.petId,
               initialPetWeightModel.date,
-              initialPetWeightModel.weight,
-              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.weightKg,
               initialPetWeightModel.notes,
             ),
           ).thenAnswer((_) => Future.value(initialPetWeight));
@@ -534,8 +518,7 @@ void main() {
             petWeightId: 1,
             pet: petId,
             date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: WeightUnits.metric,
+            weightKg: 12.5,
             notes: 'Test Weight',
           );
 
@@ -543,8 +526,7 @@ void main() {
             petWeightId: initialPetWeight.petWeightId,
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
-            weight: initialPetWeight.weight,
-            weightUnit: initialPetWeight.weightUnit,
+            weightKg: initialPetWeight.weightKg,
             notes: initialPetWeight.notes,
           );
 
@@ -555,8 +537,7 @@ void main() {
             mockDatabaseService.updatePetWeight(
               initialPetWeightModel.petWeightId,
               initialPetWeightModel.date,
-              initialPetWeightModel.weight,
-              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.weightKg,
               initialPetWeightModel.notes,
             ),
           ).thenAnswer((_) => Future.value(1));
@@ -582,7 +563,7 @@ void main() {
               linkedRecordId: savedPetWeight!.petWeightId,
               linkedRecordType: LinkedRecordType.weight,
               linkedRecordTitle:
-                  'Weight ${savedPetWeight.niceName()} recorded (updated)',
+                  'Weight ${savedPetWeight.niceName(true)} recorded (updated)',
             ),
           ).called(1);
 
@@ -599,8 +580,7 @@ void main() {
             petWeightId: 1,
             pet: petId,
             date: DateTime(2024, 5, 28),
-            weight: 12.5,
-            weightUnit: WeightUnits.metric,
+            weightKg: 12.5,
             notes: 'Test Weight',
           );
 
@@ -608,8 +588,7 @@ void main() {
             petWeightId: initialPetWeight.petWeightId,
             petId: initialPetWeight.pet,
             date: initialPetWeight.date,
-            weight: initialPetWeight.weight,
-            weightUnit: initialPetWeight.weightUnit,
+            weightKg: initialPetWeight.weightKg,
             notes: initialPetWeight.notes,
           );
 
@@ -620,8 +599,7 @@ void main() {
             mockDatabaseService.updatePetWeight(
               initialPetWeightModel.petWeightId,
               initialPetWeightModel.date,
-              initialPetWeightModel.weight,
-              initialPetWeightModel.weightUnit,
+              initialPetWeightModel.weightKg,
               initialPetWeightModel.notes,
             ),
           ).thenAnswer((_) => Future.value(1));

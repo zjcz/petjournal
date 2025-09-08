@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
@@ -57,15 +56,13 @@ void main() {
         pet!.petId,
         testDate,
         testWeight,
-        WeightUnits.metric,
         testNotes,
       );
 
       expect(petWeight, match.isNotNull);
       expect(petWeight?.pet, equals(pet.petId));
       expect(petWeight?.date, equals(testDate));
-      expect(petWeight?.weight, equals(testWeight));
-      expect(petWeight?.weightUnit, equals(WeightUnits.metric));
+      expect(petWeight?.weightKg, equals(testWeight));
       expect(petWeight?.notes, equals(testNotes));
     });
 
@@ -77,7 +74,6 @@ void main() {
         pet!.petId,
         DateTime(2025, 1, 1),
         10.5,
-        WeightUnits.metric,
         null,
       );
 
@@ -98,7 +94,6 @@ void main() {
         pet!.petId,
         testDate,
         10.5,
-        WeightUnits.metric,
         'Test Notes',
       );
 
@@ -109,11 +104,7 @@ void main() {
       final retrievedPetWeight = await database.getPetWeight(petWeightId);
       expect(retrievedPetWeight, match.isNotNull);
       expect(retrievedPetWeight?.date, equals(testDate));
-      expect(retrievedPetWeight?.weight, equals(10.5));
-      expect(
-        retrievedPetWeight?.weightUnit,
-        equals(WeightUnits.metric),
-      );
+      expect(retrievedPetWeight?.weightKg, equals(10.5));
       expect(retrievedPetWeight?.notes, equals('Test Notes'));
     });
 
@@ -123,8 +114,9 @@ void main() {
         final pet = await database.getPet(1);
         expect(pet, match.isNotNull);
 
-        final petWeights =
-            await database.getAllPetWeightsForPet(pet!.petId).first;
+        final petWeights = await database
+            .getAllPetWeightsForPet(pet!.petId)
+            .first;
         expect(petWeights, isEmpty);
       },
     );
@@ -140,7 +132,6 @@ void main() {
           pet!.petId,
           DateTime(2025, 1, 1),
           10.5,
-          WeightUnits.metric,
           'Notes 1',
         );
 
@@ -148,12 +139,12 @@ void main() {
           pet.petId,
           DateTime(2025, 2, 1),
           11.0,
-          WeightUnits.imperial,
           'Notes 2',
         );
 
-        final petWeights =
-            await database.getAllPetWeightsForPet(pet.petId).first;
+        final petWeights = await database
+            .getAllPetWeightsForPet(pet.petId)
+            .first;
         expect(petWeights.length, equals(2));
         // Verify they're ordered by date descending
         expect(petWeights[0].date, equals(DateTime(2025, 2, 1)));
@@ -168,7 +159,6 @@ void main() {
         pet!.petId,
         DateTime(2025, 1, 1),
         10.5,
-        WeightUnits.metric,
         'Test Notes',
       );
 
@@ -181,7 +171,6 @@ void main() {
         petWeightId,
         newDate,
         12.0,
-        WeightUnits.imperial,
         'Updated Notes',
       );
 
@@ -190,11 +179,7 @@ void main() {
       // Verify the update
       final updatedPetWeight = await database.getPetWeight(petWeightId);
       expect(updatedPetWeight?.date, equals(newDate));
-      expect(updatedPetWeight?.weight, equals(12.0));
-      expect(
-        updatedPetWeight?.weightUnit,
-        equals(WeightUnits.imperial),
-      );
+      expect(updatedPetWeight?.weightKg, equals(12.0));
       expect(updatedPetWeight?.notes, equals('Updated Notes'));
     });
 
@@ -203,7 +188,6 @@ void main() {
         999,
         DateTime(2025, 1, 1),
         10.5,
-        WeightUnits.metric,
         'Test Notes',
       );
 
@@ -217,7 +201,6 @@ void main() {
         pet!.petId,
         DateTime(2025, 1, 1),
         10.5,
-        WeightUnits.metric,
         'Test Notes',
       );
 
@@ -245,7 +228,6 @@ void main() {
         pet!.petId,
         DateTime(2025, 1, 1),
         10.5,
-        WeightUnits.metric,
         'Test Notes',
       );
 
@@ -257,15 +239,13 @@ void main() {
 
       // Collect initial value
       final initialValue = await stream.first;
-      expect(initialValue?.weight, equals(10.5));
-      expect(initialValue?.weightUnit, equals(WeightUnits.metric));
+      expect(initialValue?.weightKg, equals(10.5));
 
       // Update the pet weight
       await database.updatePetWeight(
         petWeightId,
         DateTime(2025, 1, 1),
         12.0,
-        WeightUnits.imperial,
         'Updated Notes',
       );
 
@@ -274,8 +254,7 @@ void main() {
 
       // Verify the update
       final updatedValue = await stream.first;
-      expect(updatedValue?.weight, equals(12.0));
-      expect(updatedValue?.weightUnit, equals(WeightUnits.imperial));
+      expect(updatedValue?.weightKg, equals(12.0));
     });
   });
 }

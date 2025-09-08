@@ -291,16 +291,14 @@ class DatabaseService extends _$DatabaseService {
   Future<PetWeight?> createPetWeight(
     int petId,
     DateTime date,
-    double weight,
-    WeightUnits weightUnit,
+    double weightKg,
     String? notes,
   ) {
     return into(petWeights).insertReturningOrNull(
       PetWeightsCompanion.insert(
         pet: petId,
         date: date,
-        weight: weight,
-        weightUnit: Value(weightUnit),
+        weightKg: weightKg,
         notes: Value(notes),
       ),
     );
@@ -310,15 +308,13 @@ class DatabaseService extends _$DatabaseService {
   Future<int> updatePetWeight(
     int id,
     DateTime date,
-    double weight,
-    WeightUnits weightUnit,
+    double weightKg,
     String? notes,
   ) {
     return (update(petWeights)..where((w) => w.petWeightId.equals(id))).write(
       PetWeightsCompanion(
         date: Value(date),
-        weight: Value(weight),
-        weightUnit: Value(weightUnit),
+        weightKg: Value(weightKg),
         notes: Value(notes),
       ),
     );

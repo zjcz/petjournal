@@ -5,6 +5,7 @@ import 'package:petjournal/app/pet/models/pet_weight_model.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/constants/custom_styles.dart';
 import 'package:petjournal/helpers/date_helper.dart';
+import 'package:petjournal/helpers/settings_helper.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
@@ -19,6 +20,8 @@ class PetWeightsWidget extends ConsumerStatefulWidget {
 }
 
 class _PetWeightsWidgetState extends ConsumerState<PetWeightsWidget> {
+  final bool _isMetric = SettingsHelper.isMetric();
+
   @override
   Widget build(BuildContext context) {
     final petWeights = ref.watch(petWeightsControllerProvider(widget.petId));
@@ -47,9 +50,7 @@ class _PetWeightsWidgetState extends ConsumerState<PetWeightsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Current Weight:', style: CustomStyles.dataTableHeaderTextStyle),
-        Text(
-          '${currentWeight.weight.toStringAsFixed(2)} ${currentWeight.weightUnit.niceName}',
-        ),
+        Text(currentWeight.niceName(_isMetric)),
         if (currentWeight.notes != null && currentWeight.notes!.isNotEmpty)
           Text('Notes: ${currentWeight.notes}'),
       ],
@@ -87,11 +88,7 @@ class _PetWeightsWidgetState extends ConsumerState<PetWeightsWidget> {
         cells: <DataCell>[
           DataCell(Text(DateHelper.formatDate(weight.date))),
 
-          DataCell(
-            Text(
-              '${weight.weight.toStringAsFixed(2)} ${weight.weightUnit.niceName}',
-            ),
-          ),
+          DataCell(Text(weight.niceName(_isMetric))),
           DataCell(Text(weight.notes ?? '')),
         ],
         onSelectChanged: (value) async {

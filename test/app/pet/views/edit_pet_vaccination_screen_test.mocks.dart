@@ -17,13 +17,13 @@ import 'package:go_router/src/router.dart' as _i18;
 import 'package:go_router/src/state.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i12;
-import 'package:petjournal/constants/linked_record_type.dart' as _i16;
+import 'package:petjournal/constants/linked_record_type.dart' as _i15;
 import 'package:petjournal/constants/pet_sex.dart' as _i13;
 import 'package:petjournal/constants/pet_status.dart' as _i14;
-import 'package:petjournal/constants/weight_units.dart' as _i15;
+import 'package:petjournal/constants/weight_units.dart' as _i17;
 import 'package:petjournal/data/database/database_service.dart' as _i3;
 import 'package:petjournal/data/database/tables/journal_entry_details.dart'
-    as _i17;
+    as _i16;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -715,18 +715,11 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<_i3.PetWeight?> createPetWeight(
     int? petId,
     DateTime? date,
-    double? weight,
-    _i15.WeightUnits? weightUnit,
+    double? weightKg,
     String? notes,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#createPetWeight, [
-              petId,
-              date,
-              weight,
-              weightUnit,
-              notes,
-            ]),
+            Invocation.method(#createPetWeight, [petId, date, weightKg, notes]),
             returnValue: _i5.Future<_i3.PetWeight?>.value(),
           )
           as _i5.Future<_i3.PetWeight?>);
@@ -735,18 +728,11 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<int> updatePetWeight(
     int? id,
     DateTime? date,
-    double? weight,
-    _i15.WeightUnits? weightUnit,
+    double? weightKg,
     String? notes,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updatePetWeight, [
-              id,
-              date,
-              weight,
-              weightUnit,
-              notes,
-            ]),
+            Invocation.method(#updatePetWeight, [id, date, weightKg, notes]),
             returnValue: _i5.Future<int>.value(0),
           )
           as _i5.Future<int>);
@@ -854,7 +840,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     required String? entryText,
     required List<int>? petIdList,
     required List<String>? tags,
-    _i16.LinkedRecordType? linkedRecordType,
+    _i15.LinkedRecordType? linkedRecordType,
     int? linkedRecordId,
     String? linkedRecordTitle,
   }) =>
@@ -892,7 +878,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   @override
   _i5.Future<int> updateLinkedJournalEntry({
     required int? linkedRecordId,
-    required _i16.LinkedRecordType? linkedRecordType,
+    required _i15.LinkedRecordType? linkedRecordType,
     required String? linkedRecordTitle,
   }) =>
       (super.noSuchMethod(
@@ -930,14 +916,14 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
           as _i5.Stream<List<_i3.JournalEntry>>);
 
   @override
-  _i5.Stream<List<_i17.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
+  _i5.Stream<List<_i16.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
     int? petId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getAllJournalEntryDetailsForPet, [petId]),
-            returnValue: _i5.Stream<List<_i17.JournalEntryDetails>>.empty(),
+            returnValue: _i5.Stream<List<_i16.JournalEntryDetails>>.empty(),
           )
-          as _i5.Stream<List<_i17.JournalEntryDetails>>);
+          as _i5.Stream<List<_i16.JournalEntryDetails>>);
 
   @override
   _i5.Future<int> deleteJournalEntry(int? id) =>
@@ -1070,7 +1056,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
 
   @override
   _i5.Future<int> saveSettingsUser(
-    _i15.WeightUnits? defaultWeightUnit,
+    _i17.WeightUnits? defaultWeightUnit,
     bool? optIntoAnalyticsWarning,
     bool? createLinkedJournalEntries,
   ) =>

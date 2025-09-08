@@ -7,10 +7,12 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_vaccinations_controller.dart';
 import 'package:petjournal/app/pet/models/pet_vaccination_model.dart';
+import 'package:petjournal/app/settings/models/settings_model.dart';
 import 'package:petjournal/constants/defaults.dart' as defaults;
 import 'package:petjournal/constants/linked_record_type.dart';
 import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/data/database/database_service.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 import 'package:petjournal/data/mapper/pet_vaccination_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
 
@@ -43,16 +45,14 @@ void main() {
     });
 
     setupMockDatabaseForJournalEntry(bool createLinkedJournalEntries) {
-      when(mockDatabaseService.watchSettings()).thenAnswer(
-        (_) => Stream.value(
-          Setting(
-            settingsId: defaults.defaultSettingsId,
-            acceptedTermsAndConditions: true,
-            optIntoAnalyticsWarning: true,
-            onBoardingComplete: true,
-            defaultWeightUnit: WeightUnits.metric,
-            createLinkedJournalEntries: createLinkedJournalEntries,
-          ),
+      SettingsLookup().refreshSettings(
+        SettingsModel(
+          lastUsedVersion: '1.0.0',
+          acceptedTermsAndConditions: true,
+          optIntoAnalyticsWarning: true,
+          onBoardingComplete: true,
+          defaultWeightUnit: WeightUnits.metric,
+          createLinkedJournalEntries: createLinkedJournalEntries,
         ),
       );
 
