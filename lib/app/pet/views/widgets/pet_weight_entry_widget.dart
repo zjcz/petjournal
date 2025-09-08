@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -76,6 +77,7 @@ class _PetWeightEntryWidgetState extends ConsumerState<PetWeightEntryWidget> {
           child: TextFormField(
             key: Key('${widget.key.toString()}_kg'),
             controller: _metricKgController,
+            keyboardType: TextInputType.number,
             decoration: InputDecoration(labelText: widget.labelText),
             validator: (value) {
               if (value == null ||
@@ -110,6 +112,8 @@ class _PetWeightEntryWidgetState extends ConsumerState<PetWeightEntryWidget> {
               child: TextFormField(
                 key: Key('${widget.key.toString()}_lb'),
                 controller: _imperialLbController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
                   if (value == null ||
                       value.isEmpty ||
@@ -152,6 +156,7 @@ class _PetWeightEntryWidgetState extends ConsumerState<PetWeightEntryWidget> {
               child: TextFormField(
                 key: Key('${widget.key.toString()}_oz'),
                 controller: _imperialOzController,
+                keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null ||
                       value.isEmpty ||
