@@ -1485,13 +1485,44 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _doseMeta = const VerificationMeta('dose');
+  static const VerificationMeta _frequencyMeta = const VerificationMeta(
+    'frequency',
+  );
   @override
-  late final GeneratedColumn<String> dose = GeneratedColumn<String>(
-    'dose',
+  late final GeneratedColumn<int> frequency = GeneratedColumn<int>(
+    'frequency',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<FrequencyType, String>
+  frequencyType = GeneratedColumn<String>(
+    'frequency_type',
     aliasedName,
     false,
     type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<FrequencyType>($PetMedsTable.$converterfrequencyType);
+  @override
+  late final GeneratedColumnWithTypeConverter<MedType, String> medType =
+      GeneratedColumn<String>(
+        'med_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<MedType>($PetMedsTable.$convertermedType);
+  static const VerificationMeta _doseUnitMeta = const VerificationMeta(
+    'doseUnit',
+  );
+  @override
+  late final GeneratedColumn<double> doseUnit = GeneratedColumn<double>(
+    'dose_unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _startDateMeta = const VerificationMeta(
@@ -1530,7 +1561,10 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
     petMedId,
     pet,
     name,
-    dose,
+    frequency,
+    frequencyType,
+    medType,
+    doseUnit,
     startDate,
     endDate,
     notes,
@@ -1569,13 +1603,21 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('dose')) {
+    if (data.containsKey('frequency')) {
       context.handle(
-        _doseMeta,
-        dose.isAcceptableOrUnknown(data['dose']!, _doseMeta),
+        _frequencyMeta,
+        frequency.isAcceptableOrUnknown(data['frequency']!, _frequencyMeta),
       );
     } else if (isInserting) {
-      context.missing(_doseMeta);
+      context.missing(_frequencyMeta);
+    }
+    if (data.containsKey('dose_unit')) {
+      context.handle(
+        _doseUnitMeta,
+        doseUnit.isAcceptableOrUnknown(data['dose_unit']!, _doseUnitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_doseUnitMeta);
     }
     if (data.containsKey('start_date')) {
       context.handle(
@@ -1618,9 +1660,25 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
-      dose: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}dose'],
+      frequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}frequency'],
+      )!,
+      frequencyType: $PetMedsTable.$converterfrequencyType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}frequency_type'],
+        )!,
+      ),
+      medType: $PetMedsTable.$convertermedType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}med_type'],
+        )!,
+      ),
+      doseUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}dose_unit'],
       )!,
       startDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -1641,13 +1699,23 @@ class $PetMedsTable extends PetMeds with TableInfo<$PetMedsTable, PetMed> {
   $PetMedsTable createAlias(String alias) {
     return $PetMedsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<FrequencyType, String, String>
+  $converterfrequencyType = const EnumNameConverter<FrequencyType>(
+    FrequencyType.values,
+  );
+  static JsonTypeConverter2<MedType, String, String> $convertermedType =
+      const EnumNameConverter<MedType>(MedType.values);
 }
 
 class PetMed extends DataClass implements Insertable<PetMed> {
   final int petMedId;
   final int pet;
   final String name;
-  final String dose;
+  final int frequency;
+  final FrequencyType frequencyType;
+  final MedType medType;
+  final double doseUnit;
   final DateTime startDate;
   final DateTime? endDate;
   final String? notes;
@@ -1655,7 +1723,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
     required this.petMedId,
     required this.pet,
     required this.name,
-    required this.dose,
+    required this.frequency,
+    required this.frequencyType,
+    required this.medType,
+    required this.doseUnit,
     required this.startDate,
     this.endDate,
     this.notes,
@@ -1666,7 +1737,18 @@ class PetMed extends DataClass implements Insertable<PetMed> {
     map['pet_med_id'] = Variable<int>(petMedId);
     map['pet'] = Variable<int>(pet);
     map['name'] = Variable<String>(name);
-    map['dose'] = Variable<String>(dose);
+    map['frequency'] = Variable<int>(frequency);
+    {
+      map['frequency_type'] = Variable<String>(
+        $PetMedsTable.$converterfrequencyType.toSql(frequencyType),
+      );
+    }
+    {
+      map['med_type'] = Variable<String>(
+        $PetMedsTable.$convertermedType.toSql(medType),
+      );
+    }
+    map['dose_unit'] = Variable<double>(doseUnit);
     map['start_date'] = Variable<DateTime>(startDate);
     if (!nullToAbsent || endDate != null) {
       map['end_date'] = Variable<DateTime>(endDate);
@@ -1682,7 +1764,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
       petMedId: Value(petMedId),
       pet: Value(pet),
       name: Value(name),
-      dose: Value(dose),
+      frequency: Value(frequency),
+      frequencyType: Value(frequencyType),
+      medType: Value(medType),
+      doseUnit: Value(doseUnit),
       startDate: Value(startDate),
       endDate: endDate == null && nullToAbsent
           ? const Value.absent()
@@ -1702,7 +1787,14 @@ class PetMed extends DataClass implements Insertable<PetMed> {
       petMedId: serializer.fromJson<int>(json['petMedId']),
       pet: serializer.fromJson<int>(json['pet']),
       name: serializer.fromJson<String>(json['name']),
-      dose: serializer.fromJson<String>(json['dose']),
+      frequency: serializer.fromJson<int>(json['frequency']),
+      frequencyType: $PetMedsTable.$converterfrequencyType.fromJson(
+        serializer.fromJson<String>(json['frequencyType']),
+      ),
+      medType: $PetMedsTable.$convertermedType.fromJson(
+        serializer.fromJson<String>(json['medType']),
+      ),
+      doseUnit: serializer.fromJson<double>(json['doseUnit']),
       startDate: serializer.fromJson<DateTime>(json['startDate']),
       endDate: serializer.fromJson<DateTime?>(json['endDate']),
       notes: serializer.fromJson<String?>(json['notes']),
@@ -1715,7 +1807,14 @@ class PetMed extends DataClass implements Insertable<PetMed> {
       'petMedId': serializer.toJson<int>(petMedId),
       'pet': serializer.toJson<int>(pet),
       'name': serializer.toJson<String>(name),
-      'dose': serializer.toJson<String>(dose),
+      'frequency': serializer.toJson<int>(frequency),
+      'frequencyType': serializer.toJson<String>(
+        $PetMedsTable.$converterfrequencyType.toJson(frequencyType),
+      ),
+      'medType': serializer.toJson<String>(
+        $PetMedsTable.$convertermedType.toJson(medType),
+      ),
+      'doseUnit': serializer.toJson<double>(doseUnit),
       'startDate': serializer.toJson<DateTime>(startDate),
       'endDate': serializer.toJson<DateTime?>(endDate),
       'notes': serializer.toJson<String?>(notes),
@@ -1726,7 +1825,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
     int? petMedId,
     int? pet,
     String? name,
-    String? dose,
+    int? frequency,
+    FrequencyType? frequencyType,
+    MedType? medType,
+    double? doseUnit,
     DateTime? startDate,
     Value<DateTime?> endDate = const Value.absent(),
     Value<String?> notes = const Value.absent(),
@@ -1734,7 +1836,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
     petMedId: petMedId ?? this.petMedId,
     pet: pet ?? this.pet,
     name: name ?? this.name,
-    dose: dose ?? this.dose,
+    frequency: frequency ?? this.frequency,
+    frequencyType: frequencyType ?? this.frequencyType,
+    medType: medType ?? this.medType,
+    doseUnit: doseUnit ?? this.doseUnit,
     startDate: startDate ?? this.startDate,
     endDate: endDate.present ? endDate.value : this.endDate,
     notes: notes.present ? notes.value : this.notes,
@@ -1744,7 +1849,12 @@ class PetMed extends DataClass implements Insertable<PetMed> {
       petMedId: data.petMedId.present ? data.petMedId.value : this.petMedId,
       pet: data.pet.present ? data.pet.value : this.pet,
       name: data.name.present ? data.name.value : this.name,
-      dose: data.dose.present ? data.dose.value : this.dose,
+      frequency: data.frequency.present ? data.frequency.value : this.frequency,
+      frequencyType: data.frequencyType.present
+          ? data.frequencyType.value
+          : this.frequencyType,
+      medType: data.medType.present ? data.medType.value : this.medType,
+      doseUnit: data.doseUnit.present ? data.doseUnit.value : this.doseUnit,
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       endDate: data.endDate.present ? data.endDate.value : this.endDate,
       notes: data.notes.present ? data.notes.value : this.notes,
@@ -1757,7 +1867,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
           ..write('petMedId: $petMedId, ')
           ..write('pet: $pet, ')
           ..write('name: $name, ')
-          ..write('dose: $dose, ')
+          ..write('frequency: $frequency, ')
+          ..write('frequencyType: $frequencyType, ')
+          ..write('medType: $medType, ')
+          ..write('doseUnit: $doseUnit, ')
           ..write('startDate: $startDate, ')
           ..write('endDate: $endDate, ')
           ..write('notes: $notes')
@@ -1766,8 +1879,18 @@ class PetMed extends DataClass implements Insertable<PetMed> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(petMedId, pet, name, dose, startDate, endDate, notes);
+  int get hashCode => Object.hash(
+    petMedId,
+    pet,
+    name,
+    frequency,
+    frequencyType,
+    medType,
+    doseUnit,
+    startDate,
+    endDate,
+    notes,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1775,7 +1898,10 @@ class PetMed extends DataClass implements Insertable<PetMed> {
           other.petMedId == this.petMedId &&
           other.pet == this.pet &&
           other.name == this.name &&
-          other.dose == this.dose &&
+          other.frequency == this.frequency &&
+          other.frequencyType == this.frequencyType &&
+          other.medType == this.medType &&
+          other.doseUnit == this.doseUnit &&
           other.startDate == this.startDate &&
           other.endDate == this.endDate &&
           other.notes == this.notes);
@@ -1785,7 +1911,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
   final Value<int> petMedId;
   final Value<int> pet;
   final Value<String> name;
-  final Value<String> dose;
+  final Value<int> frequency;
+  final Value<FrequencyType> frequencyType;
+  final Value<MedType> medType;
+  final Value<double> doseUnit;
   final Value<DateTime> startDate;
   final Value<DateTime?> endDate;
   final Value<String?> notes;
@@ -1793,7 +1922,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
     this.petMedId = const Value.absent(),
     this.pet = const Value.absent(),
     this.name = const Value.absent(),
-    this.dose = const Value.absent(),
+    this.frequency = const Value.absent(),
+    this.frequencyType = const Value.absent(),
+    this.medType = const Value.absent(),
+    this.doseUnit = const Value.absent(),
     this.startDate = const Value.absent(),
     this.endDate = const Value.absent(),
     this.notes = const Value.absent(),
@@ -1802,19 +1934,28 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
     this.petMedId = const Value.absent(),
     required int pet,
     required String name,
-    required String dose,
+    required int frequency,
+    required FrequencyType frequencyType,
+    required MedType medType,
+    required double doseUnit,
     required DateTime startDate,
     this.endDate = const Value.absent(),
     this.notes = const Value.absent(),
   }) : pet = Value(pet),
        name = Value(name),
-       dose = Value(dose),
+       frequency = Value(frequency),
+       frequencyType = Value(frequencyType),
+       medType = Value(medType),
+       doseUnit = Value(doseUnit),
        startDate = Value(startDate);
   static Insertable<PetMed> custom({
     Expression<int>? petMedId,
     Expression<int>? pet,
     Expression<String>? name,
-    Expression<String>? dose,
+    Expression<int>? frequency,
+    Expression<String>? frequencyType,
+    Expression<String>? medType,
+    Expression<double>? doseUnit,
     Expression<DateTime>? startDate,
     Expression<DateTime>? endDate,
     Expression<String>? notes,
@@ -1823,7 +1964,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
       if (petMedId != null) 'pet_med_id': petMedId,
       if (pet != null) 'pet': pet,
       if (name != null) 'name': name,
-      if (dose != null) 'dose': dose,
+      if (frequency != null) 'frequency': frequency,
+      if (frequencyType != null) 'frequency_type': frequencyType,
+      if (medType != null) 'med_type': medType,
+      if (doseUnit != null) 'dose_unit': doseUnit,
       if (startDate != null) 'start_date': startDate,
       if (endDate != null) 'end_date': endDate,
       if (notes != null) 'notes': notes,
@@ -1834,7 +1978,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
     Value<int>? petMedId,
     Value<int>? pet,
     Value<String>? name,
-    Value<String>? dose,
+    Value<int>? frequency,
+    Value<FrequencyType>? frequencyType,
+    Value<MedType>? medType,
+    Value<double>? doseUnit,
     Value<DateTime>? startDate,
     Value<DateTime?>? endDate,
     Value<String?>? notes,
@@ -1843,7 +1990,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
       petMedId: petMedId ?? this.petMedId,
       pet: pet ?? this.pet,
       name: name ?? this.name,
-      dose: dose ?? this.dose,
+      frequency: frequency ?? this.frequency,
+      frequencyType: frequencyType ?? this.frequencyType,
+      medType: medType ?? this.medType,
+      doseUnit: doseUnit ?? this.doseUnit,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       notes: notes ?? this.notes,
@@ -1862,8 +2012,21 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (dose.present) {
-      map['dose'] = Variable<String>(dose.value);
+    if (frequency.present) {
+      map['frequency'] = Variable<int>(frequency.value);
+    }
+    if (frequencyType.present) {
+      map['frequency_type'] = Variable<String>(
+        $PetMedsTable.$converterfrequencyType.toSql(frequencyType.value),
+      );
+    }
+    if (medType.present) {
+      map['med_type'] = Variable<String>(
+        $PetMedsTable.$convertermedType.toSql(medType.value),
+      );
+    }
+    if (doseUnit.present) {
+      map['dose_unit'] = Variable<double>(doseUnit.value);
     }
     if (startDate.present) {
       map['start_date'] = Variable<DateTime>(startDate.value);
@@ -1883,7 +2046,10 @@ class PetMedsCompanion extends UpdateCompanion<PetMed> {
           ..write('petMedId: $petMedId, ')
           ..write('pet: $pet, ')
           ..write('name: $name, ')
-          ..write('dose: $dose, ')
+          ..write('frequency: $frequency, ')
+          ..write('frequencyType: $frequencyType, ')
+          ..write('medType: $medType, ')
+          ..write('doseUnit: $doseUnit, ')
           ..write('startDate: $startDate, ')
           ..write('endDate: $endDate, ')
           ..write('notes: $notes')
@@ -5819,7 +5985,10 @@ typedef $$PetMedsTableCreateCompanionBuilder =
       Value<int> petMedId,
       required int pet,
       required String name,
-      required String dose,
+      required int frequency,
+      required FrequencyType frequencyType,
+      required MedType medType,
+      required double doseUnit,
       required DateTime startDate,
       Value<DateTime?> endDate,
       Value<String?> notes,
@@ -5829,7 +5998,10 @@ typedef $$PetMedsTableUpdateCompanionBuilder =
       Value<int> petMedId,
       Value<int> pet,
       Value<String> name,
-      Value<String> dose,
+      Value<int> frequency,
+      Value<FrequencyType> frequencyType,
+      Value<MedType> medType,
+      Value<double> doseUnit,
       Value<DateTime> startDate,
       Value<DateTime?> endDate,
       Value<String?> notes,
@@ -5876,8 +6048,25 @@ class $$PetMedsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get dose => $composableBuilder(
-    column: $table.dose,
+  ColumnFilters<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<FrequencyType, FrequencyType, String>
+  get frequencyType => $composableBuilder(
+    column: $table.frequencyType,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<MedType, MedType, String> get medType =>
+      $composableBuilder(
+        column: $table.medType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<double> get doseUnit => $composableBuilder(
+    column: $table.doseUnit,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5939,8 +6128,23 @@ class $$PetMedsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get dose => $composableBuilder(
-    column: $table.dose,
+  ColumnOrderings<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get frequencyType => $composableBuilder(
+    column: $table.frequencyType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get medType => $composableBuilder(
+    column: $table.medType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get doseUnit => $composableBuilder(
+    column: $table.doseUnit,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5998,8 +6202,20 @@ class $$PetMedsTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<String> get dose =>
-      $composableBuilder(column: $table.dose, builder: (column) => column);
+  GeneratedColumn<int> get frequency =>
+      $composableBuilder(column: $table.frequency, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<FrequencyType, String> get frequencyType =>
+      $composableBuilder(
+        column: $table.frequencyType,
+        builder: (column) => column,
+      );
+
+  GeneratedColumnWithTypeConverter<MedType, String> get medType =>
+      $composableBuilder(column: $table.medType, builder: (column) => column);
+
+  GeneratedColumn<double> get doseUnit =>
+      $composableBuilder(column: $table.doseUnit, builder: (column) => column);
 
   GeneratedColumn<DateTime> get startDate =>
       $composableBuilder(column: $table.startDate, builder: (column) => column);
@@ -6065,7 +6281,10 @@ class $$PetMedsTableTableManager
                 Value<int> petMedId = const Value.absent(),
                 Value<int> pet = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<String> dose = const Value.absent(),
+                Value<int> frequency = const Value.absent(),
+                Value<FrequencyType> frequencyType = const Value.absent(),
+                Value<MedType> medType = const Value.absent(),
+                Value<double> doseUnit = const Value.absent(),
                 Value<DateTime> startDate = const Value.absent(),
                 Value<DateTime?> endDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -6073,7 +6292,10 @@ class $$PetMedsTableTableManager
                 petMedId: petMedId,
                 pet: pet,
                 name: name,
-                dose: dose,
+                frequency: frequency,
+                frequencyType: frequencyType,
+                medType: medType,
+                doseUnit: doseUnit,
                 startDate: startDate,
                 endDate: endDate,
                 notes: notes,
@@ -6083,7 +6305,10 @@ class $$PetMedsTableTableManager
                 Value<int> petMedId = const Value.absent(),
                 required int pet,
                 required String name,
-                required String dose,
+                required int frequency,
+                required FrequencyType frequencyType,
+                required MedType medType,
+                required double doseUnit,
                 required DateTime startDate,
                 Value<DateTime?> endDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
@@ -6091,7 +6316,10 @@ class $$PetMedsTableTableManager
                 petMedId: petMedId,
                 pet: pet,
                 name: name,
-                dose: dose,
+                frequency: frequency,
+                frequencyType: frequencyType,
+                medType: medType,
+                doseUnit: doseUnit,
                 startDate: startDate,
                 endDate: endDate,
                 notes: notes,

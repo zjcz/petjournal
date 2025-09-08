@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:petjournal/constants/defaults.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -223,7 +225,10 @@ class DatabaseService extends _$DatabaseService {
   Future<PetMed?> createPetMed(
     int petId,
     String name,
-    String dose,
+    int frequency,
+    FrequencyType frequencyType,
+    double doseUnit,
+    MedType medType,
     DateTime startDate,
     DateTime? endDate,
     String? notes,
@@ -232,7 +237,10 @@ class DatabaseService extends _$DatabaseService {
       PetMedsCompanion.insert(
         pet: petId,
         name: name,
-        dose: dose,
+        frequency: frequency,
+        frequencyType: frequencyType,
+        doseUnit: doseUnit,
+        medType: medType,
         startDate: startDate,
         endDate: endDate == null ? Value.absent() : Value(endDate),
         notes: Value(notes),
@@ -244,7 +252,10 @@ class DatabaseService extends _$DatabaseService {
   Future<int> updatePetMed(
     int id,
     String name,
-    String dose,
+    int frequency,
+    FrequencyType frequencyType,
+    double doseUnit,
+    MedType medType,
     DateTime startDate,
     DateTime? endDate,
     String? notes,
@@ -252,7 +263,10 @@ class DatabaseService extends _$DatabaseService {
     return (update(petMeds)..where((m) => m.petMedId.equals(id))).write(
       PetMedsCompanion(
         name: Value(name),
-        dose: Value(dose),
+        frequency: Value(frequency),
+        frequencyType: Value(frequencyType),
+        doseUnit: Value(doseUnit),
+        medType: Value(medType),        
         startDate: Value(startDate),
         endDate: endDate == null ? Value.absent() : Value(endDate),
         notes: Value(notes),

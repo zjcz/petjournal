@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
@@ -45,7 +47,10 @@ void main() {
   group('PetMed CRUD Operations', () {
     test('create a new pet med record', () async {
       final testName = 'Test Med';
-      final testDose = '10mg';
+      final freq = 1;
+      final freqType = FrequencyType.daily;
+      final testDose = 10.0;
+      final testMedType = MedType.oral;
       final testStartDate = DateTime(2025, 1, 1);
       final testEndDate = DateTime(2025, 12, 31);
       final testNotes = 'Test Notes';
@@ -57,7 +62,10 @@ void main() {
       final petMed = await database.createPetMed(
         pet!.petId,
         testName,
+        freq,
+        freqType,
         testDose,
+        testMedType,
         testStartDate,
         testEndDate,
         testNotes,
@@ -66,7 +74,10 @@ void main() {
       expect(petMed, match.isNotNull);
       expect(petMed?.pet, equals(pet.petId));
       expect(petMed?.name, equals(testName));
-      expect(petMed?.dose, equals(testDose));
+      expect(petMed?.frequency, equals(freq));
+      expect(petMed?.frequencyType, equals(freqType));
+      expect(petMed?.doseUnit, equals(testDose));
+      expect(petMed?.medType, equals(testMedType));
       expect(petMed?.startDate, equals(testStartDate));
       expect(petMed?.endDate, equals(testEndDate));
       expect(petMed?.notes, equals(testNotes));
@@ -79,7 +90,10 @@ void main() {
       final petMed = await database.createPetMed(
         pet!.petId,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Test Notes',
@@ -101,7 +115,10 @@ void main() {
       final createdPetMed = await database.createPetMed(
         pet!.petId,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         testStartDate,
         null,
         'Test Notes',
@@ -114,7 +131,10 @@ void main() {
       final retrievedPetMed = await database.getPetMed(petMedId);
       expect(retrievedPetMed, match.isNotNull);
       expect(retrievedPetMed?.name, equals('Test Med'));
-      expect(retrievedPetMed?.dose, equals('10mg'));
+      expect(retrievedPetMed?.frequency, equals(1));
+      expect(retrievedPetMed?.frequencyType, equals(FrequencyType.daily));
+      expect(retrievedPetMed?.doseUnit, equals(10));
+      expect(retrievedPetMed?.medType, equals(MedType.oral));
       expect(retrievedPetMed?.startDate, equals(testStartDate));
       expect(retrievedPetMed?.notes, equals('Test Notes'));
     });
@@ -135,7 +155,10 @@ void main() {
       await database.createPetMed(
         pet!.petId,
         'Med 1',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Notes 1',
@@ -144,7 +167,10 @@ void main() {
       await database.createPetMed(
         pet.petId,
         'Med 2',
-        '20mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 2, 1),
         DateTime(2025, 12, 31),
         'Notes 2',
@@ -163,7 +189,10 @@ void main() {
       final petMed = await database.createPetMed(
         pet!.petId,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Test Notes',
@@ -178,7 +207,10 @@ void main() {
       final updatedCount = await database.updatePetMed(
         petMedId,
         'Updated Med',
-        '20mg',
+        2,
+        FrequencyType.weekly,
+        20,
+        MedType.injection,
         newStartDate,
         newEndDate,
         'Updated Notes',
@@ -189,7 +221,10 @@ void main() {
       // Verify the update
       final updatedPetMed = await database.getPetMed(petMedId);
       expect(updatedPetMed?.name, equals('Updated Med'));
-      expect(updatedPetMed?.dose, equals('20mg'));
+      expect(updatedPetMed?.frequency, equals(2));
+      expect(updatedPetMed?.frequencyType, equals(FrequencyType.weekly));
+      expect(updatedPetMed?.doseUnit, equals(20));
+      expect(updatedPetMed?.medType, equals(MedType.injection));
       expect(updatedPetMed?.startDate, equals(newStartDate));
       expect(updatedPetMed?.endDate, equals(newEndDate));
       expect(updatedPetMed?.notes, equals('Updated Notes'));
@@ -199,7 +234,10 @@ void main() {
       final updatedCount = await database.updatePetMed(
         999,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Test Notes',
@@ -214,7 +252,10 @@ void main() {
       final petMed = await database.createPetMed(
         pet!.petId,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Test Notes',
@@ -243,7 +284,10 @@ void main() {
       final petMed = await database.createPetMed(
         pet!.petId,
         'Test Med',
-        '10mg',
+        1,
+        FrequencyType.daily,
+        10,
+        MedType.oral,
         DateTime(2025, 1, 1),
         null,
         'Test Notes',
@@ -258,13 +302,19 @@ void main() {
       // Collect initial value
       final initialValue = await stream.first;
       expect(initialValue?.name, equals('Test Med'));
-      expect(initialValue?.dose, equals('10mg'));
+      expect(initialValue?.frequency, equals(1));
+      expect(initialValue?.frequencyType, equals(FrequencyType.daily));
+      expect(initialValue?.doseUnit, equals(10));
+      expect(initialValue?.medType, equals(MedType.oral));
 
       // Update the pet med
       await database.updatePetMed(
         petMedId,
         'Updated Med',
-        '20mg',
+        2,
+        FrequencyType.weekly,
+        20,
+        MedType.injection,
         DateTime(2025, 1, 1),
         null,
         'Updated Notes',
@@ -276,7 +326,10 @@ void main() {
       // Verify the update
       final updatedValue = await stream.first;
       expect(updatedValue?.name, equals('Updated Med'));
-      expect(updatedValue?.dose, equals('20mg'));
+      expect(updatedValue?.frequency, equals(2));
+      expect(updatedValue?.frequencyType, equals(FrequencyType.weekly));
+      expect(updatedValue?.doseUnit, equals(20));
+      expect(updatedValue?.medType, equals(MedType.injection));
     });
   });
 }

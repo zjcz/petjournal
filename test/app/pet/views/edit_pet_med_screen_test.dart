@@ -6,6 +6,8 @@ import 'package:mockito/mockito.dart';
 import 'package:petjournal/app/pet/views/edit_pet_med_screen.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:petjournal/app/settings/models/settings_model.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/constants/pet_sex.dart';
 import 'package:petjournal/constants/pet_status.dart';
 import 'package:petjournal/constants/weight_units.dart';
@@ -65,14 +67,17 @@ void main() {
       petMedId: 1,
       petId: 1,
       name: 'Antibiotic',
-      dose: '5mg',
+      frequency: 1,
+      frequencyType: FrequencyType.daily,
+      doseUnit: 1.5,
+      medType: MedType.oral,
       startDate: DateTime(2024, 5, 28),
       endDate: DateTime(2024, 6, 1),
       notes: 'Take with food',
     );
 
     when(mockDb.getPet(any)).thenAnswer((_) async => testPet);
-    
+
     SettingsLookup().refreshSettings(
       SettingsModel(
         lastUsedVersion: '1.0.0',
@@ -93,7 +98,10 @@ void main() {
       // Assert
       expect(find.text('Add Medication'), findsOneWidget);
       expect(find.text('Name*'), findsOneWidget);
+      expect(find.text('Frequency*'), findsOneWidget);
+      expect(find.text('Frequency Type*'), findsOneWidget);
       expect(find.text('Dose*'), findsOneWidget);
+      expect(find.text('Medication Type*'), findsOneWidget);
       expect(find.text('Start Date*'), findsOneWidget);
       expect(find.text('End Date'), findsOneWidget);
       expect(find.text('Notes (Optional)'), findsOneWidget);
@@ -114,6 +122,9 @@ void main() {
       // Assert
       expect(find.text('Name is required'), findsOneWidget);
       expect(find.text('Dose is required'), findsOneWidget);
+      expect(find.text('Frequency is required'), findsOneWidget);
+      expect(find.text('Frequency Type is required'), findsOneWidget);
+      expect(find.text('Medication Type is required'), findsOneWidget);
       expect(
         find.text('Please correct the errors in the form.'),
         findsOneWidget,
@@ -125,7 +136,7 @@ void main() {
       (tester) async {
         // Arrange
         when(
-          mockDb.updatePetMed(any, any, any, any, any, any),
+          mockDb.updatePetMed(any, any, any, any, any, any, any, any, any),
         ).thenAnswer((_) async => 1);
         // Act
         await tester.pumpWidget(createScreen(mockDb, petMed: testPetMed));
@@ -150,8 +161,12 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         // Assert
-        verify(mockDb.updatePetMed(any, any, any, any, any, any)).called(1);
-        verifyNever(mockDb.createPetMed(any, any, any, any, any, any));
+        verify(
+          mockDb.updatePetMed(any, any, any, any, any, any, any, any, any),
+        ).called(1);
+        verifyNever(
+          mockDb.createPetMed(any, any, any, any, any, any, any, any, any),
+        );
         verify(mockGoRouter.go(any)).called(1);
       },
     );
@@ -160,12 +175,17 @@ void main() {
       'saves pet med for new pet med and navigates back on valid input',
       (tester) async {
         // Arrange
-        when(mockDb.createPetMed(any, any, any, any, any, any)).thenAnswer(
+        when(
+          mockDb.createPetMed(any, any, any, any, any, any, any, any, any),
+        ).thenAnswer(
           (_) async => PetMed(
             petMedId: 1,
             pet: 1,
             name: 'Antibiotic',
-            dose: '5mg',
+            frequency: 1,
+            frequencyType: FrequencyType.daily,
+            doseUnit: 1.5,
+            medType: MedType.oral,
             startDate: DateTime.now(),
           ),
         );
@@ -183,16 +203,32 @@ void main() {
           'Antibiotics',
         );
         await tester.pumpAndSettle();
+
+        await tester.enterText(find.byKey(EditPetMedScreen.petMedFreqKey), '1');
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(DropdownButtonFormField<FrequencyType>));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(FrequencyType.daily.niceName));
+        await tester.pumpAndSettle();
+
         await tester.enterText(
           find.byKey(EditPetMedScreen.petMedDoseKey),
-          '12.3',
+          '1.5',
         );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(DropdownButtonFormField<MedType>));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(MedType.oral.niceName));
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         // Assert
-        verify(mockDb.createPetMed(any, any, any, any, any, any)).called(1);
+        verify(
+          mockDb.createPetMed(any, any, any, any, any, any, any, any, any),
+        ).called(1);
         verify(mockGoRouter.go(any)).called(1);
       },
     );
@@ -206,6 +242,12 @@ void main() {
       await tester.pumpWidget(createScreen(mockDb, petMed: testPetMed));
       await tester.pumpAndSettle();
       final buttonFinder = find.widgetWithText(TextButton, "Delete");
+      final scrollableFinder = find.byType(Scrollable).last;
+      await tester.scrollUntilVisible(
+        buttonFinder,
+        10,
+        scrollable: scrollableFinder,
+      );
       await tester.tap(buttonFinder);
       await tester.pumpAndSettle();
       // Confirm dialog

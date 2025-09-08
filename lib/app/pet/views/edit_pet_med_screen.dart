@@ -1,15 +1,23 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/extensions/material_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/widgets/date_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:petjournal/route_config.dart';
+import 'package:petjournal/widgets/frequency_type_dropdown.dart';
+import 'package:petjournal/widgets/med_type_dropdown.dart';
 
 class EditPetMedScreen extends ConsumerStatefulWidget {
   static final petMedNameKey = GlobalKey<FormFieldState>();
+  static final petMedFreqKey = GlobalKey<FormFieldState>();
+  static final petMedFreqTypeKey = GlobalKey<FormFieldState>();
   static final petMedDoseKey = GlobalKey<FormFieldState>();
+  static final petMedMedTypeKey = GlobalKey<FormFieldState>();
   static final petMedStartDateKey = GlobalKey<FormFieldState>();
   static final petMedEndDateKey = GlobalKey<FormFieldState>();
   static final petMedNotesKey = GlobalKey<FormFieldState>();
@@ -31,10 +39,13 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
 
   // --- Text Controllers ---
   late TextEditingController _nameController;
-  late TextEditingController _doseController;
+  late TextEditingController _frequencyController;
+  late TextEditingController _doseUnitController;
   late TextEditingController _notesController;
 
   // --- State Variables ---
+  FrequencyType? _frequencyType;
+  MedType? _medType;
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
 
@@ -44,19 +55,27 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
 
     // Initialize with existing pet data if available, otherwise defaults
     _nameController = TextEditingController(text: widget.petMed?.name);
-    _doseController = TextEditingController(text: widget.petMed?.dose);
+    _frequencyController = TextEditingController(
+      text: widget.petMed?.frequency.toString(),
+    );
+    _doseUnitController = TextEditingController(
+      text: widget.petMed?.doseUnit.toStringAsFixed(3),
+    );
     _notesController = TextEditingController(text: widget.petMed?.notes ?? '');
 
     if (widget.petMed != null) {
       _startDate = widget.petMed!.startDate;
       _endDate = widget.petMed!.endDate;
+      _frequencyType = widget.petMed!.frequencyType;
+      _medType = widget.petMed!.medType;
     }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _doseController.dispose();
+    _frequencyController.dispose();
+    _doseUnitController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -134,6 +153,7 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: SingleChildScrollView(
               child: Column(
+                spacing: 12,
                 children: [
                   TextFormField(
                     key: EditPetMedScreen.petMedNameKey,
@@ -148,21 +168,91 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
                       });
                     },
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    key: EditPetMedScreen.petMedDoseKey,
-                    controller: _doseController,
-                    decoration: const InputDecoration(labelText: 'Dose*'),
-                    validator: (value) => value == null || value.isEmpty
-                        ? 'Dose is required'
-                        : null,
-                    onChanged: (_) {
-                      setState(() {
-                        _unsavedChanges = true;
-                      });
-                    },
+                  Row(
+                    spacing: 15,
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          key: EditPetMedScreen.petMedFreqKey,
+                          controller: _frequencyController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Frequency*',
+                          ),
+                          validator: (value) =>
+                              value == null ||
+                                  value.isEmpty ||
+                                  int.tryParse(value) == null
+                              ? 'Frequency is required'
+                              : null,
+                          onChanged: (_) {
+                            setState(() {
+                              _unsavedChanges = true;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: FrequencyTypeDropdown(
+                          key: EditPetMedScreen.petMedFreqTypeKey,
+                          labelText: 'Frequency Type*',
+                          value: _frequencyType,
+                          onChanged: (value) {
+                            setState(() {
+                              _frequencyType = value;
+                              _unsavedChanges = true;
+                            });
+                          },
+                          validator: (value) => value == null
+                              ? 'Frequency Type is required'
+                              : null,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  Row(                    
+                    spacing: 15,
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          key: EditPetMedScreen.petMedDoseKey,
+                          controller: _doseUnitController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(labelText: 'Dose*'),
+                          validator: (value) =>
+                              value == null ||
+                                  value.isEmpty ||
+                                  double.tryParse(value) == null
+                              ? 'Dose is required'
+                              : null,
+                          onChanged: (_) {
+                            setState(() {
+                              _unsavedChanges = true;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: MedTypeDropdown(
+                          key: EditPetMedScreen.petMedMedTypeKey,
+                          labelText: 'Medication Type*',
+                          value: _medType,
+                          onChanged: (value) {
+                            setState(() {
+                              _medType = value;
+                              _unsavedChanges = true;
+                            });
+                          },
+                          validator: (value) => value == null
+                              ? 'Medication Type is required'
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
                   DateField(
                     key: EditPetMedScreen.petMedStartDateKey,
                     initialDate: _startDate,
@@ -178,7 +268,6 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
                   DateField(
                     key: EditPetMedScreen.petMedEndDateKey,
                     initialDate: _startDate,
@@ -188,7 +277,6 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
                       _unsavedChanges = true;
                     },
                   ),
-                  const SizedBox(height: 12),
                   TextFormField(
                     key: EditPetMedScreen.petMedNotesKey,
                     controller: _notesController,
@@ -203,7 +291,7 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
 
                   // only show the delete button if the record has been saved
                   if (widget.petMed != null) ...[
@@ -242,7 +330,10 @@ class _EditPetMedScreenState extends ConsumerState<EditPetMedScreen> {
       petMedId: widget.petMed?.petMedId,
       petId: widget.petId,
       name: _nameController.text,
-      dose: _doseController.text,
+      frequency: int.parse(_frequencyController.text),
+      frequencyType: _frequencyType!,
+      doseUnit: double.parse(_doseUnitController.text),
+      medType: _medType!,
       startDate: _startDate,
       endDate: _endDate,
       notes: _notesController.text.isEmpty ? null : _notesController.text,
