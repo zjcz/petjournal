@@ -9,13 +9,15 @@ import 'package:drift/drift.dart' as _i2;
 import 'package:drift/src/runtime/executor/stream_queries.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
-import 'package:petjournal/constants/linked_record_type.dart' as _i9;
+import 'package:petjournal/constants/frequency_type.dart' as _i9;
+import 'package:petjournal/constants/linked_record_type.dart' as _i11;
+import 'package:petjournal/constants/med_type.dart' as _i10;
 import 'package:petjournal/constants/pet_sex.dart' as _i7;
 import 'package:petjournal/constants/pet_status.dart' as _i8;
-import 'package:petjournal/constants/weight_units.dart' as _i11;
+import 'package:petjournal/constants/weight_units.dart' as _i13;
 import 'package:petjournal/data/database/database_service.dart' as _i3;
 import 'package:petjournal/data/database/tables/journal_entry_details.dart'
-    as _i10;
+    as _i12;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -595,7 +597,10 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<_i3.PetMed?> createPetMed(
     int? petId,
     String? name,
-    String? dose,
+    int? frequency,
+    _i9.FrequencyType? frequencyType,
+    double? doseUnit,
+    _i10.MedType? medType,
     DateTime? startDate,
     DateTime? endDate,
     String? notes,
@@ -604,7 +609,10 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
             Invocation.method(#createPetMed, [
               petId,
               name,
-              dose,
+              frequency,
+              frequencyType,
+              doseUnit,
+              medType,
               startDate,
               endDate,
               notes,
@@ -617,7 +625,10 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   _i5.Future<int> updatePetMed(
     int? id,
     String? name,
-    String? dose,
+    int? frequency,
+    _i9.FrequencyType? frequencyType,
+    double? doseUnit,
+    _i10.MedType? medType,
     DateTime? startDate,
     DateTime? endDate,
     String? notes,
@@ -626,7 +637,10 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
             Invocation.method(#updatePetMed, [
               id,
               name,
-              dose,
+              frequency,
+              frequencyType,
+              doseUnit,
+              medType,
               startDate,
               endDate,
               notes,
@@ -796,7 +810,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
     required String? entryText,
     required List<int>? petIdList,
     required List<String>? tags,
-    _i9.LinkedRecordType? linkedRecordType,
+    _i11.LinkedRecordType? linkedRecordType,
     int? linkedRecordId,
     String? linkedRecordTitle,
   }) =>
@@ -834,7 +848,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
   @override
   _i5.Future<int> updateLinkedJournalEntry({
     required int? linkedRecordId,
-    required _i9.LinkedRecordType? linkedRecordType,
+    required _i11.LinkedRecordType? linkedRecordType,
     required String? linkedRecordTitle,
   }) =>
       (super.noSuchMethod(
@@ -872,14 +886,14 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
           as _i5.Stream<List<_i3.JournalEntry>>);
 
   @override
-  _i5.Stream<List<_i10.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
+  _i5.Stream<List<_i12.JournalEntryDetails>> getAllJournalEntryDetailsForPet(
     int? petId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getAllJournalEntryDetailsForPet, [petId]),
-            returnValue: _i5.Stream<List<_i10.JournalEntryDetails>>.empty(),
+            returnValue: _i5.Stream<List<_i12.JournalEntryDetails>>.empty(),
           )
-          as _i5.Stream<List<_i10.JournalEntryDetails>>);
+          as _i5.Stream<List<_i12.JournalEntryDetails>>);
 
   @override
   _i5.Future<int> deleteJournalEntry(int? id) =>
@@ -1012,7 +1026,7 @@ class MockDatabaseService extends _i1.Mock implements _i3.DatabaseService {
 
   @override
   _i5.Future<int> saveSettingsUser(
-    _i11.WeightUnits? defaultWeightUnit,
+    _i13.WeightUnits? defaultWeightUnit,
     bool? optIntoAnalyticsWarning,
     bool? createLinkedJournalEntries,
   ) =>

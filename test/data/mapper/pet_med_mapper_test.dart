@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/data/database/database_service.dart';
 import 'package:petjournal/data/mapper/pet_med_mapper.dart';
 import 'package:matcher/matcher.dart' as match;
@@ -17,7 +19,10 @@ void main() {
             petMedId: 1,
             pet: 2,
             name: 'Antibiotic',
-            dose: '5mg',
+            frequency: 1,
+            frequencyType: FrequencyType.daily,
+            doseUnit: 1.5,
+            medType: MedType.oral,
             startDate: DateTime(2024, 5, 28),
             endDate: DateTime(2024, 6, 1),
             notes: 'Take with food',
@@ -30,7 +35,10 @@ void main() {
           expect(result.petMedId, 1);
           expect(result.petId, 2);
           expect(result.name, 'Antibiotic');
-          expect(result.dose, '5mg');
+          expect(result.frequency, 1);
+          expect(result.frequencyType, FrequencyType.daily);
+          expect(result.doseUnit, 1.5);
+          expect(result.medType, MedType.oral);
           expect(result.startDate, DateTime(2024, 5, 28));
           expect(result.endDate, DateTime(2024, 6, 1));
           expect(result.notes, 'Take with food');
@@ -43,7 +51,10 @@ void main() {
           petMedId: 3,
           pet: 4,
           name: 'Painkiller',
-          dose: '10mg',
+          frequency: 1,
+          frequencyType: FrequencyType.daily,
+          doseUnit: 1.5,
+          medType: MedType.oral,
           startDate: DateTime(2023, 1, 1),
           endDate: DateTime(2023, 1, 10),
           notes: null,
@@ -64,7 +75,10 @@ void main() {
             petMedId: 5,
             pet: 6,
             name: 'Vaccine',
-            dose: '1ml',
+            frequency: 1,
+            frequencyType: FrequencyType.daily,
+            doseUnit: 1.5,
+            medType: MedType.oral,
             startDate: DateTime(2022, 2, 2),
             endDate: null,
             notes: 'Annual',
@@ -101,7 +115,10 @@ void main() {
                 petMedId: 1,
                 pet: 2,
                 name: 'Antibiotic',
-                dose: '5mg',
+                frequency: 1,
+                frequencyType: FrequencyType.daily,
+                doseUnit: 1.5,
+                medType: MedType.oral,
                 startDate: DateTime(2024, 5, 28),
                 endDate: DateTime(2024, 6, 1),
                 notes: 'Take with food',
@@ -110,7 +127,10 @@ void main() {
                 petMedId: 3,
                 pet: 4,
                 name: 'Painkiller',
-                dose: '10mg',
+                frequency: 4,
+                frequencyType: FrequencyType.weekly,
+                doseUnit: 7.2,
+                medType: MedType.injection,
                 startDate: DateTime(2023, 1, 1),
                 endDate: null,
                 notes: null,

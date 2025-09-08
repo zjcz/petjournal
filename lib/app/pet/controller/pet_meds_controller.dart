@@ -25,7 +25,10 @@ class PetMedsController extends _$PetMedsController {
       final newPetMed = await _databaseService.createPetMed(
         petMed.petId,
         petMed.name,
-        petMed.dose,
+        petMed.frequency,
+        petMed.frequencyType,
+        petMed.doseUnit,
+        petMed.medType,
         petMed.startDate,
         petMed.endDate,
         petMed.notes,
@@ -40,7 +43,10 @@ class PetMedsController extends _$PetMedsController {
       await _databaseService.updatePetMed(
         petMed.petMedId!,
         petMed.name,
-        petMed.dose,
+        petMed.frequency,
+        petMed.frequencyType,
+        petMed.doseUnit,
+        petMed.medType,
         petMed.startDate,
         petMed.endDate,
         petMed.notes,

@@ -4,6 +4,8 @@ import 'package:petjournal/app/pet/controller/pet_meds_controller.dart';
 import 'package:petjournal/app/pet/models/pet_med_model.dart';
 import 'package:flutter/material.dart';
 import 'package:petjournal/constants/custom_styles.dart';
+import 'package:petjournal/constants/frequency_type.dart';
+import 'package:petjournal/constants/med_type.dart';
 import 'package:petjournal/helpers/date_helper.dart';
 import 'package:petjournal/route_config.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
@@ -49,7 +51,13 @@ class _PetMedsWidgetState extends ConsumerState<PetMedsWidget> {
             ),
           ),
           DataColumn(
-            label: Text('Dosage', style: CustomStyles.dataTableHeaderTextStyle),
+            label: Text(
+              'Frequency',
+              style: CustomStyles.dataTableHeaderTextStyle,
+            ),
+          ),
+          DataColumn(
+            label: Text('Dose', style: CustomStyles.dataTableHeaderTextStyle),
           ),
           DataColumn(
             label: Text('Start', style: CustomStyles.dataTableHeaderTextStyle),
@@ -74,7 +82,12 @@ class _PetMedsWidgetState extends ConsumerState<PetMedsWidget> {
       return DataRow(
         cells: <DataCell>[
           DataCell(Text(medication.name)),
-          DataCell(Text(medication.dose)),
+          DataCell(
+            Text(
+              niceFrequencyName(medication.frequency, medication.frequencyType),
+            ),
+          ),
+          DataCell(Text(niceDosage(medication.doseUnit, medication.medType))),
           DataCell(Text(DateHelper.formatDate(medication.startDate))),
           DataCell(
             Text(
@@ -95,5 +108,13 @@ class _PetMedsWidgetState extends ConsumerState<PetMedsWidget> {
     });
 
     return dataRows;
+  }
+
+  String niceFrequencyName(int frequency, FrequencyType frequencyType) {
+    return '$frequency ${frequencyType.niceName}';
+  }
+
+  String niceDosage(double dosage, MedType medType) {
+    return '$dosage ${medType.niceName}';
   }
 }
