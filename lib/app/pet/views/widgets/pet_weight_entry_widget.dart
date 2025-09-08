@@ -5,7 +5,6 @@ import 'package:petjournal/constants/weight_units.dart';
 import 'package:petjournal/helpers/imperial_weight.dart';
 import 'package:petjournal/widgets/loading_widget.dart';
 
-// TODO - Write tests
 /// This widget allows the user to enter the pet weight
 /// The widget manages whether to allow entry in metric or imperial
 class PetWeightEntryWidget extends ConsumerStatefulWidget {
