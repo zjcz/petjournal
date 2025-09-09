@@ -57,7 +57,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 }
 
                 if (!context.mounted) return;
-                Navigator.of(context).pop();
+                context.pop();                
               }
             },
           ),
