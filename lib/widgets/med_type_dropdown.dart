@@ -19,7 +19,7 @@ class MedTypeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<MedType>(
       decoration: InputDecoration(labelText: labelText),
-      value: value,
+      initialValue: value,
       items: MedType.values.map((unit) {
         return DropdownMenuItem(value: unit, child: Text(unit.niceName));
       }).toList(),

@@ -24,7 +24,7 @@ android {
         applicationId = "com.example.petjournal"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21 // Updated        
+        minSdk = flutter.minSdkVersion // Updated        
         targetSdk = 34 // Updated
         versionCode = flutter.versionCode
         versionName = flutter.versionName

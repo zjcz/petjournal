@@ -17,7 +17,7 @@ class WeightUnitsDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<WeightUnits>(
       decoration: InputDecoration(labelText: labelText),
-      value: value,
+      initialValue: value,
       items:
           WeightUnits.values.map((unit) {
             return DropdownMenuItem(value: unit, child: Text(unit.niceName));

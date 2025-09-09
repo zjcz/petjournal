@@ -30,7 +30,7 @@ class SpeciesDropdown extends ConsumerWidget {
         return DropdownButtonFormField<SpeciesModel>(
           key: GlobalKey<FormFieldState>(),
           decoration: InputDecoration(labelText: labelText ?? "Species"),
-          value: species,
+          initialValue: species,
           items: speciesData.map((s) {
             return DropdownMenuItem<SpeciesModel>(
               value: s,
