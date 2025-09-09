@@ -19,7 +19,7 @@ class FrequencyTypeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<FrequencyType>(
       decoration: InputDecoration(labelText: labelText),
-      value: value,
+      initialValue: value,
       items: FrequencyType.values.map((unit) {
         return DropdownMenuItem(value: unit, child: Text(unit.niceName));
       }).toList(),

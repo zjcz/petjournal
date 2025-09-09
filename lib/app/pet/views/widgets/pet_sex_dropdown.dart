@@ -19,7 +19,7 @@ class PetSexDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<PetSex>(
-      value: selectedValue,
+      initialValue: selectedValue,
       items: PetSex.values.map((PetSex sex) {
         return DropdownMenuItem<PetSex>(
           value: sex,
