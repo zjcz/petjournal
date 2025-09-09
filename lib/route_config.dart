@@ -16,8 +16,8 @@ import 'package:petjournal/app/pet/views/edit_pet_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_vaccination_screen.dart';
 import 'package:petjournal/app/pet/views/edit_pet_weight_screen.dart';
 import 'package:petjournal/app/pet/views/view_pet_screen.dart';
-import 'package:petjournal/app/settings/controllers/settings_controller.dart';
 import 'package:petjournal/app/settings/views/settings_screen.dart';
+import 'package:petjournal/data/lookups/settings_lookup.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'route_config.g.dart';
@@ -49,7 +49,11 @@ GoRouter setupRouter(Ref ref) {
     //initialExtra: initialExtra,
     //observers: observers,
     redirect: (context, state) {
-      final settings = ref.read(settingsControllerProvider).requireValue;
+      var settings = SettingsLookup().getSettings();
+      if (settings == null) {
+        return null;
+      }
+
       final path = state.uri.path;
       if (!settings.onBoardingComplete) {
         if (path != RouteDefs.welcome) {
