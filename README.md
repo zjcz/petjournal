@@ -38,6 +38,8 @@ flutter run
 
 ## Dev Notes
 
+This app was originally intended for release on app stores. However, due to a change in personal circumstance I have decided to make the source code publically available. Feel free to fork the repo and build the app yourself for your own use.  The app is in a work in progress state so is not production ready.
+
 Uses the following packages:
 
 - [Drift](https://pub.dev/packages/drift) for database management.
